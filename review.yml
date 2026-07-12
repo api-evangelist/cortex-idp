@@ -1,0 +1,130 @@
+aid: cortex-idp
+name: Cortex
+review:
+  question: Does Cortex expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-11'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. Cortex's documented public API
+    (https://api.getcortexapp.com/api/v1) is request/response REST over HTTPS.
+    Cortex is an internal developer portal / software catalog; the platform
+    ingests data by polling and by receiving inbound webhooks from integrations
+    (GitHub, PagerDuty, Datadog, etc.) and via custom-integration webhook
+    endpoints (POST /custom-integrations/data/{uuid}) - inbound HTTP, not a
+    server-push transport Cortex exposes to consumers. There is no documented
+    WebSocket (ws:// / wss://) or SSE stream on Cortex's own API to model.
+findings:
+  summary: |
+    Cortex does not publish a documented public WebSocket API. Cortex (cortex.io)
+    is an internal developer portal (IDP) and software catalog with Scorecards.
+    Its public API is a REST API at https://api.getcortexapp.com/api/v1,
+    authenticated with an Authorization Bearer token (an API key created in the
+    workspace Settings page; HTTP bearer, JWT-format). Every documented operation
+    - Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, Teams,
+    Audit logs, and per-integration configuration - is request/response REST over
+    HTTPS. No realtime, bidirectional, or streaming WebSocket endpoint is
+    documented on Cortex's own API as of the review date.
+  disambiguation: |
+    This review covers Cortex.io the internal developer portal / service catalog
+    & scorecards company (docs.cortex.io, api.getcortexapp.com). It is NOT Cortex
+    XSOAR / Cortex XDR by Palo Alto Networks, NOT the Cortex (CTXC) crypto token,
+    and NOT Orange Logic's Cortex digital asset management (DAM) product.
+  accessModel: |
+    Cortex is a commercial SaaS internal developer portal (also offered via AWS
+    Marketplace and Microsoft/Azure Marketplace). The REST API is available to
+    authenticated workspace customers using an API key. There is no open,
+    unauthenticated public data API; the API operates on your own workspace's
+    catalog. The API reference is public at docs.cortex.io/api.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.getcortexapp.com/api/v1
+      documented: true
+      note: Full public REST API - Catalog, Scorecards, Custom Data, Initiatives, Deploys, Teams, Integrations. Bearer auth.
+    - protocol: Webhook
+      scheme: https
+      documented: true
+      note: Inbound webhooks hydrate the catalog (integrations and POST /custom-integrations/data/{uuid}). Inbound HTTP to Cortex, not a consumer-facing push stream.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented anywhere in the Cortex API reference as of the review date.
+  endpointsConfirmedRest:
+    - GET    https://api.getcortexapp.com/api/v1/catalog
+    - GET    https://api.getcortexapp.com/api/v1/catalog/descriptors
+    - GET    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}
+    - GET    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/openapi
+    - POST   https://api.getcortexapp.com/api/v1/open-api
+    - PATCH  https://api.getcortexapp.com/api/v1/open-api
+    - PUT    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/archive
+    - PUT    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/unarchive
+    - DELETE https://api.getcortexapp.com/api/v1/catalog/{tagOrId}
+    - GET    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/gitops-logs
+    - GET    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/scorecards
+    - GET    https://api.getcortexapp.com/api/v1/scorecards
+    - GET    https://api.getcortexapp.com/api/v1/scorecards/{tag}
+    - GET    https://api.getcortexapp.com/api/v1/scorecards/{tag}/descriptor
+    - GET    https://api.getcortexapp.com/api/v1/scorecards/{tag}/scores
+    - GET    https://api.getcortexapp.com/api/v1/scorecards/{tag}/next-steps
+    - GET    https://api.getcortexapp.com/api/v1/scorecards/{scorecardTag}/entity/{tagOrId}/badge
+    - POST   https://api.getcortexapp.com/api/v1/scorecards/{tag}/entity/{entityTag}/scores
+    - POST   https://api.getcortexapp.com/api/v1/scorecards/descriptor
+    - DELETE https://api.getcortexapp.com/api/v1/scorecards/{tag}
+    - POST   https://api.getcortexapp.com/api/v1/scorecards/{tag}/entity/{entityTag}/exemption
+    - GET    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/custom-data
+    - GET    https://api.getcortexapp.com/api/v1/catalog/custom-data
+    - GET    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/custom-data/{key}
+    - POST   https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/custom-data
+    - PUT    https://api.getcortexapp.com/api/v1/catalog/custom-data
+    - DELETE https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/custom-data
+    - GET    https://api.getcortexapp.com/api/v1/initiatives
+    - GET    https://api.getcortexapp.com/api/v1/initiatives/{cid}
+    - POST   https://api.getcortexapp.com/api/v1/initiatives
+    - PUT    https://api.getcortexapp.com/api/v1/initiatives/{cid}
+    - DELETE https://api.getcortexapp.com/api/v1/initiatives/{cid}
+    - GET    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/deploys
+    - POST   https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/deploys
+    - PUT    https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/deploys/{uuid}
+    - DELETE https://api.getcortexapp.com/api/v1/catalog/{tagOrId}/deploys
+    - GET    https://api.getcortexapp.com/api/v1/deploys/environments
+    - GET    https://api.getcortexapp.com/api/v1/deploys/search
+    - GET    https://api.getcortexapp.com/api/v1/github/configurations
+    - POST   https://api.getcortexapp.com/api/v1/github/configurations/validate
+    - POST   https://api.getcortexapp.com/api/v1/github/configurations/app
+    - PUT    https://api.getcortexapp.com/api/v1/github/configurations/app/{alias}
+    - DELETE https://api.getcortexapp.com/api/v1/github/configurations
+sources:
+  - url: https://docs.cortex.io/api
+    type: Documentation
+    note: REST API overview - Bearer auth, 1000 req/min per client, 2MB body cap, 429 with Retry-After. No WebSocket mentioned.
+  - url: https://docs.cortex.io/api/readme/catalog-entities
+    type: APIReference
+    note: Catalog entity CRUD, upsert via /open-api, archive/unarchive, descriptors.
+  - url: https://docs.cortex.io/api/readme/scorecards
+    type: APIReference
+    note: Scorecards, scores, next-steps, badges, exemptions.
+  - url: https://docs.cortex.io/api/readme/custom-data
+    type: APIReference
+    note: Custom key/value data on entities, including bulk and advanced retrieval.
+  - url: https://docs.cortex.io/api/readme/initiatives
+    type: APIReference
+    note: Initiative CRUD keyed by 18-char cid.
+  - url: https://docs.cortex.io/api/readme/deploys
+    type: APIReference
+    note: Deploy events per entity, environments, and search.
+  - url: https://docs.cortex.io/api/readme/integrations/github
+    type: APIReference
+    note: GitHub integration configuration CRUD - exemplar for ~30 integrations.
+  - url: https://www.cortex.io/pricing
+    type: Pricing
+    note: Official pricing page is contact-sales / custom proposal; no public rate card.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists. Cortex's documented public API is
+    request/response REST (api.getcortexapp.com/api/v1) with Bearer/API-key auth.
+    Data ingestion happens through polling and inbound webhooks, not a
+    consumer-facing server-push transport, so no AsyncAPI document was created.

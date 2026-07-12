@@ -1,0 +1,45 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: Cortex
+providerId: cortex-idp
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: true
+tags:
+- Internal Developer Portal
+- Software Catalog
+- Rate Limiting
+- Quotas
+description: >-
+  The Cortex REST API limits requests to 1000 per minute per client. The maximum
+  request body size is 2MB. Exceeding the request rate returns an HTTP 429 with a
+  Retry-After header indicating how long to wait before retrying. These limits are
+  documented in the Cortex API overview.
+notes: >-
+  Numeric limits (1000 req/min per client, 2MB body) are taken directly from the
+  Cortex API documentation. Clients should honor the Retry-After header on 429
+  responses and implement exponential backoff with jitter.
+sources:
+- https://docs.cortex.io/api
+responseCodes:
+  throttled: 429
+limits:
+- name: API Requests
+  scope: client
+  metric: requests
+  limit: 1000 per minute
+  notes: Documented ceiling of 1000 requests per minute per client.
+- name: Request Body Size
+  scope: request
+  metric: bytes
+  limit: 2MB
+  notes: Requests with a body larger than 2MB are rejected.
+policies:
+- name: Retry-After
+  description: On a 429 response, Cortex returns a Retry-After header; clients should wait that long before retrying.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Retry-After on 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

@@ -1,0 +1,105 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: Cortex
+providerId: cortex-idp
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Internal Developer Portal
+- Software Catalog
+- Service Catalog
+- Plans
+description: >-
+  Cortex is a commercial SaaS internal developer portal. Its official pricing page
+  (cortex.io/pricing) does not publish a rate card - it directs prospects to a
+  custom proposal and a demo, so pricing is effectively contact-sales / custom. The
+  product is licensed per developer (seat-based) rather than per catalogued
+  service. Cortex is also available through the AWS Marketplace and Microsoft/Azure
+  Marketplace as private offers. The plan tiers below are MODELED from
+  publicly-visible third-party listings and are NOT confirmed by Cortex; verify all
+  names, prices, and limits directly with Cortex sales during reconciliation.
+notes: >-
+  reconciled=false. The only figure grounded on Cortex's own property is that
+  pricing is custom / contact-sales (cortex.io/pricing). Per-developer figures
+  (e.g. a ~$25/developer/month starting point) and a free tier bounded to ~20
+  services appear only in third-party pricing aggregators and are unconfirmed and
+  MODELED. The REST API itself carries no separate fee - it is included with a
+  Cortex subscription and governed by the documented rate limits.
+sources:
+- https://www.cortex.io/pricing
+- https://aws.amazon.com/marketplace/pp/prodview-x56oxtx647o3c
+- https://docs.cortex.io/api
+plans:
+- id: cortex-free
+  name: Free (Modeled)
+  type: free
+  description: >-
+    MODELED - a free/starter tier is referenced by third-party listings, typically
+    bounded to a small number of catalogued services and basic catalog
+    functionality for evaluation and small teams. Not confirmed by Cortex.
+  entries:
+  - label: Included Seats
+    name: free_seats
+    type: usage
+    metric: developers
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: modeled - free up to a bounded number of services (unconfirmed)
+    userMultiplied: false
+  elements:
+  - name: Software Catalog
+  - name: Basic Scorecards
+- id: cortex-team
+  name: Team / Pro (Modeled)
+  type: paid
+  description: >-
+    MODELED - a per-developer paid tier with unlimited services, full Scorecards,
+    Initiatives, advanced integrations, and the REST API. Per-seat price is
+    unconfirmed by Cortex (third-party listings suggest a starting point around
+    $25/developer/month; treat as unverified).
+  entries:
+  - label: Per Developer
+    name: team_seat
+    type: recurring
+    metric: developers
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: modeled per-developer / month (contact Cortex to confirm)
+    userMultiplied: true
+  elements:
+  - name: Unlimited Entities
+  - name: Scorecards and Initiatives
+  - name: Integrations
+  - name: REST API
+- id: cortex-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Custom enterprise agreement with SSO/SAML, advanced security and RBAC, custom
+    SLAs, dedicated customer success, and negotiated per-developer terms.
+    Contact-sales - this matches Cortex's own contact-sales pricing posture.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: SSO and Advanced RBAC
+  - name: Custom SLAs
+  - name: Dedicated Support
+  - name: Marketplace Private Offers
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

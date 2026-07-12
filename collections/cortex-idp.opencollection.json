@@ -1,0 +1,160 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cortex REST API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "Catalog", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List catalog entities.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/catalog", "params": [{ "name": "page", "value": "0", "type": "query" }, { "name": "pageSize", "value": "250", "type": "query" }] },
+          "docs": "Lists all catalog entities (services, resources, domains, custom types)."
+        },
+        {
+          "info": { "name": "Retrieve entity details.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId", "params": [{ "name": "tagOrId", "value": "", "type": "path", "description": "The entity x-cortex-tag or id." }] },
+          "docs": "Retrieves a single entity by tag or id."
+        },
+        {
+          "info": { "name": "Retrieve entity descriptor.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/openapi", "params": [{ "name": "tagOrId", "value": "", "type": "path" }] },
+          "docs": "Retrieves the entity descriptor (YAML/JSON)."
+        },
+        {
+          "info": { "name": "Create or update entity (upsert).", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.getcortexapp.com/api/v1/open-api", "body": { "type": "json", "data": "{}" } },
+          "docs": "Creates or updates a catalog entity from an entity descriptor (upsert)."
+        },
+        {
+          "info": { "name": "Archive entity.", "type": "http" },
+          "http": { "method": "PUT", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/archive", "params": [{ "name": "tagOrId", "value": "", "type": "path" }] },
+          "docs": "Archives a catalog entity."
+        },
+        {
+          "info": { "name": "Delete entity.", "type": "http" },
+          "http": { "method": "DELETE", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId", "params": [{ "name": "tagOrId", "value": "", "type": "path" }] },
+          "docs": "Deletes a catalog entity by tag or id."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Scorecards", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List scorecards.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/scorecards" },
+          "docs": "Lists all Scorecards."
+        },
+        {
+          "info": { "name": "Retrieve a scorecard.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag", "params": [{ "name": "tag", "value": "", "type": "path" }] },
+          "docs": "Retrieves a single Scorecard by tag."
+        },
+        {
+          "info": { "name": "Retrieve scorecard scores.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag/scores", "params": [{ "name": "tag", "value": "", "type": "path" }] },
+          "docs": "Retrieves the scores of every entity evaluated against a Scorecard."
+        },
+        {
+          "info": { "name": "Retrieve entity scorecard scores.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/scorecards", "params": [{ "name": "tagOrId", "value": "", "type": "path" }] },
+          "docs": "Retrieves the scorecard scores an entity has earned."
+        },
+        {
+          "info": { "name": "Create or update scorecard.", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.getcortexapp.com/api/v1/scorecards/descriptor", "body": { "type": "json", "data": "{}" } },
+          "docs": "Creates or updates a Scorecard from its descriptor."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Custom Data", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List custom data for an entity.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/custom-data", "params": [{ "name": "tagOrId", "value": "", "type": "path" }] },
+          "docs": "Lists custom key/value data on an entity."
+        },
+        {
+          "info": { "name": "Add custom data to an entity.", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/custom-data", "params": [{ "name": "tagOrId", "value": "", "type": "path" }], "body": { "type": "json", "data": "{}" } },
+          "docs": "Adds a custom key/value data entry to an entity."
+        },
+        {
+          "info": { "name": "Bulk add custom data.", "type": "http" },
+          "http": { "method": "PUT", "url": "https://api.getcortexapp.com/api/v1/catalog/custom-data", "body": { "type": "json", "data": "{}" } },
+          "docs": "Bulk-adds multiple key/value pairs across many entities."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Initiatives", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List initiatives.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/initiatives" },
+          "docs": "Lists all Initiatives."
+        },
+        {
+          "info": { "name": "Create an initiative.", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.getcortexapp.com/api/v1/initiatives", "body": { "type": "json", "data": "{}" } },
+          "docs": "Creates a new Initiative campaign."
+        },
+        {
+          "info": { "name": "Retrieve an initiative.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/initiatives/:cid", "params": [{ "name": "cid", "value": "", "type": "path", "description": "18-character Initiative id." }] },
+          "docs": "Retrieves a single Initiative by cid."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Deploys", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List deploys for an entity.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/deploys", "params": [{ "name": "tagOrId", "value": "", "type": "path" }] },
+          "docs": "Lists deployment events for a catalog entity."
+        },
+        {
+          "info": { "name": "Add a deploy for an entity.", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/deploys", "params": [{ "name": "tagOrId", "value": "", "type": "path" }], "body": { "type": "json", "data": "{}" } },
+          "docs": "Records a new deployment event for an entity."
+        },
+        {
+          "info": { "name": "List deploy environments.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/deploys/environments" },
+          "docs": "Lists the deploy environments known to Cortex."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Integrations", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List GitHub configurations.", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.getcortexapp.com/api/v1/github/configurations" },
+          "docs": "Lists the GitHub integration configurations (exemplar for ~30 integrations)."
+        },
+        {
+          "info": { "name": "Validate a GitHub configuration.", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.getcortexapp.com/api/v1/github/configurations/validate", "body": { "type": "json", "data": "{}" } },
+          "docs": "Validates a GitHub integration configuration without saving it."
+        },
+        {
+          "info": { "name": "Add a GitHub App configuration.", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.getcortexapp.com/api/v1/github/configurations/app", "body": { "type": "json", "data": "{}" } },
+          "docs": "Adds a GitHub App integration configuration."
+        }
+      ]
+    }
+  ]
+}

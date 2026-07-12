@@ -1,0 +1,83 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: Cortex
+providerId: cortex-idp
+created: '2026-07-11'
+modified: '2026-07-11'
+reconciled: false
+tags:
+- Internal Developer Portal
+- Software Catalog
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of Cortex spend. Cortex is a per-developer (seat-based) SaaS internal
+  developer portal, contracted as an annual/enterprise agreement (also available as
+  AWS and Microsoft Marketplace private offers). Cost is driven by the number of
+  developer seats rather than by the number of catalogued entities or API calls -
+  the REST API is included and carries no metered usage fee beyond the documented
+  rate limits. Because pricing is contact-sales, per-unit rates are not reconciled
+  here.
+notes: >-
+  reconciled=false. Cortex does not publish per-seat rates; model spend from your
+  negotiated per-developer price times seat count. The dominant cost lever is seat
+  count and enterprise feature tier, not API consumption.
+sources:
+- https://www.cortex.io/pricing
+- https://aws.amazon.com/marketplace/pp/prodview-x56oxtx647o3c
+- https://docs.cortex.io/api
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: Cortex
+serviceCategory: Developer Tools and Platform Engineering
+billingModel:
+  pricingCategory: Seat-Based
+  billingFrequency: Annual
+  billingCurrency: USD
+  chargeCategories:
+  - Purchase
+  - Usage
+  - Adjustment
+focusColumns:
+  ServiceName: Cortex Internal Developer Portal
+  ServiceCategory: Developer Tools and Platform Engineering
+  ProviderName: Cortex
+  PublisherName: Cortex
+  InvoiceIssuerName: Cortex
+  BillingCurrency: USD
+  ChargeCategory: Purchase
+  PricingCategory: Seat-Based
+meters:
+- name: developer_seats
+  description: Number of licensed developer seats on the Cortex platform - the primary billing metric.
+  unit: seats
+  aggregation: max
+  dimensions:
+  - account
+  - team
+- name: api_requests
+  description: REST API requests. Included with the subscription (governed by rate limits), not separately metered.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+  - apiKey
+principles:
+- name: Visibility
+  description: Track licensed developer seats against active users; monitor which teams actually use the catalog and Scorecards.
+- name: Allocation
+  description: Map seats and catalog entities to teams so the per-developer license cost maps to internal cost centers.
+- name: Optimization
+  description: Reclaim inactive seats, right-size the feature tier, and use Marketplace private offers where they lower committed spend.
+- name: Accountability
+  description: Assign an owner for the Cortex contract; review seat count and tier against renewal terms each cycle.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

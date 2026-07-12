@@ -1,0 +1,264 @@
+{
+  "info": {
+    "name": "Cortex REST API",
+    "description": "Cortex (cortex.io) internal developer portal / software catalog REST API. Base URL: https://api.getcortexapp.com/api/v1. All requests require an Authorization: Bearer <token> header, where the token is an API key created in the Settings page of your Cortex workspace. NOTE: this is Cortex.io the IDP, not Cortex XSOAR (Palo Alto) or Orange Logic Cortex DAM. Request bodies are honestly modeled; verify payloads against docs.cortex.io/api.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{bearerToken}}", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.getcortexapp.com/api/v1", "type": "string" },
+    { "key": "bearerToken", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Catalog",
+      "item": [
+        {
+          "name": "List catalog entities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/catalog?page=0&pageSize=250", "host": ["{{baseUrl}}"], "path": ["catalog"], "query": [{ "key": "page", "value": "0" }, { "key": "pageSize", "value": "250" }] },
+            "description": "Lists all catalog entities (services, resources, domains, custom types)."
+          }
+        },
+        {
+          "name": "Retrieve entity details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Retrieves a single entity by x-cortex-tag or id."
+          }
+        },
+        {
+          "name": "Retrieve entity descriptor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId/openapi", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId", "openapi"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Retrieves the entity descriptor (YAML/JSON) for an entity."
+          }
+        },
+        {
+          "name": "Create or update entity (upsert)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"info\": {\n    \"x-cortex-tag\": \"my-service\",\n    \"title\": \"My Service\",\n    \"x-cortex-type\": \"service\"\n  }\n}" },
+            "url": { "raw": "{{baseUrl}}/open-api", "host": ["{{baseUrl}}"], "path": ["open-api"] },
+            "description": "Creates or updates a catalog entity from an entity descriptor (upsert)."
+          }
+        },
+        {
+          "name": "Archive entity",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId/archive", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId", "archive"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Archives a catalog entity."
+          }
+        },
+        {
+          "name": "Delete entity",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Deletes a catalog entity by tag or id."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Scorecards",
+      "item": [
+        {
+          "name": "List scorecards",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/scorecards", "host": ["{{baseUrl}}"], "path": ["scorecards"] },
+            "description": "Lists all Scorecards."
+          }
+        },
+        {
+          "name": "Retrieve a scorecard",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/scorecards/:tag", "host": ["{{baseUrl}}"], "path": ["scorecards", ":tag"], "variable": [{ "key": "tag", "value": "" }] },
+            "description": "Retrieves a single Scorecard by tag."
+          }
+        },
+        {
+          "name": "Retrieve scorecard scores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/scorecards/:tag/scores", "host": ["{{baseUrl}}"], "path": ["scorecards", ":tag", "scores"], "variable": [{ "key": "tag", "value": "" }] },
+            "description": "Retrieves the scores of every entity evaluated against a Scorecard."
+          }
+        },
+        {
+          "name": "Retrieve entity scorecard scores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId/scorecards", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId", "scorecards"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Retrieves the scorecard scores an entity has earned."
+          }
+        },
+        {
+          "name": "Create or update scorecard",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/scorecards/descriptor", "host": ["{{baseUrl}}"], "path": ["scorecards", "descriptor"] },
+            "description": "Creates or updates a Scorecard from its descriptor."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Custom Data",
+      "item": [
+        {
+          "name": "List custom data for an entity",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId/custom-data", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId", "custom-data"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Lists custom key/value data on an entity."
+          }
+        },
+        {
+          "name": "Add custom data to an entity",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"key\": \"tier\",\n  \"value\": \"tier-1\",\n  \"description\": \"Service tier\"\n}" },
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId/custom-data", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId", "custom-data"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Adds a custom key/value data entry to an entity."
+          }
+        },
+        {
+          "name": "Bulk add custom data",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"values\": {}\n}" },
+            "url": { "raw": "{{baseUrl}}/catalog/custom-data", "host": ["{{baseUrl}}"], "path": ["catalog", "custom-data"] },
+            "description": "Bulk-adds multiple key/value pairs across many entities."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Initiatives",
+      "item": [
+        {
+          "name": "List initiatives",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/initiatives", "host": ["{{baseUrl}}"], "path": ["initiatives"] },
+            "description": "Lists all Initiatives."
+          }
+        },
+        {
+          "name": "Create an initiative",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Production Readiness Q3\"\n}" },
+            "url": { "raw": "{{baseUrl}}/initiatives", "host": ["{{baseUrl}}"], "path": ["initiatives"] },
+            "description": "Creates a new Initiative campaign."
+          }
+        },
+        {
+          "name": "Retrieve an initiative",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/initiatives/:cid", "host": ["{{baseUrl}}"], "path": ["initiatives", ":cid"], "variable": [{ "key": "cid", "value": "" }] },
+            "description": "Retrieves a single Initiative by its 18-character cid."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deploys",
+      "item": [
+        {
+          "name": "List deploys for an entity",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId/deploys", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId", "deploys"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Lists deployment events for a catalog entity."
+          }
+        },
+        {
+          "name": "Add a deploy for an entity",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"sha\": \"abc123\",\n  \"title\": \"Release 1.2.0\",\n  \"type\": \"DEPLOY\",\n  \"environment\": \"production\"\n}" },
+            "url": { "raw": "{{baseUrl}}/catalog/:tagOrId/deploys", "host": ["{{baseUrl}}"], "path": ["catalog", ":tagOrId", "deploys"], "variable": [{ "key": "tagOrId", "value": "" }] },
+            "description": "Records a new deployment event for an entity."
+          }
+        },
+        {
+          "name": "List deploy environments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/deploys/environments", "host": ["{{baseUrl}}"], "path": ["deploys", "environments"] },
+            "description": "Lists the deploy environments known to Cortex."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Integrations",
+      "item": [
+        {
+          "name": "List GitHub configurations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/github/configurations", "host": ["{{baseUrl}}"], "path": ["github", "configurations"] },
+            "description": "Lists the GitHub integration configurations (exemplar for ~30 integrations)."
+          }
+        },
+        {
+          "name": "Validate a GitHub configuration",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/github/configurations/validate", "host": ["{{baseUrl}}"], "path": ["github", "configurations", "validate"] },
+            "description": "Validates a GitHub integration configuration without saving it."
+          }
+        },
+        {
+          "name": "Add a GitHub App configuration",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/github/configurations/app", "host": ["{{baseUrl}}"], "path": ["github", "configurations", "app"] },
+            "description": "Adds a GitHub App integration configuration."
+          }
+        }
+      ]
+    }
+  ]
+}

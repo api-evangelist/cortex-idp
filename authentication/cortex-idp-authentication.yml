@@ -1,0 +1,18 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/cortex-idp-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: 'API key created in the Settings page of your Cortex workspace. Passed
+    as `Authorization: Bearer YOUR_API_KEY`. Cortex API keys are scoped by role and
+    permissions; some operations require specific permissions such as "Edit entities"
+    or "Configure integrations".'
+  sources:
+  - https://docs.cortex.io/api
+  - openapi/cortex-idp-openapi.yml
