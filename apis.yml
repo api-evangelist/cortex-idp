@@ -162,6 +162,8 @@ apis:
     same configuration pattern). List, validate, add, update, and delete personal
     and app configurations per integration.
 common:
+- type: AgenticAccess
+  url: agentic-access/cortex-idp-agentic-access.yml
 - type: Authentication
   url: authentication/cortex-idp-authentication.yml
 - type: LinkedIn
