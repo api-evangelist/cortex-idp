@@ -10,7 +10,7 @@ schemes:
   scheme: bearer
   bearerFormat: JWT
   description: 'API key created in the Settings page of your Cortex workspace. Passed
-    as `Authorization: Bearer YOUR_API_KEY`. Cortex API keys are scoped by role and
+    as `Authorization: Bearer [example key]`. Cortex API keys are scoped by role and
     permissions; some operations require specific permissions such as "Edit entities"
     or "Configure integrations".'
   sources:
