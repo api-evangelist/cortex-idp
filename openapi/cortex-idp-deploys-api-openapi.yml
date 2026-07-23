@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: Cortex REST Catalog Deploys API
+  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.
+  version: '1.0'
+  contact:
+    name: Cortex
+    url: https://www.cortex.io
+servers:
+- url: https://api.getcortexapp.com/api/v1
+  description: Cortex REST API
+security:
+- bearerAuth: []
+tags:
+- name: Deploys
+  description: Deployment events recorded per catalog entity.
+paths:
+  /catalog/{tagOrId}/deploys:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    get:
+      operationId: listEntityDeploys
+      tags:
+      - Deploys
+      summary: List deploys for an entity
+      description: Lists deployment events recorded for a catalog entity.
+      responses:
+        '200':
+          description: A list of deploy events.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeployList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: addEntityDeploy
+      tags:
+      - Deploys
+      summary: Add a deploy for an entity
+      description: Records a new deployment event for a catalog entity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeployInput'
+      responses:
+        '200':
+          description: The recorded deploy event.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteEntityDeploys
+      tags:
+      - Deploys
+      summary: Delete deploys for an entity
+      description: Deletes deploy events for an entity, optionally filtered by environment, sha, or type.
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/{tagOrId}/deploys/{uuid}:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    - name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    put:
+      operationId: updateEntityDeploy
+      tags:
+      - Deploys
+      summary: Update a deploy
+      description: Updates a single deploy event for an entity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeployInput'
+      responses:
+        '200':
+          description: The updated deploy event.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteEntityDeploy
+      tags:
+      - Deploys
+      summary: Delete a deploy
+      description: Deletes a single deploy event by uuid.
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /deploys/environments:
+    get:
+      operationId: listDeployEnvironments
+      tags:
+      - Deploys
+      summary: List deploy environments
+      description: Lists the deploy environments known to Cortex.
+      responses:
+        '200':
+          description: A list of environments.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /deploys/search:
+    get:
+      operationId: searchDeploys
+      tags:
+      - Deploys
+      summary: Search deploys
+      description: Searches deploy events across the catalog.
+      responses:
+        '200':
+          description: Matching deploy events.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    TagOrId:
+      name: tagOrId
+      in: path
+      required: true
+      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Deploy:
+      type: object
+      description: A deployment event. Modeled/simplified.
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        sha:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        environment:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    DeployInput:
+      type: object
+      properties:
+        sha:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        environment:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    DeployList:
+      type: object
+      properties:
+        deploys:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deploy'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'

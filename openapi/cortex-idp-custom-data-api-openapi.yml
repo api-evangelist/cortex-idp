@@ -1,0 +1,177 @@
+openapi: 3.0.3
+info:
+  title: Cortex REST Catalog Custom Data API
+  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.
+  version: '1.0'
+  contact:
+    name: Cortex
+    url: https://www.cortex.io
+servers:
+- url: https://api.getcortexapp.com/api/v1
+  description: Cortex REST API
+security:
+- bearerAuth: []
+tags:
+- name: Custom Data
+  description: Arbitrary key/value metadata attached to catalog entities.
+paths:
+  /custom-data:
+    get:
+      operationId: getCustomDataAdvanced
+      tags:
+      - Custom Data
+      summary: Retrieve custom data (advanced)
+      description: Advanced retrieval of custom data across entities, supporting keys with non-alphanumeric characters. Full path is /catalog/custom-data.
+      responses:
+        '200':
+          description: Custom data entries.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      operationId: bulkUpsertCustomData
+      tags:
+      - Custom Data
+      summary: Bulk add custom data
+      description: Bulk operation to add multiple key/value pairs across many entities. Full path is /catalog/custom-data.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Bulk upsert result.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/{tagOrId}/custom-data:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    get:
+      operationId: listEntityCustomData
+      tags:
+      - Custom Data
+      summary: List custom data for an entity
+      description: Lists custom key/value data attached to an entity, with pagination.
+      responses:
+        '200':
+          description: Custom data entries for the entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDataList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: addEntityCustomData
+      tags:
+      - Custom Data
+      summary: Add custom data to an entity
+      description: Adds or creates a custom key/value data entry on an entity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDataInput'
+      responses:
+        '200':
+          description: The created custom data entry.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteEntityCustomData
+      tags:
+      - Custom Data
+      summary: Delete custom data from an entity
+      description: Deletes a custom data entry from an entity by key query parameter.
+      parameters:
+      - name: key
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/{tagOrId}/custom-data/{key}:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    - name: key
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      operationId: getEntityCustomDataByKey
+      tags:
+      - Custom Data
+      summary: Retrieve custom data by key
+      description: Retrieves a specific custom data entry on an entity by key.
+      responses:
+        '200':
+          description: The custom data entry.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    TagOrId:
+      name: tagOrId
+      in: path
+      required: true
+      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
+  schemas:
+    CustomDataList:
+      type: object
+      properties:
+        customData:
+          type: array
+          items:
+            type: object
+            properties:
+              key:
+                type: string
+              value: {}
+              description:
+                type: string
+              source:
+                type: string
+              dateUpdated:
+                type: string
+                format: date-time
+    CustomDataInput:
+      type: object
+      required:
+      - key
+      - value
+      properties:
+        key:
+          type: string
+        value:
+          description: Arbitrary JSON value.
+        description:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'

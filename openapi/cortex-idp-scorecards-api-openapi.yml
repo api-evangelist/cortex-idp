@@ -1,0 +1,300 @@
+openapi: 3.0.3
+info:
+  title: Cortex REST Catalog Scorecards API
+  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.
+  version: '1.0'
+  contact:
+    name: Cortex
+    url: https://www.cortex.io
+servers:
+- url: https://api.getcortexapp.com/api/v1
+  description: Cortex REST API
+security:
+- bearerAuth: []
+tags:
+- name: Scorecards
+  description: Standards that measure catalog entities, with scores and exemptions.
+paths:
+  /catalog/{tagOrId}/scorecards:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    get:
+      operationId: getEntityScorecardScores
+      tags:
+      - Scorecards
+      summary: Retrieve scorecard scores for an entity
+      description: Retrieves the scores an entity has earned across the Scorecards it is evaluated against, including ladder level, score, and score percentage.
+      responses:
+        '200':
+          description: Scorecard scores for the entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityScorecardScores'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards:
+    get:
+      operationId: listScorecards
+      tags:
+      - Scorecards
+      summary: List scorecards
+      description: Lists all Scorecards defined in the workspace.
+      responses:
+        '200':
+          description: A list of scorecards.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScorecardList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards/descriptor:
+    post:
+      operationId: upsertScorecardDescriptor
+      tags:
+      - Scorecards
+      summary: Create or update a scorecard
+      description: Creates or updates a Scorecard from its descriptor (YAML/JSON).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: The created or updated scorecard.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards/{tag}:
+    parameters:
+    - $ref: '#/components/parameters/ScorecardTag'
+    get:
+      operationId: getScorecard
+      tags:
+      - Scorecards
+      summary: Retrieve a scorecard
+      description: Retrieves a single Scorecard by its tag.
+      responses:
+        '200':
+          description: The requested scorecard.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scorecard'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteScorecard
+      tags:
+      - Scorecards
+      summary: Delete a scorecard
+      description: Deletes a Scorecard by tag.
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards/{tag}/descriptor:
+    parameters:
+    - $ref: '#/components/parameters/ScorecardTag'
+    get:
+      operationId: getScorecardDescriptor
+      tags:
+      - Scorecards
+      summary: Retrieve a scorecard descriptor
+      description: Retrieves the descriptor (source-of-truth definition) for a Scorecard.
+      responses:
+        '200':
+          description: The scorecard descriptor.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards/{tag}/scores:
+    parameters:
+    - $ref: '#/components/parameters/ScorecardTag'
+    get:
+      operationId: getScorecardScores
+      tags:
+      - Scorecards
+      summary: Retrieve scores for a scorecard
+      description: Retrieves the scores of every entity evaluated against a Scorecard.
+      responses:
+        '200':
+          description: Scores across entities.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards/{tag}/next-steps:
+    parameters:
+    - $ref: '#/components/parameters/ScorecardTag'
+    get:
+      operationId: getScorecardNextSteps
+      tags:
+      - Scorecards
+      summary: Retrieve next steps for a scorecard
+      description: Retrieves the recommended next steps to improve scores on a Scorecard.
+      responses:
+        '200':
+          description: Next steps.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards/{scorecardTag}/entity/{tagOrId}/badge:
+    parameters:
+    - name: scorecardTag
+      in: path
+      required: true
+      schema:
+        type: string
+    - $ref: '#/components/parameters/TagOrId'
+    get:
+      operationId: getScorecardBadge
+      tags:
+      - Scorecards
+      summary: Retrieve a scorecard badge for an entity
+      description: Retrieves an SVG/JSON badge representing an entity's standing on a Scorecard.
+      responses:
+        '200':
+          description: The badge.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards/{tag}/entity/{entityTag}/scores:
+    parameters:
+    - $ref: '#/components/parameters/ScorecardTag'
+    - name: entityTag
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      operationId: submitScorecardScore
+      tags:
+      - Scorecards
+      summary: Submit a score for an entity
+      description: Submits or overrides a score for an entity on a Scorecard.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: The recorded score.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /scorecards/{tag}/entity/{entityTag}/exemption:
+    parameters:
+    - $ref: '#/components/parameters/ScorecardTag'
+    - name: entityTag
+      in: path
+      required: true
+      schema:
+        type: string
+    post:
+      operationId: requestExemption
+      tags:
+      - Scorecards
+      summary: Request a scorecard exemption
+      description: Requests a time-boxed exemption from a Scorecard rule for an entity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: The requested exemption.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    TagOrId:
+      name: tagOrId
+      in: path
+      required: true
+      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
+    ScorecardTag:
+      name: tag
+      in: path
+      required: true
+      description: The Scorecard tag.
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Scorecard:
+      type: object
+      description: A Scorecard definition. Modeled/simplified.
+      properties:
+        tag:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        rules:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+    ScorecardList:
+      type: object
+      properties:
+        scorecards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scorecard'
+    EntityScorecardScores:
+      type: object
+      properties:
+        scorecardScores:
+          type: array
+          items:
+            type: object
+            properties:
+              scorecardName:
+                type: string
+              score:
+                type: number
+              scorePercentage:
+                type: number
+              totalPossibleScore:
+                type: number
+              ladderLevels:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: true
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'

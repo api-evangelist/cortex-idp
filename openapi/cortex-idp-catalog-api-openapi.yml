@@ -1,0 +1,276 @@
+openapi: 3.0.3
+info:
+  title: Cortex REST Catalog API
+  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.
+  version: '1.0'
+  contact:
+    name: Cortex
+    url: https://www.cortex.io
+servers:
+- url: https://api.getcortexapp.com/api/v1
+  description: Cortex REST API
+security:
+- bearerAuth: []
+tags:
+- name: Catalog
+  description: Software catalog entities - services, resources, domains, and custom types.
+paths:
+  /catalog:
+    get:
+      operationId: listCatalogEntities
+      tags:
+      - Catalog
+      summary: List catalog entities
+      description: Lists all catalog entities (services, resources, domains, and custom entity types). Supports pagination via page and pageSize, and filtering by type, group, and owner.
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 0
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          default: 250
+      - name: types
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A page of catalog entities.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteCatalogEntitiesByType
+      tags:
+      - Catalog
+      summary: Delete entities by type
+      description: Deletes catalog entities matching the given entity type.
+      parameters:
+      - name: type
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/descriptors:
+    get:
+      operationId: listEntityDescriptors
+      tags:
+      - Catalog
+      summary: List entity descriptors
+      description: Lists the entity descriptors (YAML source of truth) for catalog entities.
+      responses:
+        '200':
+          description: A list of entity descriptors.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/{tagOrId}:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    get:
+      operationId: getCatalogEntity
+      tags:
+      - Catalog
+      summary: Retrieve entity details
+      description: Retrieves a single catalog entity by its tag (x-cortex-tag) or id.
+      responses:
+        '200':
+          description: The requested catalog entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteCatalogEntity
+      tags:
+      - Catalog
+      summary: Delete an entity
+      description: Deletes a catalog entity by tag or id.
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/{tagOrId}/openapi:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    get:
+      operationId: getEntityDescriptor
+      tags:
+      - Catalog
+      summary: Retrieve entity descriptor
+      description: Retrieves the entity descriptor (OpenAPI-style YAML/JSON) for a single entity.
+      responses:
+        '200':
+          description: The entity descriptor.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/{tagOrId}/archive:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    put:
+      operationId: archiveEntity
+      tags:
+      - Catalog
+      summary: Archive an entity
+      description: Archives a catalog entity, hiding it from active views while retaining history.
+      responses:
+        '200':
+          description: The archived entity.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/{tagOrId}/unarchive:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    put:
+      operationId: unarchiveEntity
+      tags:
+      - Catalog
+      summary: Unarchive an entity
+      description: Restores a previously archived catalog entity.
+      responses:
+        '200':
+          description: The restored entity.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /catalog/{tagOrId}/gitops-logs:
+    parameters:
+    - $ref: '#/components/parameters/TagOrId'
+    get:
+      operationId: getGitopsLogs
+      tags:
+      - Catalog
+      summary: Retrieve GitOps logs
+      description: Retrieves the GitOps ingestion log for an entity descriptor.
+      responses:
+        '200':
+          description: GitOps log entries.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /open-api:
+    post:
+      operationId: upsertEntity
+      tags:
+      - Catalog
+      summary: Create or update an entity (upsert)
+      description: Creates or updates a catalog entity from an entity descriptor. Behaves as an upsert by default. Accepts application/openapi+yaml or JSON.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityDescriptor'
+      responses:
+        '200':
+          description: The created or updated entity.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      operationId: patchEntity
+      tags:
+      - Catalog
+      summary: Create or patch an entity (merge)
+      description: Merges the supplied descriptor changes into an existing entity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntityDescriptor'
+      responses:
+        '200':
+          description: The patched entity.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  parameters:
+    TagOrId:
+      name: tagOrId
+      in: path
+      required: true
+      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
+  schemas:
+    EntityList:
+      type: object
+      properties:
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        page:
+          type: integer
+        totalPages:
+          type: integer
+    Entity:
+      type: object
+      description: A catalog entity. Modeled/simplified - verify fields against Cortex docs.
+      properties:
+        tag:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          description: e.g. service, resource, domain, or a custom entity type.
+        description:
+          type: string
+        groups:
+          type: array
+          items:
+            type: string
+        ownership:
+          type: object
+          additionalProperties: true
+        metadata:
+          type: object
+          additionalProperties: true
+    EntityDescriptor:
+      type: object
+      description: An entity descriptor (x-cortex-* YAML/JSON) submitted to create or update an entity. Modeled - see Cortex descriptor reference for full schema.
+      additionalProperties: true
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'

@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: Cortex REST Catalog Integrations API
+  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.
+  version: '1.0'
+  contact:
+    name: Cortex
+    url: https://www.cortex.io
+servers:
+- url: https://api.getcortexapp.com/api/v1
+  description: Cortex REST API
+security:
+- bearerAuth: []
+tags:
+- name: Integrations
+  description: Third-party integration configurations that hydrate the catalog.
+paths:
+  /github/configurations:
+    get:
+      operationId: listGithubConfigurations
+      tags:
+      - Integrations
+      summary: List GitHub configurations
+      description: Lists the GitHub integration configurations. GitHub is shown as the exemplar; roughly thirty integrations follow this same configuration pattern under their own path prefix.
+      responses:
+        '200':
+          description: A list of GitHub configurations.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteGithubConfigurations
+      tags:
+      - Integrations
+      summary: Delete all GitHub configurations
+      description: Deletes all GitHub integration configurations.
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /github/default-configuration:
+    get:
+      operationId: getGithubDefaultConfiguration
+      tags:
+      - Integrations
+      summary: Retrieve the default GitHub configuration
+      description: Retrieves the default GitHub integration configuration.
+      responses:
+        '200':
+          description: The default configuration.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /github/configurations/validate:
+    post:
+      operationId: validateGithubConfiguration
+      tags:
+      - Integrations
+      summary: Validate a GitHub configuration
+      description: Validates a GitHub integration configuration without saving it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Validation result.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /github/configurations/app:
+    post:
+      operationId: addGithubAppConfiguration
+      tags:
+      - Integrations
+      summary: Add a GitHub App configuration
+      description: Adds a GitHub App integration configuration.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: The created configuration.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /github/configurations/app/{alias}:
+    parameters:
+    - name: alias
+      in: path
+      required: true
+      schema:
+        type: string
+    put:
+      operationId: updateGithubAppConfiguration
+      tags:
+      - Integrations
+      summary: Update a GitHub App configuration
+      description: Updates a GitHub App integration configuration by alias.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: The updated configuration.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteGithubAppConfiguration
+      tags:
+      - Integrations
+      summary: Delete a GitHub App configuration
+      description: Deletes a GitHub App integration configuration by alias.
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'

@@ -1,0 +1,167 @@
+openapi: 3.0.3
+info:
+  title: Cortex REST Catalog Initiatives API
+  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.
+  version: '1.0'
+  contact:
+    name: Cortex
+    url: https://www.cortex.io
+servers:
+- url: https://api.getcortexapp.com/api/v1
+  description: Cortex REST API
+security:
+- bearerAuth: []
+tags:
+- name: Initiatives
+  description: Time-boxed improvement campaigns driving entities toward a Scorecard target.
+paths:
+  /initiatives:
+    get:
+      operationId: listInitiatives
+      tags:
+      - Initiatives
+      summary: List initiatives
+      description: Lists all Initiatives in the workspace.
+      responses:
+        '200':
+          description: A list of initiatives.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitiativeList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: createInitiative
+      tags:
+      - Initiatives
+      summary: Create an initiative
+      description: Creates a new Initiative campaign.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitiativeInput'
+      responses:
+        '200':
+          description: The created initiative.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /initiatives/{cid}:
+    parameters:
+    - name: cid
+      in: path
+      required: true
+      description: 18-character auto-generated identifier for the Initiative.
+      schema:
+        type: string
+    get:
+      operationId: getInitiative
+      tags:
+      - Initiatives
+      summary: Retrieve an initiative
+      description: Retrieves a single Initiative by its cid.
+      responses:
+        '200':
+          description: The requested initiative.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Initiative'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      operationId: updateInitiative
+      tags:
+      - Initiatives
+      summary: Update an initiative
+      description: Updates an existing Initiative.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InitiativeInput'
+      responses:
+        '200':
+          description: The updated initiative.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    delete:
+      operationId: deleteInitiative
+      tags:
+      - Initiatives
+      summary: Delete an initiative
+      description: Deletes an Initiative by cid.
+      responses:
+        '200':
+          description: Deletion confirmation.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    InitiativeInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        scorecardTag:
+          type: string
+        targetDate:
+          type: string
+          format: date
+    Initiative:
+      type: object
+      description: An Initiative campaign. Modeled/simplified.
+      properties:
+        cid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        scorecardTag:
+          type: string
+        targetDate:
+          type: string
+          format: date
+    InitiativeList:
+      type: object
+      properties:
+        initiatives:
+          type: array
+          items:
+            $ref: '#/components/schemas/Initiative'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'
