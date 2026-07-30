@@ -13,7 +13,20 @@ description: Cortex (cortex.io) is an internal developer portal (IDP) and softwa
   Integrations. NOTE - this is Cortex.io the internal developer portal / service
   catalog & scorecards company, NOT Cortex XSOAR (Palo Alto Networks), NOT the
   Cortex crypto token, and NOT Orange Logic's Cortex DAM.
-image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+accessModel:
+  pricing: freemium
+  onboarding: self-serve
+  trial: false
+  try_now: true
+  public: false
+  label: Freemium · Self-serve signup
+  confidence: high
+  source:
+  - plans
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/cortex-idp.png
 tags:
 - Software Catalog
 - Internal Developer Portal
@@ -29,138 +42,172 @@ specificationVersion: '0.19'
 apis:
 - aid: cortex-idp:cortex-idp-catalog-api
   name: Cortex Catalog API
-  tags:
-  - Software Catalog
-  - Service Catalog
-  - Entities
-  - Internal Developer Portal
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  description: Software catalog entities - services, resources, domains, and custom types.
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
-  properties:
-  - url: https://docs.cortex.io/api
-    type: Documentation
-  - url: https://docs.cortex.io/api/readme/catalog-entities
-    type: APIReference
-  - url: openapi/cortex-idp-openapi.yml
-    type: OpenAPI
-  - url: collections/cortex-idp.postman_collection.json
-    type: PostmanCollection
-  - url: collections/cortex-idp.opencollection.json
-    type: OpenCollection
-  description: The software catalog core - list, retrieve, create/update (upsert via
-    entity descriptor), archive, unarchive, and delete catalog entities (services,
-    resources, domains, and custom entity types). Retrieve an entity's descriptor,
-    GitOps logs, and its scorecard scores. This is the service-catalog / internal
-    developer portal surface consumers search for when they look for a software
-    catalog.
-- aid: cortex-idp:cortex-idp-scorecards-api
-  name: Cortex Scorecards API
   tags:
-  - Scorecards
-  - Standards
-  - Developer Experience
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.cortex.io/api/readme/scorecards
-  baseURL: https://api.getcortexapp.com/api/v1
+  - Catalog
   properties:
-  - url: https://docs.cortex.io/api/readme/scorecards
-    type: APIReference
-  - url: openapi/cortex-idp-openapi.yml
-    type: OpenAPI
-  - url: collections/cortex-idp.postman_collection.json
-    type: PostmanCollection
-  - url: collections/cortex-idp.opencollection.json
-    type: OpenCollection
-  description: List and retrieve Scorecards, fetch scores and next steps, get a
-    per-entity badge, submit scores, and manage a scorecard via its descriptor.
-    Includes the exemption workflow (request, approve, deny, revoke) used to grant
-    entities time-boxed exceptions from a standard.
+  - type: OpenAPI
+    url: openapi/cortex-idp-catalog-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
 - aid: cortex-idp:cortex-idp-custom-data-api
   name: Cortex Custom Data API
+  description: Arbitrary key/value metadata attached to catalog entities.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
   tags:
   - Custom Data
-  - Metadata
-  - Entities
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.cortex.io/api/readme/custom-data
-  baseURL: https://api.getcortexapp.com/api/v1
   properties:
-  - url: https://docs.cortex.io/api/readme/custom-data
-    type: APIReference
-  - url: openapi/cortex-idp-openapi.yml
-    type: OpenAPI
-  - url: collections/cortex-idp.postman_collection.json
-    type: PostmanCollection
-  - url: collections/cortex-idp.opencollection.json
-    type: OpenCollection
-  description: Attach arbitrary key/value metadata to catalog entities - list, get
-    by key, add, bulk upsert across many entities, and delete custom data. Used to
-    enrich the software catalog with facts sourced from your own systems.
-- aid: cortex-idp:cortex-idp-initiatives-api
-  name: Cortex Initiatives API
-  tags:
-  - Initiatives
-  - Campaigns
-  - Governance
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.cortex.io/api/readme/initiatives
-  baseURL: https://api.getcortexapp.com/api/v1
-  properties:
-  - url: https://docs.cortex.io/api/readme/initiatives
-    type: APIReference
-  - url: openapi/cortex-idp-openapi.yml
-    type: OpenAPI
-  - url: collections/cortex-idp.postman_collection.json
-    type: PostmanCollection
-  - url: collections/cortex-idp.opencollection.json
-    type: OpenCollection
-  description: Create, list, get, update, and delete Initiatives - time-boxed
-    improvement campaigns that drive entities toward a Scorecard target across the
-    catalog.
+  - type: OpenAPI
+    url: openapi/cortex-idp-custom-data-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
 - aid: cortex-idp:cortex-idp-deploys-api
   name: Cortex Deploys API
+  description: Deployment events recorded per catalog entity.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
   tags:
   - Deploys
-  - Deployments
-  - Delivery
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.cortex.io/api/readme/deploys
-  baseURL: https://api.getcortexapp.com/api/v1
   properties:
-  - url: https://docs.cortex.io/api/readme/deploys
-    type: APIReference
-  - url: openapi/cortex-idp-openapi.yml
-    type: OpenAPI
-  - url: collections/cortex-idp.postman_collection.json
-    type: PostmanCollection
-  - url: collections/cortex-idp.opencollection.json
-    type: OpenCollection
-  description: Record and query deployment events per catalog entity - list, add,
-    update, and delete deploys, search across deploys, and list deploy environments.
-    Feeds delivery/velocity signals into the catalog and Scorecards.
+  - type: OpenAPI
+    url: openapi/cortex-idp-deploys-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-initiatives-api
+  name: Cortex Initiatives API
+  description: Time-boxed improvement campaigns driving entities toward a Scorecard target.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Initiatives
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-initiatives-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
 - aid: cortex-idp:cortex-idp-integrations-api
   name: Cortex Integrations API
+  description: Third-party integration configurations that hydrate the catalog.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
   tags:
   - Integrations
-  - Configuration
-  - GitHub
-  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
-  humanURL: https://docs.cortex.io/api/readme/integrations/github
-  baseURL: https://api.getcortexapp.com/api/v1
   properties:
-  - url: https://docs.cortex.io/api/readme/integrations/github
-    type: APIReference
-  - url: openapi/cortex-idp-openapi.yml
-    type: OpenAPI
-  - url: collections/cortex-idp.postman_collection.json
-    type: PostmanCollection
-  - url: collections/cortex-idp.opencollection.json
-    type: OpenCollection
-  description: Manage the third-party integration configurations that hydrate the
-    catalog (GitHub shown as the exemplar - roughly thirty integrations follow the
-    same configuration pattern). List, validate, add, update, and delete personal
-    and app configurations per integration.
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-scorecards-api
+  name: Cortex Scorecards API
+  description: Standards that measure catalog entities, with scores and exemptions.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Scorecards
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-scorecards-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
 common:
 - type: AgenticAccess
   url: agentic-access/cortex-idp-agentic-access.yml
