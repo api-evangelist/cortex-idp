@@ -1,0 +1,24 @@
+{
+  "provider": "cortex-idp",
+  "sources": [
+    "cortex-idp-catalog-api-openapi.yml",
+    "cortex-idp-custom-data-api-openapi.yml",
+    "cortex-idp-deploys-api-openapi.yml",
+    "cortex-idp-initiatives-api-openapi.yml",
+    "cortex-idp-integrations-api-openapi.yml",
+    "cortex-idp-scorecards-api-openapi.yml"
+  ],
+  "outputs": [
+    "cortex-idp-catalog-api-openapi.yml",
+    "cortex-idp-custom-data-api-openapi.yml",
+    "cortex-idp-deploys-api-openapi.yml",
+    "cortex-idp-initiatives-api-openapi.yml",
+    "cortex-idp-integrations-api-openapi.yml",
+    "cortex-idp-scorecards-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
