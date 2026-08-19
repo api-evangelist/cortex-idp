@@ -1,0 +1,127 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cortex REST Catalog Integrations API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Integrations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List GitHub configurations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/github/configurations"
+          },
+          "docs": "Lists the GitHub integration configurations. GitHub is shown as the exemplar; roughly thirty integrations follow this same configuration pattern under their own path prefix."
+        },
+        {
+          "info": {
+            "name": "Delete all GitHub configurations",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/github/configurations"
+          },
+          "docs": "Deletes all GitHub integration configurations."
+        },
+        {
+          "info": {
+            "name": "Retrieve the default GitHub configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/github/default-configuration"
+          },
+          "docs": "Retrieves the default GitHub integration configuration."
+        },
+        {
+          "info": {
+            "name": "Validate a GitHub configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/github/configurations/validate",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Validates a GitHub integration configuration without saving it."
+        },
+        {
+          "info": {
+            "name": "Add a GitHub App configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/github/configurations/app",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Adds a GitHub App integration configuration."
+        },
+        {
+          "info": {
+            "name": "Update a GitHub App configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.getcortexapp.com/api/v1/github/configurations/app/:alias",
+            "params": [
+              {
+                "name": "alias",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates a GitHub App integration configuration by alias."
+        },
+        {
+          "info": {
+            "name": "Delete a GitHub App configuration",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/github/configurations/app/:alias",
+            "params": [
+              {
+                "name": "alias",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Deletes a GitHub App integration configuration by alias."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

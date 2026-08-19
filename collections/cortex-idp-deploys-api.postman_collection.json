@@ -1,0 +1,1126 @@
+{
+  "item": [
+    {
+      "id": "8a95609b-5fef-4de2-9811-c03041286985",
+      "name": "Deploys",
+      "description": {
+        "content": "Deployment events recorded per catalog entity.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "87c99214-b54a-49a8-89e3-63c567142df2",
+          "name": "List deploys for an entity",
+          "request": {
+            "name": "List deploys for an entity",
+            "description": {
+              "content": "Lists deployment events recorded for a catalog entity.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "catalog",
+                ":tagOrId",
+                "deploys"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "tagOrId",
+                  "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "2ec62643-730d-4d4f-9734-a72a6c51d2de",
+              "name": "A list of deploy events.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"deploys\": [\n    {\n      \"uuid\": \"f5f4c771-b3a0-1552-daee-2e5025e3bf5d\",\n      \"sha\": \"string\",\n      \"title\": \"string\",\n      \"type\": \"string\",\n      \"environment\": \"string\",\n      \"timestamp\": \"1947-07-08T18:09:22.170Z\"\n    },\n    {\n      \"uuid\": \"dae5e2c1-7163-5413-b4db-cd4c94832d6c\",\n      \"sha\": \"string\",\n      \"title\": \"string\",\n      \"type\": \"string\",\n      \"environment\": \"string\",\n      \"timestamp\": \"1967-08-26T03:03:28.189Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c891e7a8-7cb2-4594-822d-6ca0f1635755",
+              "name": "Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"requestId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "5e164f32-f3f9-4b22-8f3a-ca92d1e17099",
+          "name": "Add a deploy for an entity",
+          "request": {
+            "name": "Add a deploy for an entity",
+            "description": {
+              "content": "Records a new deployment event for a catalog entity.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "catalog",
+                ":tagOrId",
+                "deploys"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "tagOrId",
+                  "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sha\": \"<string>\",\n  \"title\": \"<string>\",\n  \"type\": \"<string>\",\n  \"environment\": \"<string>\",\n  \"timestamp\": \"<dateTime>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "df1eaf46-34ca-4862-8959-6ec9f02cfc34",
+              "name": "The recorded deploy event.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sha\": \"<string>\",\n  \"title\": \"<string>\",\n  \"type\": \"<string>\",\n  \"environment\": \"<string>\",\n  \"timestamp\": \"<dateTime>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "861e409e-9cd9-43aa-a5ef-84e9ba58e0b2",
+              "name": "Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sha\": \"<string>\",\n  \"title\": \"<string>\",\n  \"type\": \"<string>\",\n  \"environment\": \"<string>\",\n  \"timestamp\": \"<dateTime>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"requestId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "2af12341-21e9-421d-bd32-068f044d0775",
+          "name": "Delete deploys for an entity",
+          "request": {
+            "name": "Delete deploys for an entity",
+            "description": {
+              "content": "Deletes deploy events for an entity, optionally filtered by environment, sha, or type.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "catalog",
+                ":tagOrId",
+                "deploys"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "tagOrId",
+                  "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "25f2f8d8-3d91-49dc-82c2-de61eca65676",
+              "name": "Deletion confirmation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "f4a3d398-eaa6-4ad7-a1a4-6aaa2d98aa63",
+              "name": "Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"requestId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "74049cc9-60d5-4a18-aa35-dca8b3b0bef8",
+          "name": "Update a deploy",
+          "request": {
+            "name": "Update a deploy",
+            "description": {
+              "content": "Updates a single deploy event for an entity.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "catalog",
+                ":tagOrId",
+                "deploys",
+                ":uuid"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "tagOrId",
+                  "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "uuid",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sha\": \"<string>\",\n  \"title\": \"<string>\",\n  \"type\": \"<string>\",\n  \"environment\": \"<string>\",\n  \"timestamp\": \"<dateTime>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b61744a8-fb24-4a66-9ad2-7d8a3e330490",
+              "name": "The updated deploy event.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys",
+                    ":uuid"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "uuid",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sha\": \"<string>\",\n  \"title\": \"<string>\",\n  \"type\": \"<string>\",\n  \"environment\": \"<string>\",\n  \"timestamp\": \"<dateTime>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "e8d2c1d7-73d1-445a-ba13-440207179e88",
+              "name": "Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys",
+                    ":uuid"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "uuid",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"sha\": \"<string>\",\n  \"title\": \"<string>\",\n  \"type\": \"<string>\",\n  \"environment\": \"<string>\",\n  \"timestamp\": \"<dateTime>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"requestId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6ce5cb5d-b973-4081-a7b3-a0f656976455",
+          "name": "Delete a deploy",
+          "request": {
+            "name": "Delete a deploy",
+            "description": {
+              "content": "Deletes a single deploy event by uuid.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "catalog",
+                ":tagOrId",
+                "deploys",
+                ":uuid"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "tagOrId",
+                  "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<uuid>",
+                  "key": "uuid",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "1765c2af-5ad8-40ab-98bb-afa0c884703d",
+              "name": "Deletion confirmation.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys",
+                    ":uuid"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "uuid",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ee6746ef-da43-4604-8083-8068809c7379",
+              "name": "Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "catalog",
+                    ":tagOrId",
+                    "deploys",
+                    ":uuid"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "tagOrId",
+                      "description": "(Required) The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<uuid>",
+                      "key": "uuid",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"requestId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "06c14caa-eb47-42ae-a099-a24412f838c9",
+          "name": "List deploy environments",
+          "request": {
+            "name": "List deploy environments",
+            "description": {
+              "content": "Lists the deploy environments known to Cortex.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "deploys",
+                "environments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "dd7558bd-75ab-4d91-b0d3-a0cc2ccd796b",
+              "name": "A list of environments.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "deploys",
+                    "environments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "260b17d9-ec4b-469e-bacd-e38668422c30",
+              "name": "Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "deploys",
+                    "environments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"requestId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "db8e5442-0382-48a5-8d57-f58c2765cea2",
+          "name": "Search deploys",
+          "request": {
+            "name": "Search deploys",
+            "description": {
+              "content": "Searches deploy events across the catalog.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "deploys",
+                "search"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "d5b75ad7-d8a1-4971-a5e5-cd8016063735",
+              "name": "Matching deploy events.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "deploys",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "23ab417f-fd57-4dee-addd-23bd8199573b",
+              "name": "Missing or invalid Bearer token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "deploys",
+                    "search"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"requestId\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.getcortexapp.com/api/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "ebc82ee2-5e73-4bcf-801f-e4f03ab32d0b",
+    "name": "Cortex REST Catalog Deploys API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.\n\nContact Support:\n Name: Cortex",
+      "type": "text/plain"
+    }
+  }
+}

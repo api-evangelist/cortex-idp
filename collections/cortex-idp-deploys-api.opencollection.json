@@ -1,0 +1,159 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cortex REST Catalog Deploys API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Deploys",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List deploys for an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/deploys",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Lists deployment events recorded for a catalog entity."
+        },
+        {
+          "info": {
+            "name": "Add a deploy for an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/deploys",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Records a new deployment event for a catalog entity."
+        },
+        {
+          "info": {
+            "name": "Delete deploys for an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/deploys",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Deletes deploy events for an entity, optionally filtered by environment, sha, or type."
+        },
+        {
+          "info": {
+            "name": "Update a deploy",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/deploys/:uuid",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              },
+              {
+                "name": "uuid",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates a single deploy event for an entity."
+        },
+        {
+          "info": {
+            "name": "Delete a deploy",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/deploys/:uuid",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              },
+              {
+                "name": "uuid",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Deletes a single deploy event by uuid."
+        },
+        {
+          "info": {
+            "name": "List deploy environments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/deploys/environments"
+          },
+          "docs": "Lists the deploy environments known to Cortex."
+        },
+        {
+          "info": {
+            "name": "Search deploys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/deploys/search"
+          },
+          "docs": "Searches deploy events across the catalog."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

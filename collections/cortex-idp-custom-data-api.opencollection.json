@@ -1,0 +1,140 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cortex REST Catalog Custom Data API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Custom Data",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve custom data (advanced)",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/custom-data"
+          },
+          "docs": "Advanced retrieval of custom data across entities, supporting keys with non-alphanumeric characters. Full path is /catalog/custom-data."
+        },
+        {
+          "info": {
+            "name": "Bulk add custom data",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.getcortexapp.com/api/v1/custom-data",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk operation to add multiple key/value pairs across many entities. Full path is /catalog/custom-data."
+        },
+        {
+          "info": {
+            "name": "List custom data for an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/custom-data",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Lists custom key/value data attached to an entity, with pagination."
+        },
+        {
+          "info": {
+            "name": "Add custom data to an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/custom-data",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Adds or creates a custom key/value data entry on an entity."
+        },
+        {
+          "info": {
+            "name": "Delete custom data from an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/custom-data",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              },
+              {
+                "name": "key",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Deletes a custom data entry from an entity by key query parameter."
+        },
+        {
+          "info": {
+            "name": "Retrieve custom data by key",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/custom-data/:key",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              },
+              {
+                "name": "key",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Retrieves a specific custom data entry on an entity by key."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

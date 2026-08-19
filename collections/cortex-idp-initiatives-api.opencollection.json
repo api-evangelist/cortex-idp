@@ -1,0 +1,111 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cortex REST Catalog Initiatives API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Initiatives",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List initiatives",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/initiatives"
+          },
+          "docs": "Lists all Initiatives in the workspace."
+        },
+        {
+          "info": {
+            "name": "Create an initiative",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/initiatives",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new Initiative campaign."
+        },
+        {
+          "info": {
+            "name": "Retrieve an initiative",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/initiatives/:cid",
+            "params": [
+              {
+                "name": "cid",
+                "value": "",
+                "type": "path",
+                "description": "18-character auto-generated identifier for the Initiative."
+              }
+            ]
+          },
+          "docs": "Retrieves a single Initiative by its cid."
+        },
+        {
+          "info": {
+            "name": "Update an initiative",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.getcortexapp.com/api/v1/initiatives/:cid",
+            "params": [
+              {
+                "name": "cid",
+                "value": "",
+                "type": "path",
+                "description": "18-character auto-generated identifier for the Initiative."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Updates an existing Initiative."
+        },
+        {
+          "info": {
+            "name": "Delete an initiative",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/initiatives/:cid",
+            "params": [
+              {
+                "name": "cid",
+                "value": "",
+                "type": "path",
+                "description": "18-character auto-generated identifier for the Initiative."
+              }
+            ]
+          },
+          "docs": "Deletes an Initiative by cid."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,225 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cortex REST Catalog API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Catalog",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List catalog entities",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "pageSize",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "types",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Lists all catalog entities (services, resources, domains, and custom entity types). Supports pagination via page and pageSize, and filtering by type, group, and owner."
+        },
+        {
+          "info": {
+            "name": "Delete entities by type",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/catalog",
+            "params": [
+              {
+                "name": "type",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Deletes catalog entities matching the given entity type."
+        },
+        {
+          "info": {
+            "name": "List entity descriptors",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/descriptors"
+          },
+          "docs": "Lists the entity descriptors (YAML source of truth) for catalog entities."
+        },
+        {
+          "info": {
+            "name": "Retrieve entity details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Retrieves a single catalog entity by its tag (x-cortex-tag) or id."
+        },
+        {
+          "info": {
+            "name": "Delete an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Deletes a catalog entity by tag or id."
+        },
+        {
+          "info": {
+            "name": "Retrieve entity descriptor",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/openapi",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Retrieves the entity descriptor (OpenAPI-style YAML/JSON) for a single entity."
+        },
+        {
+          "info": {
+            "name": "Archive an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/archive",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Archives a catalog entity, hiding it from active views while retaining history."
+        },
+        {
+          "info": {
+            "name": "Unarchive an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/unarchive",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Restores a previously archived catalog entity."
+        },
+        {
+          "info": {
+            "name": "Retrieve GitOps logs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/gitops-logs",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Retrieves the GitOps ingestion log for an entity descriptor."
+        },
+        {
+          "info": {
+            "name": "Create or update an entity (upsert)",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/open-api",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates or updates a catalog entity from an entity descriptor. Behaves as an upsert by default. Accepts application/openapi+yaml or JSON."
+        },
+        {
+          "info": {
+            "name": "Create or patch an entity (merge)",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.getcortexapp.com/api/v1/open-api",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Merges the supplied descriptor changes into an existing entity."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,244 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Cortex REST Catalog Scorecards API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Scorecards",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Retrieve scorecard scores for an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/catalog/:tagOrId/scorecards",
+            "params": [
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Retrieves the scores an entity has earned across the Scorecards it is evaluated against, including ladder level, score, and score percentage."
+        },
+        {
+          "info": {
+            "name": "List scorecards",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards"
+          },
+          "docs": "Lists all Scorecards defined in the workspace."
+        },
+        {
+          "info": {
+            "name": "Create or update a scorecard",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/descriptor",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates or updates a Scorecard from its descriptor (YAML/JSON)."
+        },
+        {
+          "info": {
+            "name": "Retrieve a scorecard",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag",
+            "params": [
+              {
+                "name": "tag",
+                "value": "",
+                "type": "path",
+                "description": "The Scorecard tag."
+              }
+            ]
+          },
+          "docs": "Retrieves a single Scorecard by its tag."
+        },
+        {
+          "info": {
+            "name": "Delete a scorecard",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag",
+            "params": [
+              {
+                "name": "tag",
+                "value": "",
+                "type": "path",
+                "description": "The Scorecard tag."
+              }
+            ]
+          },
+          "docs": "Deletes a Scorecard by tag."
+        },
+        {
+          "info": {
+            "name": "Retrieve a scorecard descriptor",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag/descriptor",
+            "params": [
+              {
+                "name": "tag",
+                "value": "",
+                "type": "path",
+                "description": "The Scorecard tag."
+              }
+            ]
+          },
+          "docs": "Retrieves the descriptor (source-of-truth definition) for a Scorecard."
+        },
+        {
+          "info": {
+            "name": "Retrieve scores for a scorecard",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag/scores",
+            "params": [
+              {
+                "name": "tag",
+                "value": "",
+                "type": "path",
+                "description": "The Scorecard tag."
+              }
+            ]
+          },
+          "docs": "Retrieves the scores of every entity evaluated against a Scorecard."
+        },
+        {
+          "info": {
+            "name": "Retrieve next steps for a scorecard",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag/next-steps",
+            "params": [
+              {
+                "name": "tag",
+                "value": "",
+                "type": "path",
+                "description": "The Scorecard tag."
+              }
+            ]
+          },
+          "docs": "Retrieves the recommended next steps to improve scores on a Scorecard."
+        },
+        {
+          "info": {
+            "name": "Retrieve a scorecard badge for an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/:scorecardTag/entity/:tagOrId/badge",
+            "params": [
+              {
+                "name": "scorecardTag",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "tagOrId",
+                "value": "",
+                "type": "path",
+                "description": "The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded."
+              }
+            ]
+          },
+          "docs": "Retrieves an SVG/JSON badge representing an entity's standing on a Scorecard."
+        },
+        {
+          "info": {
+            "name": "Submit a score for an entity",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag/entity/:entityTag/scores",
+            "params": [
+              {
+                "name": "tag",
+                "value": "",
+                "type": "path",
+                "description": "The Scorecard tag."
+              },
+              {
+                "name": "entityTag",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Submits or overrides a score for an entity on a Scorecard."
+        },
+        {
+          "info": {
+            "name": "Request a scorecard exemption",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.getcortexapp.com/api/v1/scorecards/:tag/entity/:entityTag/exemption",
+            "params": [
+              {
+                "name": "tag",
+                "value": "",
+                "type": "path",
+                "description": "The Scorecard tag."
+              },
+              {
+                "name": "entityTag",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Requests a time-boxed exemption from a Scorecard rule for an entity."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
