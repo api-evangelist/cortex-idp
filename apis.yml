@@ -158,6 +158,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - Integration
+  tags_raw:
   - Integrations
   properties:
   - type: OpenAPI
