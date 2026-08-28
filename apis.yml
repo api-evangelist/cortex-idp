@@ -13,6 +13,18 @@ description: Cortex (cortex.io) is an internal developer portal (IDP) and softwa
   Integrations. NOTE - this is Cortex.io the internal developer portal / service
   catalog & scorecards company, NOT Cortex XSOAR (Palo Alto Networks), NOT the
   Cortex crypto token, and NOT Orange Logic's Cortex DAM.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
