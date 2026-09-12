@@ -2,17 +2,7 @@ aid: cortex-idp
 url: https://raw.githubusercontent.com/api-evangelist/cortex-idp/refs/heads/main/apis.yml
 name: Cortex
 kind: company
-description: Cortex (cortex.io) is an internal developer portal (IDP) and software
-  catalog platform. It gives engineering organizations a catalog of services and
-  entities, Scorecards that measure those entities against production-readiness and
-  reliability standards, Initiatives for driving improvement campaigns, and roughly
-  thirty integrations (GitHub, PagerDuty, Datadog, Kubernetes, and more) that
-  hydrate the catalog. Cortex exposes a documented REST API (base
-  https://api.getcortexapp.com/api/v1) with Bearer/API-key authentication covering
-  the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, Teams, and
-  Integrations. NOTE - this is Cortex.io the internal developer portal / service
-  catalog & scorecards company, NOT Cortex XSOAR (Palo Alto Networks), NOT the
-  Cortex crypto token, and NOT Orange Logic's Cortex DAM.
+description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog platform. It gives engineering organizations a catalog of services and entities, Scorecards that measure those entities against production-readiness and reliability standards, Initiatives for driving improvement campaigns, and roughly thirty integrations (GitHub, PagerDuty, Datadog, Kubernetes, and more) that hydrate the catalog. Cortex exposes a documented REST API (base https://api.getcortexapp.com/api/v1) with Bearer/API-key authentication covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, Teams, and Integrations. NOTE - this is Cortex.io the internal developer portal / service catalog & scorecards company, NOT Cortex XSOAR (Palo Alto Networks), NOT the Cortex crypto token, and NOT Orange Logic's Cortex DAM.
 deliveryModel:
   model: saas
   open_source: false
@@ -222,6 +212,46 @@ apis:
     url: https://docs.cortex.io/api/readme/deploys
   - type: APIReference
     url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:dependencies-api
+  name: Cortex Dependencies API
+  description: REST endpoints to list and inspect entity-to-entity dependencies (caller and callee) and the relationships used to build the service graph.
+  humanURL: https://docs.cortex.io/
+  baseURL: https://api.getcortexapp.com
+  tags:
+  - REST API
+  - Dependencies
+  - Graph
+  properties:
+  - type: Documentation
+    url: https://docs.cortex.io/
+- aid: cortex-idp:workflows-api
+  name: Cortex Workflow Runs API
+  description: REST endpoints for managing and querying Workflow runs, used to drive developer self-service actions and scaffolding from the Cortex IDP.
+  humanURL: https://docs.cortex.io/
+  baseURL: https://api.getcortexapp.com
+  tags:
+  - REST API
+  - Workflows
+  - Self-Service
+  properties:
+  - type: Documentation
+    url: https://docs.cortex.io/
+- aid: cortex-idp:mcp
+  name: Cortex MCP Server
+  description: Model Context Protocol server exposing Cortex catalog, scorecards, dependencies, and on-call data to AI agents and copilots through MCP tools and resources.
+  humanURL: https://docs.cortex.io/
+  baseURL: https://docs.cortex.io/
+  tags:
+  - MCP
+  - Artificial Intelligence
+  - Agents
+  tags_raw:
+  - MCP
+  - AI
+  - Agents
+  properties:
+  - type: Documentation
+    url: https://docs.cortex.io/
 common:
 - type: AgenticAccess
   url: agentic-access/cortex-idp-agentic-access.yml
