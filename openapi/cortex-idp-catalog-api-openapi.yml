@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
   title: Cortex REST Catalog API
-  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.
+  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog.
   version: '1.0'
   contact:
     name: Cortex
@@ -201,6 +201,19 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     TagOrId:
       name: tagOrId
@@ -221,6 +234,17 @@ components:
           type: integer
         totalPages:
           type: integer
+    EntityDescriptor:
+      type: object
+      description: An entity descriptor (x-cortex-* YAML/JSON) submitted to create or update an entity. Modeled - see Cortex descriptor reference for full schema.
+      additionalProperties: true
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
     Entity:
       type: object
       description: A catalog entity. Modeled/simplified - verify fields against Cortex docs.
@@ -244,30 +268,6 @@ components:
         metadata:
           type: object
           additionalProperties: true
-    EntityDescriptor:
-      type: object
-      description: An entity descriptor (x-cortex-* YAML/JSON) submitted to create or update an entity. Modeled - see Cortex descriptor reference for full schema.
-      additionalProperties: true
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        requestId:
-          type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

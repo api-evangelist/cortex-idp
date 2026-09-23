@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: Cortex REST Catalog Deploys API
-  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog. This OpenAPI describes the documented public REST API at https://api.getcortexapp.com/api/v1, covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, and third-party Integration configurations (GitHub shown as the exemplar). All requests are authenticated with an Authorization Bearer token - an API key created in the Settings page of your Cortex workspace. Paths and methods here are grounded in the live Cortex API reference (docs.cortex.io/api); request and response schemas are honestly modeled and simplified, not copied verbatim, and are marked as such. Verify exact payloads against the current Cortex documentation. NOTE - this is Cortex.io the internal developer portal, NOT Cortex XSOAR (Palo Alto Networks) and NOT Orange Logic's Cortex DAM.
+  title: Cortex REST Deploys API
+  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog.
   version: '1.0'
   contact:
     name: Cortex
@@ -123,22 +123,14 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    TagOrId:
-      name: tagOrId
-      in: path
-      required: true
-      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
-      schema:
-        type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    DeployList:
+      type: object
+      properties:
+        deploys:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deploy'
     Deploy:
       type: object
       description: A deployment event. Modeled/simplified.
@@ -171,13 +163,6 @@ components:
         timestamp:
           type: string
           format: date-time
-    DeployList:
-      type: object
-      properties:
-        deploys:
-          type: array
-          items:
-            $ref: '#/components/schemas/Deploy'
     Error:
       type: object
       properties:
@@ -185,6 +170,21 @@ components:
           type: string
         requestId:
           type: string
+  parameters:
+    TagOrId:
+      name: tagOrId
+      in: path
+      required: true
+      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
