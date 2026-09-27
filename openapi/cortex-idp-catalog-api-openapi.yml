@@ -201,19 +201,6 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   parameters:
     TagOrId:
       name: tagOrId
@@ -223,6 +210,13 @@ components:
       schema:
         type: string
   schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
     EntityList:
       type: object
       properties:
@@ -234,17 +228,6 @@ components:
           type: integer
         totalPages:
           type: integer
-    EntityDescriptor:
-      type: object
-      description: An entity descriptor (x-cortex-* YAML/JSON) submitted to create or update an entity. Modeled - see Cortex descriptor reference for full schema.
-      additionalProperties: true
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        requestId:
-          type: string
     Entity:
       type: object
       description: A catalog entity. Modeled/simplified - verify fields against Cortex docs.
@@ -268,6 +251,23 @@ components:
         metadata:
           type: object
           additionalProperties: true
+    EntityDescriptor:
+      type: object
+      description: An entity descriptor (x-cortex-* YAML/JSON) submitted to create or update an entity. Modeled - see Cortex descriptor reference for full schema.
+      additionalProperties: true
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

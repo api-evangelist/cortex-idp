@@ -229,13 +229,6 @@ components:
           items:
             type: object
             additionalProperties: true
-    ScorecardList:
-      type: object
-      properties:
-        scorecards:
-          type: array
-          items:
-            $ref: '#/components/schemas/Scorecard'
     Error:
       type: object
       properties:
@@ -264,19 +257,26 @@ components:
                 items:
                   type: object
                   additionalProperties: true
+    ScorecardList:
+      type: object
+      properties:
+        scorecards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scorecard'
   parameters:
-    ScorecardTag:
-      name: tag
-      in: path
-      required: true
-      description: The Scorecard tag.
-      schema:
-        type: string
     TagOrId:
       name: tagOrId
       in: path
       required: true
       description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
+    ScorecardTag:
+      name: tag
+      in: path
+      required: true
+      description: The Scorecard tag.
       schema:
         type: string
   responses:

@@ -103,6 +103,27 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
+    InitiativeInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        scorecardTag:
+          type: string
+        targetDate:
+          type: string
+          format: date
     InitiativeList:
       type: object
       properties:
@@ -125,27 +146,6 @@ components:
         targetDate:
           type: string
           format: date
-    InitiativeInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        scorecardTag:
-          type: string
-        targetDate:
-          type: string
-          format: date
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        requestId:
-          type: string
   responses:
     NotFound:
       description: The requested resource was not found.
