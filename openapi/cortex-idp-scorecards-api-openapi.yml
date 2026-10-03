@@ -214,28 +214,13 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    Scorecard:
+    ScorecardList:
       type: object
-      description: A Scorecard definition. Modeled/simplified.
       properties:
-        tag:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        rules:
+        scorecards:
           type: array
           items:
-            type: object
-            additionalProperties: true
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        requestId:
-          type: string
+            $ref: '#/components/schemas/Scorecard'
     EntityScorecardScores:
       type: object
       properties:
@@ -257,28 +242,28 @@ components:
                 items:
                   type: object
                   additionalProperties: true
-    ScorecardList:
+    Error:
       type: object
       properties:
-        scorecards:
+        message:
+          type: string
+        requestId:
+          type: string
+    Scorecard:
+      type: object
+      description: A Scorecard definition. Modeled/simplified.
+      properties:
+        tag:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        rules:
           type: array
           items:
-            $ref: '#/components/schemas/Scorecard'
-  parameters:
-    TagOrId:
-      name: tagOrId
-      in: path
-      required: true
-      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
-      schema:
-        type: string
-    ScorecardTag:
-      name: tag
-      in: path
-      required: true
-      description: The Scorecard tag.
-      schema:
-        type: string
+            type: object
+            additionalProperties: true
   responses:
     NotFound:
       description: The requested resource was not found.
@@ -292,6 +277,21 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    ScorecardTag:
+      name: tag
+      in: path
+      required: true
+      description: The Scorecard tag.
+      schema:
+        type: string
+    TagOrId:
+      name: tagOrId
+      in: path
+      required: true
+      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

@@ -123,22 +123,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    TagOrId:
-      name: tagOrId
-      in: path
-      required: true
-      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
-      schema:
-        type: string
   schemas:
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        requestId:
-          type: string
     Deploy:
       type: object
       description: A deployment event. Modeled/simplified.
@@ -178,6 +163,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Deploy'
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
   responses:
     Unauthorized:
       description: Missing or invalid Bearer token.
@@ -185,6 +177,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    TagOrId:
+      name: tagOrId
+      in: path
+      required: true
+      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http

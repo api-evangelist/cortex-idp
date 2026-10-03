@@ -117,6 +117,18 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    CustomDataInput:
+      type: object
+      required:
+      - key
+      - value
+      properties:
+        key:
+          type: string
+        value:
+          description: Arbitrary JSON value.
+        description:
+          type: string
     CustomDataList:
       type: object
       properties:
@@ -142,18 +154,13 @@ components:
           type: string
         requestId:
           type: string
-    CustomDataInput:
-      type: object
-      required:
-      - key
-      - value
-      properties:
-        key:
-          type: string
-        value:
-          description: Arbitrary JSON value.
-        description:
-          type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     TagOrId:
       name: tagOrId
@@ -162,13 +169,6 @@ components:
       description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
       schema:
         type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

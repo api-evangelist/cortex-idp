@@ -103,13 +103,21 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    Error:
+    Initiative:
       type: object
+      description: An Initiative campaign. Modeled/simplified.
       properties:
-        message:
+        cid:
           type: string
-        requestId:
+        name:
           type: string
+        description:
+          type: string
+        scorecardTag:
+          type: string
+        targetDate:
+          type: string
+          format: date
     InitiativeInput:
       type: object
       required:
@@ -131,21 +139,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Initiative'
-    Initiative:
+    Error:
       type: object
-      description: An Initiative campaign. Modeled/simplified.
       properties:
-        cid:
+        message:
           type: string
-        name:
+        requestId:
           type: string
-        description:
-          type: string
-        scorecardTag:
-          type: string
-        targetDate:
-          type: string
-          format: date
   responses:
     NotFound:
       description: The requested resource was not found.

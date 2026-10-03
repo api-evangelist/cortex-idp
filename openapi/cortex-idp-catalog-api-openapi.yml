@@ -201,33 +201,7 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  parameters:
-    TagOrId:
-      name: tagOrId
-      in: path
-      required: true
-      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
-      schema:
-        type: string
   schemas:
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        requestId:
-          type: string
-    EntityList:
-      type: object
-      properties:
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/Entity'
-        page:
-          type: integer
-        totalPages:
-          type: integer
     Entity:
       type: object
       description: A catalog entity. Modeled/simplified - verify fields against Cortex docs.
@@ -251,10 +225,28 @@ components:
         metadata:
           type: object
           additionalProperties: true
+    EntityList:
+      type: object
+      properties:
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        page:
+          type: integer
+        totalPages:
+          type: integer
     EntityDescriptor:
       type: object
       description: An entity descriptor (x-cortex-* YAML/JSON) submitted to create or update an entity. Modeled - see Cortex descriptor reference for full schema.
       additionalProperties: true
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
+          type: string
   responses:
     NotFound:
       description: The requested resource was not found.
@@ -268,6 +260,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    TagOrId:
+      name: tagOrId
+      in: path
+      required: true
+      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http
