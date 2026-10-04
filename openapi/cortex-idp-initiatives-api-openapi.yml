@@ -102,7 +102,41 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    InitiativeList:
+      type: object
+      properties:
+        initiatives:
+          type: array
+          items:
+            $ref: '#/components/schemas/Initiative'
+    InitiativeInput:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        scorecardTag:
+          type: string
+        targetDate:
+          type: string
+          format: date
     Initiative:
       type: object
       description: An Initiative campaign. Modeled/simplified.
@@ -118,27 +152,6 @@ components:
         targetDate:
           type: string
           format: date
-    InitiativeInput:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        scorecardTag:
-          type: string
-        targetDate:
-          type: string
-          format: date
-    InitiativeList:
-      type: object
-      properties:
-        initiatives:
-          type: array
-          items:
-            $ref: '#/components/schemas/Initiative'
     Error:
       type: object
       properties:
@@ -146,19 +159,6 @@ components:
           type: string
         requestId:
           type: string
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

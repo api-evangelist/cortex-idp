@@ -124,13 +124,9 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
-    Deploy:
+    DeployInput:
       type: object
-      description: A deployment event. Modeled/simplified.
       properties:
-        uuid:
-          type: string
-          format: uuid
         sha:
           type: string
         title:
@@ -142,9 +138,13 @@ components:
         timestamp:
           type: string
           format: date-time
-    DeployInput:
+    Deploy:
       type: object
+      description: A deployment event. Modeled/simplified.
       properties:
+        uuid:
+          type: string
+          format: uuid
         sha:
           type: string
         title:

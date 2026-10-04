@@ -202,6 +202,21 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    EntityDescriptor:
+      type: object
+      description: An entity descriptor (x-cortex-* YAML/JSON) submitted to create or update an entity. Modeled - see Cortex descriptor reference for full schema.
+      additionalProperties: true
+    EntityList:
+      type: object
+      properties:
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Entity'
+        page:
+          type: integer
+        totalPages:
+          type: integer
     Entity:
       type: object
       description: A catalog entity. Modeled/simplified - verify fields against Cortex docs.
@@ -225,21 +240,6 @@ components:
         metadata:
           type: object
           additionalProperties: true
-    EntityList:
-      type: object
-      properties:
-        entities:
-          type: array
-          items:
-            $ref: '#/components/schemas/Entity'
-        page:
-          type: integer
-        totalPages:
-          type: integer
-    EntityDescriptor:
-      type: object
-      description: An entity descriptor (x-cortex-* YAML/JSON) submitted to create or update an entity. Modeled - see Cortex descriptor reference for full schema.
-      additionalProperties: true
     Error:
       type: object
       properties:
@@ -248,14 +248,14 @@ components:
         requestId:
           type: string
   responses:
-    NotFound:
-      description: The requested resource was not found.
+    Unauthorized:
+      description: Missing or invalid Bearer token.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid Bearer token.
+    NotFound:
+      description: The requested resource was not found.
       content:
         application/json:
           schema:
