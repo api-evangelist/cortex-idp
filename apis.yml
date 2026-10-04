@@ -37,7 +37,6 @@ tags:
 - Internal Developer Portal
 - Service Catalog
 - Developer Experience
-- IDP
 - Scorecards
 - Platform Engineering
 - Developer Portal
@@ -257,6 +256,9 @@ apis:
   - type: Documentation
     url: https://docs.cortex.io/
 common:
+- type: CapabilityMap
+  url: capabilities/cortex-idp-capability-edges.yml
+  name: Cortex Business Capability Map
 - type: AgenticAccess
   url: agentic-access/cortex-idp-agentic-access.yml
 - type: Authentication
@@ -278,3 +280,5 @@ common:
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
+x-tags-removed:
+- IDP
