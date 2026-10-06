@@ -42,7 +42,7 @@ tags:
 - Developer Portal
 - Developer Tools
 created: '2026-07-11'
-modified: '2026-07-11'
+modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
 - aid: cortex-idp:cortex-idp-catalog-api
@@ -256,6 +256,8 @@ apis:
   - type: Documentation
     url: https://docs.cortex.io/
 common:
+- url: https://www.cortex.io/blog
+  type: Blog
 - type: CapabilityMap
   url: capabilities/cortex-idp-capability-edges.yml
   name: Cortex Business Capability Map
