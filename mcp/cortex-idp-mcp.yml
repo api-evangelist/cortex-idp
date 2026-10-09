@@ -1,0 +1,28 @@
+generated: '2026-09-25'
+method: probed
+source: https://mcp.cortex.io/mcp
+status: published
+server:
+  name: cortex-idp
+  transport: http
+  url: https://mcp.cortex.io/mcp
+deployment:
+  mode: remote
+  endpoint: https://mcp.cortex.io/mcp
+  verified: probed
+  probe: live
+  checked: '2026-09-25'
+  source: 'docs-check 2026-09-25 (first-party, on the provider''s own domain: named in https://docs.cortex.io/get-started/cortex-ai-assistant/mcp/configuring-cortex-mcp.md
+    (linked from llms.txt); probed with JSON-RPC initialize; roadmap#590 #721)'
+  probe_why: 'initialize answered: serverInfo Cortex MCP Server 1.28.1'
+  server_info:
+    name: Cortex MCP Server
+    version: 1.28.1
+  protocol_version: '2025-06-18'
+  found_via: named in https://docs.cortex.io/get-started/cortex-ai-assistant/mcp/configuring-cortex-mcp.md
+    (linked from llms.txt)
+tools_note: No tool list captured. This manifest records a PROBED, reachable endpoint only; anonymous
+  tools/list was auth-gated or the server requires an initialize handshake this reachability probe does
+  not perform. Run signals/audit_mcp_authorship.py --probe to enumerate tools and settle platform-vs-provider
+  authorship. Do NOT derive a tool list from the OpenAPI and store it here -- that is a candidate manifest,
+  and it belongs under an X-MCPServerCandidate pointer.
