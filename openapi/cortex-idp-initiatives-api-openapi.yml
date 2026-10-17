@@ -102,20 +102,22 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    Initiative:
+      type: object
+      description: An Initiative campaign. Modeled/simplified.
+      properties:
+        cid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        scorecardTag:
+          type: string
+        targetDate:
+          type: string
+          format: date
     InitiativeList:
       type: object
       properties:
@@ -137,21 +139,6 @@ components:
         targetDate:
           type: string
           format: date
-    Initiative:
-      type: object
-      description: An Initiative campaign. Modeled/simplified.
-      properties:
-        cid:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        scorecardTag:
-          type: string
-        targetDate:
-          type: string
-          format: date
     Error:
       type: object
       properties:
@@ -159,6 +146,19 @@ components:
           type: string
         requestId:
           type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

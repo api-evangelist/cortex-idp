@@ -116,13 +116,6 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
     CustomDataInput:
       type: object
@@ -135,6 +128,13 @@ components:
         value:
           description: Arbitrary JSON value.
         description:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        requestId:
           type: string
     CustomDataList:
       type: object
@@ -154,13 +154,13 @@ components:
               dateUpdated:
                 type: string
                 format: date-time
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
-        requestId:
-          type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   parameters:
     TagOrId:
       name: tagOrId
