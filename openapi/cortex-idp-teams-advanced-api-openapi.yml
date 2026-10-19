@@ -1,0 +1,513 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Teams [Advanced] API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Teams [Advanced]
+paths:
+  /api/v1/teams:
+    put:
+      description: '*Warning:* This API should only be used if your team identifier contains non-alphanumeric characters. Otherwise, use the standard API under `Teams`.'
+      operationId: updateTeamAdvanced
+      parameters:
+      - in: query
+        name: teamTag
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTeamRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamResponse'
+          description: Successfully updated team
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Team not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update team metadata
+      tags:
+      - Teams [Advanced]
+      x-cortex-mcp-description: Update team metadata for teams with special characters. Disabled for MCP access to prevent external modifications
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/teams/members:
+    put:
+      description: 'For teams whose members are not backed by an IdP, use this API to update the team members. Note that it will replace the members in the team with the members defined in this request.
+
+        *Warning:* This API should only be used if your team identifier contains non-alphanumeric characters. Otherwise, use the standard API under `Teams`.'
+      operationId: updateCortexTeamMembersAdvanced
+      parameters:
+      - in: query
+        name: teamTag
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CortexManagedTeamMembersRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamResponse'
+          description: Successfully updated team members
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Team not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[Cortex managed teams] Update members in team'
+      tags:
+      - Teams [Advanced]
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    TeamsLink:
+      required:
+      - name
+      - type
+      - url
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+    CortexManagedTeamMembersRequest:
+      required:
+      - members
+      - type
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/CortexTeamMember'
+        type:
+          type: string
+    Member:
+      required:
+      - id
+      - roles
+      type: object
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+    Role:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the role
+          example: Team Leader
+        source:
+          type: string
+          description: Source of the role if pulled in through integration. This will be blank if manually defined in Cortex.
+          example: WORKDAY
+    TeamResponse.CORTEX:
+      title: CORTEX
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/TeamResponse'
+      - required:
+        - cortexTeam
+        type: object
+        properties:
+          cortexTeam:
+            $ref: '#/components/schemas/CortexTeamDetails'
+    UpdateTeamRequest.CORTEX:
+      title: CORTEX
+      type: object
+      description: Use this request shape when updating a team entry whose memberships are manually maintained via API or the UI.
+      allOf:
+      - $ref: '#/components/schemas/UpdateTeamRequest'
+      - required:
+        - cortexTeam
+        - type
+        type: object
+        properties:
+          cortexTeam:
+            $ref: '#/components/schemas/CortexTeamDetails'
+          type:
+            type: string
+    CortexTeamMemberRole:
+      required:
+      - tag
+      - type
+      type: object
+      properties:
+        source:
+          type: string
+        tag:
+          type: string
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/CortexTeamMemberRole.MISCONFIGURED'
+      - $ref: '#/components/schemas/CortexTeamMemberRole.TEAM_ROLE'
+    UpdateTeamRequest.IDP:
+      title: IDP
+      type: object
+      description: Use this request shape when updating a team entry whose memberships are synced with an Idp group, such as from Okta, Google Groups, Github Teams, Azure AD, etc.
+      allOf:
+      - $ref: '#/components/schemas/UpdateTeamRequest'
+      - required:
+        - type
+        type: object
+        properties:
+          type:
+            type: string
+    CortexTeamMemberRole.TEAM_ROLE:
+      title: TEAM_ROLE
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CortexTeamMemberRole'
+      - required:
+        - name
+        type: object
+        properties:
+          name:
+            type: string
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    SlackChannel1:
+      required:
+      - name
+      - notificationsEnabled
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        notificationsEnabled:
+          type: boolean
+    TeamMetadata:
+      required:
+      - name
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        summary:
+          type: string
+    CortexTeamMemberDetails:
+      required:
+      - email
+      - name
+      - notificationsEnabled
+      - roles
+      type: object
+      properties:
+        description:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        notificationsEnabled:
+          type: boolean
+        role:
+          $ref: '#/components/schemas/CortexTeamMemberRole'
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/CortexTeamMemberRole'
+    CortexTeamMemberRole.MISCONFIGURED:
+      title: MISCONFIGURED
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CortexTeamMemberRole'
+    TeamResponse.IDP:
+      title: IDP
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/TeamResponse'
+      - required:
+        - idpGroup
+        type: object
+        properties:
+          idpGroup:
+            $ref: '#/components/schemas/IdpGroupDetailsResponse'
+    CortexTeamMember:
+      required:
+      - email
+      - name
+      - notificationsEnabled
+      - roleTags
+      type: object
+      properties:
+        description:
+          type: string
+        email:
+          type: string
+        name:
+          type: string
+        notificationsEnabled:
+          type: boolean
+        roleTags:
+          type: array
+          items:
+            type: string
+    UpdateTeamRequest:
+      required:
+      - links
+      - metadata
+      - slackChannels
+      - type
+      type: object
+      properties:
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamsLink'
+        metadata:
+          $ref: '#/components/schemas/TeamMetadata'
+        slackChannels:
+          type: array
+          items:
+            $ref: '#/components/schemas/SlackChannel1'
+        type:
+          type: string
+          description: Use "IDP" for IdentityProviderBackedTeam and "CORTEX" for ManagedTeam
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/UpdateTeamRequest.CORTEX'
+      - $ref: '#/components/schemas/UpdateTeamRequest.IDP'
+    IdpGroupDetailsResponse:
+      required:
+      - group
+      - members
+      - provider
+      type: object
+      properties:
+        group:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
+        provider:
+          type: string
+          enum:
+          - ACTIVE_DIRECTORY
+          - AZURE_DEVOPS
+          - BAMBOOHR
+          - GIT
+          - GITLAB
+          - GOOGLE
+          - OKTA
+          - OPSGENIE
+          - SERVICE_NOW
+          - SLACK
+          - WORKDAY
+    TeamResponse:
+      required:
+      - catalogEntityTag
+      - id
+      - isArchived
+      - links
+      - metadata
+      - slackChannels
+      - teamTag
+      - type
+      type: object
+      properties:
+        catalogEntityTag:
+          type: string
+        id:
+          type: string
+        isArchived:
+          type: boolean
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/TeamsLink'
+        metadata:
+          $ref: '#/components/schemas/TeamMetadata'
+        slackChannels:
+          type: array
+          items:
+            $ref: '#/components/schemas/SlackChannel1'
+        teamTag:
+          type: string
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/TeamResponse.CORTEX'
+      - $ref: '#/components/schemas/TeamResponse.IDP'
+    CortexTeamDetails:
+      required:
+      - members
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/CortexTeamMemberDetails'
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

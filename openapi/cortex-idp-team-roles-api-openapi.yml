@@ -1,0 +1,259 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Team Roles API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Team Roles
+paths:
+  /api/v1/team-roles:
+    get:
+      description: Retrieve all team member role definitions configured for the organization. These are the roles that can be assigned to members of a team (e.g. "Security Champion", "Tech Lead"), not Cortex user roles or permissions.
+      operationId: listTeamMemberRoles
+      parameters:
+      - description: Case-insensitive filter matched against the role name and tag. Omit to return all roles.
+        in: query
+        name: query
+        required: false
+        schema:
+          type: string
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamRolesResponse'
+          description: Object containing a page of team member roles
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List team member roles
+      tags:
+      - Team Roles
+      x-cortex-mcp-description: List the team member roles defined in this workspace (for example on-call, tech-lead), each with its tag, name and description. Roles are referenced by tag wherever a team member is returned, so read this to interpret them.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: Create a new team member role definition that can then be assigned to members of a team (e.g. "Security Champion", "Tech Lead"). Requires the Edit Settings permission.
+      operationId: createTeamMemberRole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTeamRoleRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamRoleResponse'
+          description: Successfully created the team member role
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The tag is invalid, or a role with the same tag already exists
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Caller does not have the Edit Settings permission
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create a team member role
+      tags:
+      - Team Roles
+      x-cortex-mcp-description: Define a new team member role (for example "Security Champion") with a name, a unique tag (letters, digits and hyphens), an optional description and a default for notificationsEnabled. Members can then be given the role through roleTags. Fails if the tag already exists, so check listTeamMemberRoles first. Needs the Edit Settings permission.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    TeamRoleResponse:
+      required:
+      - name
+      - notificationsEnabled
+      - tag
+      type: object
+      properties:
+        description:
+          type: string
+          description: Optional description of the team member role
+        name:
+          type: string
+          description: Display name of the team member role
+        notificationsEnabled:
+          type: boolean
+          description: Whether notifications are enabled by default for members assigned this role
+        tag:
+          type: string
+          description: Unique tag identifying the team member role
+      description: Team member roles for the current page
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    TeamRolesResponse:
+      required:
+      - page
+      - roles
+      - total
+      - totalPages
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        roles:
+          type: array
+          description: Team member roles for the current page
+          items:
+            $ref: '#/components/schemas/TeamRoleResponse'
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    CreateTeamRoleRequest:
+      required:
+      - name
+      - tag
+      type: object
+      properties:
+        description:
+          type: string
+          description: Optional description of the team member role
+        name:
+          type: string
+          description: Display name of the team member role
+          example: Security Champion
+        notificationsEnabled:
+          type: boolean
+          description: Whether notifications are enabled by default for members assigned this role. Defaults to true.
+        tag:
+          type: string
+          description: Unique tag identifying the team member role. May only contain letters, digits, and hyphens.
+          example: security-champion
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

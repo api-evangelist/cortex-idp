@@ -1,0 +1,474 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex [Integrations] Workday API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: '[Integrations] Workday'
+paths:
+  /api/v1/workday/configuration:
+    post:
+      operationId: WorkdaySaveConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkdayConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseWorkdayConfigurationResponse'
+          description: Successfully added configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add a configuration
+      tags:
+      - '[Integrations] Workday'
+      x-cortex-mcp-enabled: 'false'
+    put:
+      operationId: WorkdayReplaceConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkdayConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseWorkdayConfigurationResponse'
+          description: Successfully updates configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update the existing configuration
+      tags:
+      - '[Integrations] Workday'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/workday/configuration/validate:
+    post:
+      operationId: WorkdayValidateConfiguration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleIntegrationConfigValidation'
+          description: Successfully validated configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate a configuration
+      tags:
+      - '[Integrations] Workday'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/workday/configurations:
+    delete:
+      operationId: WorkdayDeleteConfiguration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseWorkdayConfigurationResponse'
+          description: Successfully deleted configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a configuration
+      tags:
+      - '[Integrations] Workday'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/workday/default-configuration:
+    get:
+      operationId: WorkdayGetConfiguration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkdayConfigurationResponse'
+          description: Successfully found configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a configuration
+      tags:
+      - '[Integrations] Workday'
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    TeamListWorkdayReportMapping:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/WorkdayReportMappingV2'
+      - required:
+        - fallbackFields
+        - teamListFields
+        type: object
+        properties:
+          fallbackFields:
+            $ref: '#/components/schemas/FallbackFields'
+          teamListFields:
+            $ref: '#/components/schemas/TeamListFields'
+    ConfigurationsResponseWorkdayConfigurationResponse:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkdayConfigurationResponse'
+    MultipleTeamFieldsWorkdayReportMapping:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/WorkdayReportMappingV2'
+      - required:
+        - teams
+        type: object
+        properties:
+          teams:
+            type: array
+            items:
+              $ref: '#/components/schemas/TeamFields'
+    HierarchyColumns:
+      required:
+      - fieldOnChildNode
+      - fieldOnParentNode
+      type: object
+      properties:
+        fieldOnChildNode:
+          $ref: '#/components/schemas/Base'
+        fieldOnParentNode:
+          $ref: '#/components/schemas/OptionalList'
+    IntegrationConfigValidation:
+      required:
+      - isValid
+      type: object
+      properties:
+        alias:
+          type: string
+        isValid:
+          type: boolean
+        message:
+          type: string
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    TeamFields:
+      required:
+      - teamId
+      type: object
+      properties:
+        parentTeamIdField:
+          $ref: '#/components/schemas/Base'
+        teamId:
+          $ref: '#/components/schemas/Base'
+        teamName:
+          $ref: '#/components/schemas/Base'
+    Base:
+      required:
+      - columnName
+      type: object
+      properties:
+        columnName:
+          type: string
+    WorkdayReportMappingV2:
+      required:
+      - email
+      - employeeId
+      - rootTeams
+      - type
+      type: object
+      properties:
+        email:
+          $ref: '#/components/schemas/Base'
+        employeeId:
+          $ref: '#/components/schemas/Base'
+        employeeRole:
+          $ref: '#/components/schemas/Base'
+        firstName:
+          $ref: '#/components/schemas/Base'
+        lastName:
+          $ref: '#/components/schemas/Base'
+        managerEmail:
+          $ref: '#/components/schemas/Base'
+        rootTeams:
+          type: array
+          items:
+            $ref: '#/components/schemas/RootTeam'
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    FallbackFields:
+      type: object
+      properties:
+        fieldOnChildNode:
+          $ref: '#/components/schemas/Base'
+        fieldOnParentNode:
+          $ref: '#/components/schemas/OptionalList'
+        teamId:
+          $ref: '#/components/schemas/Base'
+        teamName:
+          $ref: '#/components/schemas/Base'
+    ListKey:
+      required:
+      - columnName
+      type: object
+      properties:
+        columnName:
+          type: string
+    TeamListFields:
+      required:
+      - teamId
+      - teamListKey
+      type: object
+      properties:
+        hierarchy:
+          $ref: '#/components/schemas/HierarchyColumns'
+        teamEmployeeManages:
+          $ref: '#/components/schemas/Base'
+        teamId:
+          $ref: '#/components/schemas/Base'
+        teamListKey:
+          $ref: '#/components/schemas/ListKey'
+        teamName:
+          $ref: '#/components/schemas/Base'
+    RootTeam:
+      required:
+      - id
+      type: object
+      properties:
+        id:
+          type: string
+    WorkdayConfigurationResponse:
+      required:
+      - lastFour
+      - ownershipReportUrl
+      - username
+      type: object
+      properties:
+        lastFour:
+          type: string
+        ownershipReportUrl:
+          type: string
+        reportMappingV2:
+          oneOf:
+          - $ref: '#/components/schemas/BaseWorkdayReportMapping'
+          - $ref: '#/components/schemas/MultipleTeamFieldsWorkdayReportMapping'
+          - $ref: '#/components/schemas/TeamListWorkdayReportMapping'
+        username:
+          type: string
+    BaseWorkdayReportMapping:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/WorkdayReportMappingV2'
+      - required:
+        - teamId
+        type: object
+        properties:
+          hierarchy:
+            $ref: '#/components/schemas/HierarchyColumns'
+          teamId:
+            $ref: '#/components/schemas/Base'
+          teamName:
+            $ref: '#/components/schemas/Base'
+    MultipleIntegrationConfigValidation:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationConfigValidation'
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    OptionalList:
+      required:
+      - columnName
+      - isList
+      type: object
+      properties:
+        columnName:
+          type: string
+        isList:
+          type: boolean
+    WorkdayConfigurationRequest:
+      required:
+      - ownershipReportUrl
+      - password
+      - username
+      type: object
+      properties:
+        ownershipReportUrl:
+          type: string
+        password:
+          type: string
+        reportMappingV2:
+          oneOf:
+          - $ref: '#/components/schemas/BaseWorkdayReportMapping'
+          - $ref: '#/components/schemas/MultipleTeamFieldsWorkdayReportMapping'
+          - $ref: '#/components/schemas/TeamListWorkdayReportMapping'
+        username:
+          type: string
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

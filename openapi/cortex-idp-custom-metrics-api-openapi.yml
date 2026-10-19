@@ -1,0 +1,704 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Custom Metrics API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Custom Metrics
+paths:
+  /api/v1/eng-intel/custom-metrics:
+    get:
+      description: Returns every custom metric defined in the workspace, sorted by key. API key must have the `View Eng Intelligence` permission. Draft metrics are included only when the key also has the `Configure Eng Intelligence custom metrics` permission.
+      operationId: listCustomMetricDefinitions
+      parameters:
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCustomMetricDefinitions'
+          description: A page of custom metric definitions
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List custom metric definitions
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: List the custom metrics defined in the workspace, sorted by key. Each definition has its key, name, type (PUBLIC_API or CQL), description, valence, category, and draft flag. Use a key from this list with getCustomMetricData or createCustomMetricData.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: Defines a custom metric of type `PUBLIC_API`, which you then record data points against. The key cannot change after creation. API key must have the `Configure Eng Intelligence custom metrics` permission.
+      operationId: createCustomMetricDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomMetricDefinitionRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomMetricDefinition'
+          description: The created custom metric definition
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The request body failed validation
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: A custom metric with this key already exists
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create a custom metric definition
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: Define a new PUBLIC_API custom metric so data points can be recorded against its key. The key must be unique, uses letters, digits, and hyphens, and cannot change later. CQL metrics cannot be created through this tool.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/eng-intel/custom-metrics/{customMetricKey}:
+    delete:
+      description: Removes the metric from Eng Intelligence. Its recorded data points stay out of reach, and creating the key again starts with no data. Only `PUBLIC_API` metrics can be deleted through the API. API key must have the `Configure Eng Intelligence custom metrics` permission.
+      operationId: deleteCustomMetricDefinition
+      parameters:
+      - description: Key of the custom metric
+        example: deploy-frequency
+        in: path
+        name: customMetricKey
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: The custom metric was deleted
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The metric is a CQL metric
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: No custom metric has this key
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a custom metric definition
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: Cortex Custom Metric Definitions API - Read and manage the custom metric keys that custom metric data points are recorded against
+      x-cortex-mcp-enabled: 'false'
+    get:
+      description: API key must have the `View Eng Intelligence` permission. A draft metric returns 404 unless the key also has the `Configure Eng Intelligence custom metrics` permission.
+      operationId: getCustomMetricDefinition
+      parameters:
+      - description: Key of the custom metric
+        example: deploy-frequency
+        in: path
+        name: customMetricKey
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomMetricDefinition'
+          description: The custom metric definition
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: No custom metric has this key
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a custom metric definition
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: Retrieve one custom metric definition by its key. Returns 404 if no custom metric has that key.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: Replaces the definition in full, so an omitted optional field is cleared. Only `PUBLIC_API` metrics can be updated through the API. API key must have the `Configure Eng Intelligence custom metrics` permission.
+      operationId: updateCustomMetricDefinition
+      parameters:
+      - description: Key of the custom metric
+        example: deploy-frequency
+        in: path
+        name: customMetricKey
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCustomMetricDefinitionRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomMetricDefinition'
+          description: The updated custom metric definition
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The request body failed validation, or the metric is a CQL metric
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: No custom metric has this key
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update a custom metric definition
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: Replace a PUBLIC_API custom metric definition in full, identified by customMetricKey. Omitted optional fields are cleared, so read the definition first with getCustomMetricDefinition and send every field back. The key and type cannot change, and CQL metrics cannot be updated through this tool.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/eng-intel/custom-metrics/{customMetricKey}/entity/{tagOrId}:
+    delete:
+      description: Deletes custom metric data points for entity.
+      operationId: deleteByTimeRange
+      parameters:
+      - description: Key for the custom metric filter
+        in: path
+        name: customMetricKey
+        required: true
+        schema:
+          type: string
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - description: Start date for the deletion (inclusive)
+        in: query
+        name: startDate
+        required: true
+        schema:
+          type: string
+          format: date-time
+      - description: End date for the deletion (inclusive)
+        in: query
+        name: endDate
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '204':
+          description: Successfully deleted data points
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid filters
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete custom metrics data points
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: Delete custom metric data points within a time range. Disabled for MCP access to preserve metric history
+      x-cortex-mcp-enabled: 'false'
+    get:
+      description: Lists all custom metrics data points for an entity
+      operationId: getCustomMetricData
+      parameters:
+      - description: Key for the custom metric filter
+        in: path
+        name: customMetricKey
+        required: true
+        schema:
+          type: string
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - description: 'Start date for the filter, inclusive (UTC, e.g. 2026-06-22T00:00:00). Default: 6 months ago'
+        in: query
+        name: startDate
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: End date for the filter, inclusive (UTC, e.g. 2026-06-22T00:00:00)
+        in: query
+        name: endDate
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomMetricDataResponse'
+          description: Successfully retrieved custom metrics data points
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid filters
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve custom metrics data points
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: Retrieve custom metric data points for an entity. Returns paginated time-series data for a specific custom metric, with optional filtering by date range to analyze trends and patterns.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: Adds a single custom metric data point for entity.
+      operationId: createCustomMetricData
+      parameters:
+      - description: Key for the custom metric filter
+        in: path
+        name: customMetricKey
+        required: true
+        schema:
+          type: string
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomDataRequest'
+        required: true
+      responses:
+        '200':
+          description: Successfully added data point
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid filters
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add custom metrics data point
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: Add one data point (value plus an optional timestamp, which defaults to now) to an entity's custom metric, identified by customMetricKey. The metric must already be defined. Timestamps cannot be in the future or more than 2 years old. Every call adds another point, so retrying creates duplicates. Read data back with getCustomMetricData.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/eng-intel/custom-metrics/{customMetricKey}/entity/{tagOrId}/bulk:
+    post:
+      description: Adds multiple custom metric data points for entity.
+      operationId: createBulkCustomMetricData
+      parameters:
+      - description: Key for the custom metric filter
+        in: path
+        name: customMetricKey
+        required: true
+        schema:
+          type: string
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCustomDataBulkRequest'
+        required: true
+      responses:
+        '200':
+          description: Successfully added data points
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid filters
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add custom metrics data points in bulk
+      tags:
+      - Custom Metrics
+      x-cortex-mcp-description: Add multiple custom metric data points in bulk. Disabled for MCP access to prevent external systems from modifying metric data
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    ListCustomMetricDefinitions:
+      required:
+      - customMetrics
+      - page
+      - total
+      - totalPages
+      type: object
+      properties:
+        customMetrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomMetricDefinition'
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+      description: A page of custom metric definitions
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    CustomMetricDefinition:
+      required:
+      - isDraft
+      - key
+      - name
+      - type
+      - valence
+      type: object
+      properties:
+        category:
+          type: string
+          description: Free-text group for the metric
+          example: Delivery
+        cqlExpression:
+          type: string
+          description: The CQL expression behind a `CQL` metric. Null for `PUBLIC_API`.
+        description:
+          type: string
+          description: What the metric measures
+        isDraft:
+          type: boolean
+          description: A draft metric is hidden from Eng Intelligence
+        key:
+          type: string
+          description: Unique key that data points are recorded against
+          example: deploy-frequency
+        name:
+          type: string
+          description: Display name
+          example: Deploy frequency
+        type:
+          type: string
+          description: '`PUBLIC_API` metrics take data points through the API. `CQL` metrics compute their values from a CQL expression and are read-only through the API.'
+          enum:
+          - CQL
+          - PUBLIC_API
+        valence:
+          type: string
+          description: Whether a higher value is better
+          enum:
+          - POSITIVE
+          - NEGATIVE
+          - NEUTRAL
+      description: A custom metric defined in the workspace
+    CreateCustomMetricDefinitionRequest:
+      required:
+      - key
+      - name
+      - valence
+      type: object
+      properties:
+        category:
+          type: string
+          description: Free-text group for the metric
+          example: Delivery
+        description:
+          type: string
+          description: What the metric measures
+        isDraft:
+          type: boolean
+          description: A draft metric still accepts data points but is hidden from Eng Intelligence. Defaults to false.
+          default: false
+        key:
+          type: string
+          description: Unique key that data points are recorded against. Letters, digits, and hyphens, 2 to 255 characters, starting and ending with a letter or digit.
+          example: deploy-frequency
+        name:
+          type: string
+          description: Display name
+          example: Deploy frequency
+        valence:
+          type: string
+          description: Whether a higher value is better. Defaults to NEUTRAL.
+          enum:
+          - POSITIVE
+          - NEGATIVE
+          - NEUTRAL
+      description: A custom metric to define
+    CreateCustomDataBulkDef:
+      maxLength: 100
+      minLength: 1
+      required:
+      - timestamp
+      - value
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: 'Timestamp for the data point in ISO 8601 format. Accepts timezone offsets (e.g., ''2024-08-14T11:00:00Z'' or ''2024-08-14T11:00:00+00:00''). Note: It can''t be earlier than 2 years'
+          format: date-time
+        value:
+          type: number
+          description: Value for the data point
+          format: double
+      description: List of data points
+    CreateCustomDataRequest:
+      required:
+      - value
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: 'Timestamp for the data point in ISO 8601 format. Accepts timezone offsets (e.g., ''2024-08-14T11:00:00Z'' or ''2024-08-14T11:00:00+00:00''). Note: It can''t be earlier than 2 years'
+          format: date-time
+        value:
+          type: number
+          description: Value for the data point
+          format: double
+      description: Data point to be added
+    CustomMetricDataResponse:
+      required:
+      - data
+      - page
+      - total
+      - totalPages
+      type: object
+      properties:
+        data:
+          type: array
+          description: Data points
+          items:
+            $ref: '#/components/schemas/CustomMetricData'
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    CustomMetricData:
+      required:
+      - timestamp
+      - value
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        value:
+          type: number
+          format: double
+      description: Data points
+    CreateCustomDataBulkRequest:
+      required:
+      - series
+      type: object
+      properties:
+        series:
+          maxLength: 100
+          minLength: 1
+          type: array
+          description: List of data points
+          items:
+            $ref: '#/components/schemas/CreateCustomDataBulkDef'
+      description: Data points to be added
+    UpdateCustomMetricDefinitionRequest:
+      required:
+      - name
+      - valence
+      type: object
+      properties:
+        category:
+          type: string
+          description: Free-text group for the metric
+          example: Delivery
+        description:
+          type: string
+          description: What the metric measures
+        isDraft:
+          type: boolean
+          description: A draft metric still accepts data points but is hidden from Eng Intelligence. Defaults to false.
+          default: false
+        name:
+          type: string
+          description: Display name
+          example: Deploy frequency
+        valence:
+          type: string
+          description: Whether a higher value is better. Defaults to NEUTRAL.
+          enum:
+          - POSITIVE
+          - NEGATIVE
+          - NEUTRAL
+      description: The full replacement state for a custom metric
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

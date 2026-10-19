@@ -1,0 +1,621 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex [Integrations] Azure Devops API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: '[Integrations] Azure Devops'
+paths:
+  /api/v1/azure-devops/configuration:
+    post:
+      operationId: AzureDevopsSaveConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AzureDevopsConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseAzureDevopsConfiguration'
+          description: Successfully added configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add a single configuration
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/azure-devops/configuration/validate:
+    post:
+      operationId: AzureDevopsValidateAllConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleIntegrationConfigValidation'
+          description: Successfully validated all configurations
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate all configurations
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/azure-devops/configuration/validate/{alias}:
+    post:
+      operationId: AzureDevopsValidateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationConfigValidation'
+          description: Successfully validated configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate a configuration
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/azure-devops/configuration/{alias}:
+    delete:
+      operationId: AzureDevopsRemoveConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseAzureDevopsConfiguration'
+          description: Successfully deleted configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a configuration
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: AzureDevopsGetConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AzureDevopsConfiguration'
+          description: Successfully found configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a configuration
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+    put:
+      description: 'WARNING: Updating aliases for configurations or changing the default configuration could cause entity YAMLs that use this integration to break.'
+      operationId: AzureDevopsUpdateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AzureDevopsUpdateConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseAzureDevopsConfiguration'
+          description: Successfully updated configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update a configuration
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/azure-devops/configurations:
+    delete:
+      operationId: AzureDevopsRemoveAllConfigurations
+      responses:
+        '200':
+          description: Successfully deleted all configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete all configurations
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: AzureDevopsListConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseAzureDevopsConfiguration'
+          description: Successfully found configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve configurations
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+    post:
+      operationId: AzureDevopsSaveConfigurations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurationsRequestAzureDevopsConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleConfigurationsResponseAzureDevopsConfiguration'
+          description: Successfully added configurations
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add multiple configurations
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/azure-devops/default-configuration:
+    get:
+      operationId: AzureDevopsGetDefaultConfiguration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AzureDevopsConfiguration'
+          description: Successfully found default configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve default configuration
+      tags:
+      - '[Integrations] Azure Devops'
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    AzureDevopsUpdateConfigurationRequest.PERSONAL_ACCESS_TOKEN:
+      title: PERSONAL_ACCESS_TOKEN
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AzureDevopsUpdateConfigurationRequest'
+      - type: object
+        properties:
+          personalAccessToken:
+            type: string
+          username:
+            type: string
+    AzureDevopsConfiguration.SERVICE_PRINCIPAL:
+      title: SERVICE_PRINCIPAL
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AzureDevopsConfiguration'
+      - required:
+        - azureTenantId
+        - clientId
+        - lastFour
+        type: object
+        properties:
+          azureTenantId:
+            type: string
+          clientId:
+            type: string
+          lastFour:
+            type: string
+    AzureDevopsConfiguration:
+      required:
+      - alias
+      - isDefault
+      - organizationSlug
+      - type
+      type: object
+      properties:
+        alias:
+          type: string
+        host:
+          type: string
+        isDefault:
+          type: boolean
+        organizationSlug:
+          type: string
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/AzureDevopsConfiguration.PERSONAL_ACCESS_TOKEN'
+      - $ref: '#/components/schemas/AzureDevopsConfiguration.SERVICE_PRINCIPAL'
+    IntegrationConfigValidation:
+      required:
+      - isValid
+      type: object
+      properties:
+        alias:
+          type: string
+        isValid:
+          type: boolean
+        message:
+          type: string
+    AzureDevopsConfigurationRequest:
+      required:
+      - alias
+      - isDefault
+      - organizationSlug
+      - type
+      type: object
+      properties:
+        alias:
+          type: string
+        host:
+          type: string
+        isDefault:
+          type: boolean
+        organizationSlug:
+          type: string
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/AzureDevopsConfigurationRequest.PERSONAL_ACCESS_TOKEN'
+      - $ref: '#/components/schemas/AzureDevopsConfigurationRequest.SERVICE_PRINCIPAL'
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    ConfigurationsResponseAzureDevopsConfiguration:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AzureDevopsConfiguration'
+    AzureDevopsUpdateConfigurationRequest:
+      required:
+      - alias
+      - isDefault
+      - type
+      type: object
+      properties:
+        alias:
+          type: string
+        host:
+          type: string
+        isDefault:
+          type: boolean
+        organizationSlug:
+          type: string
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/AzureDevopsUpdateConfigurationRequest.PERSONAL_ACCESS_TOKEN'
+      - $ref: '#/components/schemas/AzureDevopsUpdateConfigurationRequest.SERVICE_PRINCIPAL'
+    AzureDevopsConfigurationRequest.PERSONAL_ACCESS_TOKEN:
+      title: PERSONAL_ACCESS_TOKEN
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AzureDevopsConfigurationRequest'
+      - required:
+        - personalAccessToken
+        - username
+        type: object
+        properties:
+          personalAccessToken:
+            type: string
+          username:
+            type: string
+    MultipleIntegrationConfigValidation:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationConfigValidation'
+    ConfigurationsRequestAzureDevopsConfigurationRequest:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AzureDevopsConfigurationRequest'
+    AzureDevopsUpdateConfigurationRequest.SERVICE_PRINCIPAL:
+      title: SERVICE_PRINCIPAL
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AzureDevopsUpdateConfigurationRequest'
+      - type: object
+        properties:
+          azureTenantId:
+            type: string
+          clientId:
+            type: string
+          clientSecret:
+            type: string
+    MultipleConfigurationsResponseAzureDevopsConfiguration:
+      required:
+      - configurations
+      - skippedConfigurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AzureDevopsConfiguration'
+        skippedConfigurations:
+          type: object
+          additionalProperties:
+            type: string
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    AzureDevopsConfiguration.PERSONAL_ACCESS_TOKEN:
+      title: PERSONAL_ACCESS_TOKEN
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AzureDevopsConfiguration'
+      - required:
+        - lastFour
+        - username
+        type: object
+        properties:
+          lastFour:
+            type: string
+          username:
+            type: string
+    AzureDevopsConfigurationRequest.SERVICE_PRINCIPAL:
+      title: SERVICE_PRINCIPAL
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AzureDevopsConfigurationRequest'
+      - required:
+        - azureTenantId
+        - clientId
+        - clientSecret
+        type: object
+        properties:
+          azureTenantId:
+            type: string
+          clientId:
+            type: string
+          clientSecret:
+            type: string
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

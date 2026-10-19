@@ -1,0 +1,245 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Queries API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Queries
+paths:
+  /api/v1/queries:
+    post:
+      description: Run a CQL query. For more information about the types of queries you can run, take a look at our CQL Explorer in the app.
+      operationId: createQuery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+          description: Successfully submitted query
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad request
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Conflict
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Run query
+      tags:
+      - Queries
+      x-cortex-mcp-description: Submit a CQL query to run in the background over every catalog entity. The query must return a boolean for each entity, and the entities where it is true are the matches. Returns a jobId immediately, not results; fetch the status and matching entities with getQueryResults(jobId). Returns 409 if the same query is already running.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/queries/{jobId}:
+    get:
+      description: Retrieve the status and results of a CQL query
+      operationId: getQueryResults
+      parameters:
+      - description: jobId of the query to retrieve
+        in: path
+        name: jobId
+        required: true
+        schema:
+          type: string
+          description: jobId of the query to retrieve
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryBuilderResult'
+          description: Successfully found query
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Query not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve query results
+      tags:
+      - Queries
+      x-cortex-mcp-description: Get the status of a CQL query job started with createQuery, by jobId. Once the job is done, returns the entities the query matched.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    QueryBuilderResult:
+      required:
+      - queryDetails
+      - status
+      type: object
+      properties:
+        progress:
+          type: number
+        queryDetails:
+          $ref: '#/components/schemas/QueryResponse'
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/QueryResult'
+        status:
+          type: string
+          enum:
+          - IN_PROGRESS
+          - DONE
+          - CANCELLED
+          - FAILURE
+          - TIMED_OUT
+    QueryResponse:
+      required:
+      - initiatedAt
+      - jobId
+      - query
+      type: object
+      properties:
+        initiatedAt:
+          type: string
+          format: date-time
+        jobId:
+          type: string
+          description: Id that can be used to request the status of the query. If you would like to re-run the query, you must re-run the query in the UI. See [retrieve query results](/docs/api/get-query-results)
+        query:
+          type: string
+    QueryResult:
+      required:
+      - name
+      - tag
+      - type
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        tag:
+          type: string
+        type:
+          type: string
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    QueryRequest:
+      required:
+      - query
+      type: object
+      properties:
+        query:
+          type: string
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

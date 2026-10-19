@@ -45,34 +45,6 @@ created: '2026-07-11'
 modified: '2026-10-06'
 specificationVersion: '0.23'
 apis:
-- aid: cortex-idp:cortex-idp-catalog-api
-  name: Cortex Catalog API
-  description: Software catalog entities - services, resources, domains, and custom types.
-  humanURL: https://docs.cortex.io/api/readme/catalog-entities
-  baseURL: https://api.getcortexapp.com/api/v1
-  tags:
-  - Catalog
-  properties:
-  - type: OpenAPI
-    url: openapi/cortex-idp-catalog-api-openapi.yml
-  - type: Documentation
-    url: https://docs.cortex.io/api
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/catalog-entities
-  - type: PostmanCollection
-    url: collections/cortex-idp.postman_collection.json
-  - type: OpenCollection
-    url: collections/cortex-idp.opencollection.json
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/scorecards
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/custom-data
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/initiatives
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/deploys
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/integrations/github
 - aid: cortex-idp:cortex-idp-custom-data-api
   name: Cortex Custom Data API
   description: Arbitrary key/value metadata attached to catalog entities.
@@ -157,36 +129,6 @@ apis:
     url: https://docs.cortex.io/api/readme/deploys
   - type: APIReference
     url: https://docs.cortex.io/api/readme/integrations/github
-- aid: cortex-idp:cortex-idp-integrations-api
-  name: Cortex Integrations API
-  description: Third-party integration configurations that hydrate the catalog.
-  humanURL: https://docs.cortex.io/api/readme/catalog-entities
-  baseURL: https://api.getcortexapp.com/api/v1
-  tags:
-  - Integration
-  tags_raw:
-  - Integrations
-  properties:
-  - type: OpenAPI
-    url: openapi/cortex-idp-integrations-api-openapi.yml
-  - type: Documentation
-    url: https://docs.cortex.io/api
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/catalog-entities
-  - type: PostmanCollection
-    url: collections/cortex-idp.postman_collection.json
-  - type: OpenCollection
-    url: collections/cortex-idp.opencollection.json
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/scorecards
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/custom-data
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/initiatives
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/deploys
-  - type: APIReference
-    url: https://docs.cortex.io/api/readme/integrations/github
 - aid: cortex-idp:cortex-idp-scorecards-api
   name: Cortex Scorecards API
   description: Standards that measure catalog entities, with scores and exemptions.
@@ -217,7 +159,9 @@ apis:
     url: https://docs.cortex.io/api/readme/integrations/github
 - aid: cortex-idp:dependencies-api
   name: Cortex Dependencies API
-  description: REST endpoints to list and inspect entity-to-entity dependencies (caller and callee) and the relationships used to build the service graph.
+  description: >-
+    REST endpoints to list and inspect entity-to-entity dependencies (caller and callee) and the relationships
+    used to build the service graph.
   humanURL: https://docs.cortex.io/
   baseURL: https://api.getcortexapp.com
   tags:
@@ -229,7 +173,9 @@ apis:
     url: https://docs.cortex.io/
 - aid: cortex-idp:workflows-api
   name: Cortex Workflow Runs API
-  description: REST endpoints for managing and querying Workflow runs, used to drive developer self-service actions and scaffolding from the Cortex IDP.
+  description: >-
+    REST endpoints for managing and querying Workflow runs, used to drive developer self-service actions
+    and scaffolding from the Cortex IDP.
   humanURL: https://docs.cortex.io/
   baseURL: https://api.getcortexapp.com
   tags:
@@ -241,7 +187,9 @@ apis:
     url: https://docs.cortex.io/
 - aid: cortex-idp:mcp
   name: Cortex MCP Server
-  description: Model Context Protocol server exposing Cortex catalog, scorecards, dependencies, and on-call data to AI agents and copilots through MCP tools and resources.
+  description: >-
+    Model Context Protocol server exposing Cortex catalog, scorecards, dependencies, and on-call data
+    to AI agents and copilots through MCP tools and resources.
   humanURL: https://docs.cortex.io/
   baseURL: https://docs.cortex.io/
   tags:
@@ -255,6 +203,2559 @@ apis:
   properties:
   - type: Documentation
     url: https://docs.cortex.io/
+- aid: cortex-idp:cortex-idp-api-keys-api
+  name: Cortex API Keys API
+  description: The API Keys API from Cortex — 2 operation(s) for api keys.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - API Keys
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-api-keys-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-audit-logs-api
+  name: Cortex Audit Logs API
+  description: The Audit Logs API from Cortex — 1 operation(s) for audit logs.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Audit Logs
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-audit-logs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-catalog-entities-api
+  name: Cortex Catalog Entities API
+  description: The Catalog Entities API from Cortex — 13 operation(s) for catalog entities.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Catalog Entities
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-catalog-entities-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-catalogs-api
+  name: Cortex Catalogs API
+  description: The Catalogs API from Cortex — 2 operation(s) for catalogs.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Catalogs
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-catalogs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-custom-data-advanced-api
+  name: Cortex Custom Data [Advanced] API
+  description: The Custom Data [Advanced] API from Cortex — 1 operation(s) for custom data [advanced].
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Custom Data [Advanced]
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-custom-data-advanced-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-custom-events-api
+  name: Cortex Custom Events API
+  description: The Custom Events API from Cortex — 2 operation(s) for custom events.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Custom Events
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-custom-events-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-custom-metrics-api
+  name: Cortex Custom Metrics API
+  description: The Custom Metrics API from Cortex — 4 operation(s) for custom metrics.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Custom Metrics
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-custom-metrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-dependencies-api
+  name: Cortex Dependencies API
+  description: The Dependencies API from Cortex — 3 operation(s) for dependencies.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Dependencies
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-dependencies-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-dev-login-controller-api
+  name: Cortex Dev Login Controller API
+  description: The dev-login-controller API from Cortex — 1 operation(s) for dev-login-controller.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - dev-login-controller
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-dev-login-controller-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-discovery-audit-api
+  name: Cortex Discovery Audit API
+  description: The Discovery Audit API from Cortex — 1 operation(s) for discovery audit.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Discovery Audit
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-discovery-audit-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-docs-api
+  name: Cortex Docs API
+  description: The Docs API from Cortex — 1 operation(s) for docs.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Docs
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-docs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-eng-intel-1-registry-api
+  name: 'Cortex Eng Intel: 1-Registry API'
+  description: 'The Eng Intel: 1-Registry API from Cortex — 1 operation(s) for eng intel: 1-registry.'
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - 'Eng Intel: 1-Registry'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-eng-intel-1-registry-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-eng-intel-2-metrics-api
+  name: 'Cortex Eng Intel: 2-Metrics API'
+  description: 'The Eng Intel: 2-Metrics API from Cortex — 1 operation(s) for eng intel: 2-metrics.'
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - 'Eng Intel: 2-Metrics'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-eng-intel-2-metrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-eng-intel-3-trace-api
+  name: 'Cortex Eng Intel: 3-Trace API'
+  description: 'The Eng Intel: 3-Trace API from Cortex — 1 operation(s) for eng intel: 3-trace.'
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - 'Eng Intel: 3-Trace'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-eng-intel-3-trace-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-eng-intel-user-labels-api
+  name: 'Cortex Eng Intel: User Labels API'
+  description: 'The Eng Intel: User Labels API from Cortex — 3 operation(s) for eng intel: user labels.'
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - 'Eng Intel: User Labels'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-eng-intel-user-labels-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-entity-relationship-types-api
+  name: Cortex Entity Relationship Types API
+  description: >-
+    The Entity Relationship Types API from Cortex — 2 operation(s) for entity relationship types.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Entity Relationship Types
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-entity-relationship-types-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-entity-relationships-api
+  name: Cortex Entity Relationships API
+  description: The Entity Relationships API from Cortex — 3 operation(s) for entity relationships.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Entity Relationships
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-entity-relationships-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-entity-types-api
+  name: Cortex Entity Types API
+  description: The Entity Types API from Cortex — 2 operation(s) for entity types.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Entity Types
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-entity-types-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-gitops-logs-api
+  name: Cortex GitOps Logs API
+  description: The GitOps Logs API from Cortex — 1 operation(s) for gitops logs.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - GitOps Logs
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-gitops-logs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-groups-api
+  name: Cortex Groups API
+  description: The Groups API from Cortex — 1 operation(s) for groups.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-groups-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integration-status-api
+  name: Cortex Integration Status API
+  description: The Integration Status API from Cortex — 1 operation(s) for integration status.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Integration Status
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integration-status-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-anthropic-api
+  name: Cortex [Integrations] Anthropic API
+  description: >-
+    The [Integrations] Anthropic API from Cortex — 6 operation(s) for [integrations] anthropic.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Anthropic'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-anthropic-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-apiiro-api
+  name: Cortex [Integrations] Apiiro API
+  description: The [Integrations] Apiiro API from Cortex — 6 operation(s) for [integrations] apiiro.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Apiiro'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-apiiro-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-argocd-api
+  name: Cortex [Integrations] ArgoCD API
+  description: The [Integrations] ArgoCD API from Cortex — 6 operation(s) for [integrations] argocd.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] ArgoCD'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-argocd-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-aws-api
+  name: Cortex [Integrations] AWS API
+  description: The [Integrations] AWS API from Cortex — 6 operation(s) for [integrations] aws.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] AWS'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-aws-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-azure-active-directory-api
+  name: Cortex [Integrations] Azure Active Directory API
+  description: >-
+    The [Integrations] Azure Active Directory API from Cortex — 4 operation(s) for [integrations] azure
+    active directory.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Azure Active Directory'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-azure-active-directory-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-azure-devops-api
+  name: Cortex [Integrations] Azure Devops API
+  description: >-
+    The [Integrations] Azure Devops API from Cortex — 6 operation(s) for [integrations] azure devops.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Azure Devops'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-azure-devops-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-azure-resources-api
+  name: Cortex [Integrations] Azure Resources API
+  description: >-
+    The [Integrations] Azure Resources API from Cortex — 7 operation(s) for [integrations] azure resources.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Azure Resources'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-azure-resources-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-bamboohr-api
+  name: Cortex [Integrations] BambooHR API
+  description: >-
+    The [Integrations] BambooHR API from Cortex — 4 operation(s) for [integrations] bamboohr.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] BambooHR'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-bamboohr-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-bitbucket-api
+  name: Cortex [Integrations] Bitbucket API
+  description: >-
+    The [Integrations] Bitbucket API from Cortex — 6 operation(s) for [integrations] bitbucket.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Bitbucket'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-bitbucket-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-bugsnag-api
+  name: Cortex [Integrations] Bugsnag API
+  description: The [Integrations] Bugsnag API from Cortex — 4 operation(s) for [integrations] bugsnag.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Bugsnag'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-bugsnag-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-buildkite-api
+  name: Cortex [Integrations] Buildkite API
+  description: >-
+    The [Integrations] Buildkite API from Cortex — 4 operation(s) for [integrations] buildkite.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Buildkite'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-buildkite-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-checkmarx-sast-api
+  name: Cortex [Integrations] Checkmarx SAST API
+  description: >-
+    The [Integrations] Checkmarx SAST API from Cortex — 4 operation(s) for [integrations] checkmarx sast.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Checkmarx SAST'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-checkmarx-sast-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-circleci-api
+  name: Cortex [Integrations] CircleCI API
+  description: >-
+    The [Integrations] CircleCI API from Cortex — 6 operation(s) for [integrations] circleci.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] CircleCI'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-circleci-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-clickup-api
+  name: Cortex [Integrations] ClickUp API
+  description: The [Integrations] ClickUp API from Cortex — 4 operation(s) for [integrations] clickup.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] ClickUp'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-clickup-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-codecov-api
+  name: Cortex [Integrations] Codecov API
+  description: The [Integrations] Codecov API from Cortex — 4 operation(s) for [integrations] codecov.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Codecov'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-codecov-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-coralogix-api
+  name: Cortex [Integrations] Coralogix API
+  description: >-
+    The [Integrations] Coralogix API from Cortex — 6 operation(s) for [integrations] coralogix.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Coralogix'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-coralogix-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-datadog-api
+  name: Cortex [Integrations] Datadog API
+  description: The [Integrations] Datadog API from Cortex — 6 operation(s) for [integrations] datadog.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Datadog'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-datadog-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-dynatrace-api
+  name: Cortex [Integrations] Dynatrace API
+  description: >-
+    The [Integrations] Dynatrace API from Cortex — 4 operation(s) for [integrations] dynatrace.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Dynatrace'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-dynatrace-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-firehydrant-api
+  name: Cortex [Integrations] Firehydrant API
+  description: >-
+    The [Integrations] Firehydrant API from Cortex — 4 operation(s) for [integrations] firehydrant.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Firehydrant'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-firehydrant-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-github-api
+  name: Cortex [Integrations] GitHub API
+  description: The [Integrations] GitHub API from Cortex — 8 operation(s) for [integrations] github.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] GitHub'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-github-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-gitlab-api
+  name: Cortex [Integrations] GitLab API
+  description: The [Integrations] GitLab API from Cortex — 6 operation(s) for [integrations] gitlab.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] GitLab'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-gitlab-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-harness-api
+  name: Cortex [Integrations] Harness API
+  description: The [Integrations] Harness API from Cortex — 6 operation(s) for [integrations] harness.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Harness'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-harness-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-incident-io-api
+  name: Cortex [Integrations] Incident.io API
+  description: >-
+    The [Integrations] Incident.io API from Cortex — 6 operation(s) for [integrations] incident.io.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Incident.io'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-incident-io-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-instana-api
+  name: Cortex [Integrations] Instana API
+  description: The [Integrations] Instana API from Cortex — 4 operation(s) for [integrations] instana.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Instana'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-instana-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-jenkins-api
+  name: Cortex [Integrations] Jenkins API
+  description: The [Integrations] Jenkins API from Cortex — 6 operation(s) for [integrations] jenkins.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Jenkins'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-jenkins-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-jira-api
+  name: Cortex [Integrations] Jira API
+  description: The [Integrations] Jira API from Cortex — 6 operation(s) for [integrations] jira.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Jira'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-jira-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-kubernetes-api
+  name: Cortex [Integrations] Kubernetes API
+  description: >-
+    The [Integrations] Kubernetes API from Cortex — 1 operation(s) for [integrations] kubernetes.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Kubernetes'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-kubernetes-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-launchdarkly-api
+  name: Cortex [Integrations] LaunchDarkly API
+  description: >-
+    The [Integrations] LaunchDarkly API from Cortex — 6 operation(s) for [integrations] launchdarkly.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] LaunchDarkly'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-launchdarkly-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-lightstep-api
+  name: Cortex [Integrations] Lightstep API
+  description: >-
+    The [Integrations] Lightstep API from Cortex — 4 operation(s) for [integrations] lightstep.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Lightstep'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-lightstep-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-mend-sast-api
+  name: Cortex [Integrations] Mend SAST API
+  description: >-
+    The [Integrations] Mend SAST API from Cortex — 4 operation(s) for [integrations] mend sast.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Mend SAST'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-mend-sast-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-mend-sca-api
+  name: Cortex [Integrations] Mend SCA API
+  description: >-
+    The [Integrations] Mend SCA API from Cortex — 4 operation(s) for [integrations] mend sca.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Mend SCA'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-mend-sca-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-new-relic-api
+  name: Cortex [Integrations] New Relic API
+  description: >-
+    The [Integrations] New Relic API from Cortex — 6 operation(s) for [integrations] new relic.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] New Relic'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-new-relic-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-okta-api
+  name: Cortex [Integrations] Okta API
+  description: The [Integrations] Okta API from Cortex — 4 operation(s) for [integrations] okta.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Okta'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-okta-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-opsgenie-api
+  name: Cortex [Integrations] Opsgenie API
+  description: >-
+    The [Integrations] Opsgenie API from Cortex — 4 operation(s) for [integrations] opsgenie.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Opsgenie'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-opsgenie-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-pagerduty-api
+  name: Cortex [Integrations] PagerDuty API
+  description: >-
+    The [Integrations] PagerDuty API from Cortex — 4 operation(s) for [integrations] pagerduty.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] PagerDuty'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-pagerduty-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-prometheus-api
+  name: Cortex [Integrations] Prometheus API
+  description: >-
+    The [Integrations] Prometheus API from Cortex — 6 operation(s) for [integrations] prometheus.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Prometheus'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-prometheus-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-rollbar-api
+  name: Cortex [Integrations] Rollbar API
+  description: The [Integrations] Rollbar API from Cortex — 4 operation(s) for [integrations] rollbar.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Rollbar'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-rollbar-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-rootly-api
+  name: Cortex [Integrations] Rootly API
+  description: The [Integrations] Rootly API from Cortex — 4 operation(s) for [integrations] rootly.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Rootly'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-rootly-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-semgrep-api
+  name: Cortex [Integrations] Semgrep API
+  description: The [Integrations] Semgrep API from Cortex — 6 operation(s) for [integrations] semgrep.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Semgrep'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-semgrep-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-sentry-api
+  name: Cortex [Integrations] Sentry API
+  description: The [Integrations] Sentry API from Cortex — 4 operation(s) for [integrations] sentry.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Sentry'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-sentry-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-servicenow-api
+  name: Cortex [Integrations] ServiceNow API
+  description: >-
+    The [Integrations] ServiceNow API from Cortex — 4 operation(s) for [integrations] servicenow.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] ServiceNow'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-servicenow-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-signalfx-api
+  name: Cortex [Integrations] SignalFx API
+  description: >-
+    The [Integrations] SignalFx API from Cortex — 4 operation(s) for [integrations] signalfx.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] SignalFx'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-signalfx-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-snyk-api
+  name: Cortex [Integrations] Snyk API
+  description: The [Integrations] Snyk API from Cortex — 4 operation(s) for [integrations] snyk.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Snyk'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-snyk-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-sonarqube-api
+  name: Cortex [Integrations] SonarQube API
+  description: >-
+    The [Integrations] SonarQube API from Cortex — 6 operation(s) for [integrations] sonarqube.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] SonarQube'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-sonarqube-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-sumologic-api
+  name: Cortex [Integrations] SumoLogic API
+  description: >-
+    The [Integrations] SumoLogic API from Cortex — 4 operation(s) for [integrations] sumologic.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] SumoLogic'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-sumologic-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-veracode-api
+  name: Cortex [Integrations] Veracode API
+  description: >-
+    The [Integrations] Veracode API from Cortex — 4 operation(s) for [integrations] veracode.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Veracode'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-veracode-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-victorops-api
+  name: Cortex [Integrations] VictorOps API
+  description: >-
+    The [Integrations] VictorOps API from Cortex — 4 operation(s) for [integrations] victorops.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] VictorOps'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-victorops-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-wiz-api
+  name: Cortex [Integrations] Wiz API
+  description: The [Integrations] Wiz API from Cortex — 4 operation(s) for [integrations] wiz.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Wiz'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-wiz-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-workday-api
+  name: Cortex [Integrations] Workday API
+  description: The [Integrations] Workday API from Cortex — 4 operation(s) for [integrations] workday.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] Workday'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-workday-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-integrations-xmatters-api
+  name: Cortex [Integrations] xMatters API
+  description: >-
+    The [Integrations] xMatters API from Cortex — 4 operation(s) for [integrations] xmatters.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - '[Integrations] xMatters'
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-integrations-xmatters-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-ip-allowlist-api
+  name: Cortex IP Allowlist API
+  description: The IP Allowlist API from Cortex — 2 operation(s) for ip allowlist.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - IP Allowlist
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-ip-allowlist-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-my-workspace-api
+  name: Cortex My Workspace API
+  description: The My Workspace API from Cortex — 1 operation(s) for my workspace.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - My Workspace
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-my-workspace-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-notification-logs-api
+  name: Cortex Notification Logs API
+  description: The Notification Logs API from Cortex — 2 operation(s) for notification logs.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Notification Logs
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-notification-logs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-on-call-api
+  name: Cortex On Call API
+  description: The On-call API from Cortex — 2 operation(s) for on-call.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - On-call
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-on-call-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-packages-api
+  name: Cortex Packages API
+  description: The Packages API from Cortex — 18 operation(s) for packages.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Packages
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-packages-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-plugins-api
+  name: Cortex Plugins API
+  description: The Plugins API from Cortex — 2 operation(s) for plugins.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Plugins
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-plugins-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-public-scim-schema-controller-api
+  name: Cortex Public SCIM Schema Controller API
+  description: >-
+    The public-scim-schema-controller API from Cortex — 2 operation(s) for public-scim-schema-controller.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - public-scim-schema-controller
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-public-scim-schema-controller-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-queries-api
+  name: Cortex Queries API
+  description: The Queries API from Cortex — 2 operation(s) for queries.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Queries
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-queries-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-scaffolder-api
+  name: Cortex Scaffolder API
+  description: The Scaffolder API from Cortex — 2 operation(s) for scaffolder.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Scaffolder
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-scaffolder-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-scim-api
+  name: Cortex SCIM API
+  description: The SCIM API from Cortex — 2 operation(s) for scim.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - SCIM
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-scim-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-secrets-api
+  name: Cortex Secrets API
+  description: The Secrets API from Cortex — 2 operation(s) for secrets.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Secrets
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-secrets-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-team-roles-api
+  name: Cortex Team Roles API
+  description: The Team Roles API from Cortex — 1 operation(s) for team roles.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Team Roles
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-team-roles-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-teams-advanced-api
+  name: Cortex Teams [Advanced] API
+  description: The Teams [Advanced] API from Cortex — 2 operation(s) for teams [advanced].
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Teams [Advanced]
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-teams-advanced-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-teams-api
+  name: Cortex Teams API
+  description: The Teams API from Cortex — 5 operation(s) for teams.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Teams
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-teams-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-teams-departments-legacy-api
+  name: Cortex Teams [Departments] (legacy) API
+  description: >-
+    The Teams [Departments] (legacy) API from Cortex — 1 operation(s) for teams [departments] (legacy).
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Teams [Departments] (legacy)
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-teams-departments-legacy-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-teams-hierarchies-api
+  name: Cortex Teams Hierarchies API
+  description: The Teams Hierarchies API from Cortex — 1 operation(s) for teams hierarchies.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Teams Hierarchies
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-teams-hierarchies-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-users-api
+  name: Cortex Users API
+  description: The Users API from Cortex — 2 operation(s) for users.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-verifications-api
+  name: Cortex Verifications API
+  description: The Verifications API from Cortex — 3 operation(s) for verifications.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Verifications
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-verifications-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
+- aid: cortex-idp:cortex-idp-workflows-api
+  name: Cortex Workflows API
+  description: The Workflows API from Cortex — 7 operation(s) for workflows.
+  humanURL: https://docs.cortex.io/api/readme/catalog-entities
+  baseURL: https://api.getcortexapp.com/api/v1
+  tags:
+  - Workflows
+  properties:
+  - type: OpenAPI
+    url: openapi/cortex-idp-workflows-api-openapi.yml
+  - type: Documentation
+    url: https://docs.cortex.io/api
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/catalog-entities
+  - type: PostmanCollection
+    url: collections/cortex-idp.postman_collection.json
+  - type: OpenCollection
+    url: collections/cortex-idp.opencollection.json
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/scorecards
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/custom-data
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/initiatives
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/deploys
+  - type: APIReference
+    url: https://docs.cortex.io/api/readme/integrations/github
 common:
 - url: https://www.cortex.io/blog
   type: Blog

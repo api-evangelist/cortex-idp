@@ -1,0 +1,235 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex [Integrations] Rootly API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: '[Integrations] Rootly'
+paths:
+  /api/v1/rootly/configuration:
+    post:
+      operationId: RootlySaveConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RootlyConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseRootlyConfiguration'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add a configuration
+      tags:
+      - '[Integrations] Rootly'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/rootly/configuration/{alias}:
+    delete:
+      operationId: RootlyRemoveConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseRootlyConfiguration'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a configuration by alias
+      tags:
+      - '[Integrations] Rootly'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: RootlyGetConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RootlyConfiguration'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a configuration by alias
+      tags:
+      - '[Integrations] Rootly'
+      x-cortex-mcp-enabled: 'false'
+    put:
+      operationId: RootlyUpdateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RootlyUpdateConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseRootlyConfiguration'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update a configuration
+      tags:
+      - '[Integrations] Rootly'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/rootly/configurations:
+    get:
+      operationId: RootlyGetConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseRootlyConfiguration'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve all configurations
+      tags:
+      - '[Integrations] Rootly'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/rootly/default-configuration:
+    get:
+      operationId: RootlyGetDefaultConfiguration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RootlyConfiguration'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve default configuration
+      tags:
+      - '[Integrations] Rootly'
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    RootlyUpdateConfigurationRequest:
+      required:
+      - alias
+      - isDefault
+      type: object
+      properties:
+        alias:
+          type: string
+        apiKey:
+          type: string
+        isDefault:
+          type: boolean
+    RootlyConfigurationRequest:
+      required:
+      - alias
+      - apiKey
+      - isDefault
+      type: object
+      properties:
+        alias:
+          type: string
+        apiKey:
+          type: string
+        isDefault:
+          type: boolean
+    ConfigurationsResponseRootlyConfiguration:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RootlyConfiguration'
+    RootlyConfiguration:
+      required:
+      - alias
+      - isDefault
+      - lastFour
+      type: object
+      properties:
+        alias:
+          type: string
+        isDefault:
+          type: boolean
+        lastFour:
+          type: string
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

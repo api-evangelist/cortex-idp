@@ -1,0 +1,782 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Entity Relationships API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Entity Relationships
+paths:
+  /api/v1/catalog/{tagOrId}/relationships/{relationshipTypeTag}/destinations:
+    get:
+      description: List all entity destinations for a certain relationship type. Optional depth parameter to limit the depth of the relationship tree.
+      operationId: listEntityDestinationsForRelationshipType
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: Maximum depth to traverse in the relationship hierarchy. Defaults to 1 (i.e., direct relationships only).
+        example: 2
+        in: query
+        name: depth
+        required: false
+        schema:
+          type: string
+      - description: If true will include relationships that traverse archived entities
+        example: false
+        in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityDestinationsResponse'
+          description: Successfully retrieved entity sources
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List entity destinations for a relationship type
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-description: List all destinations for a certain relationship type and entity. Use the listRelationshipTypes tool to find the relevant relationshipTypeTag.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: Add direct destinations for a given entity and entity relationship type
+      operationId: addEntityDestinations
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEntityRelationshipDestinations'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityDestinationsResponse'
+          description: Successfully added entity destinations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Relationship validation error
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add direct entity destinations for a given entity
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-description: Add destination entities, given by tag, to an entity for one relationship type. Destinations the entity already has are kept, and adding one that already exists changes nothing. To replace the whole list of destinations, use updateEntityDestinations. Pass force=true to override relationships defined in the catalog descriptor; the next descriptor sync will overwrite them again.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: Update all direct destinations for a given entity and entity relationship type
+      operationId: updateEntityDestinations
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEntityRelationshipDestinations'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntityDestinationsResponse'
+          description: Successfully updated entity destinations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Relationship validation error
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update direct entity destinations for a given entity
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-description: Replace the direct destinations of an entity for one relationship type, given as entity tags. Existing destinations that are not in the list are removed, so an empty list removes them all. To add destinations without removing any, use addEntityDestinations. Pass force=true to override relationships defined in the catalog descriptor; the next descriptor sync will overwrite them again.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/relationships/{relationshipTypeTag}/sources:
+    get:
+      description: List all entity sources for a certain relationship type. Optional depth parameter to limit the depth of the relationship tree.
+      operationId: listEntitySourcesForRelationshipType
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: Maximum depth to traverse in the relationship hierarchy. Defaults to 1 (i.e., direct relationships only).
+        example: 2
+        in: query
+        name: depth
+        required: false
+        schema:
+          type: string
+      - description: If true will include relationships that traverse archived entities
+        example: false
+        in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntitySourcesResponse'
+          description: Successfully retrieved entity sources
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List entity sources for a relationship type
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-description: List all sources for a certain relationship type and entity. Use the listRelationshipTypes tool to find the relevant relationshipTypeTag.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: Add direct sources for a given entity and entity relationship type
+      operationId: addEntitySources
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEntityRelationshipSources'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntitySourcesResponse'
+          description: Successfully added entity sources
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Relationship validation error
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add direct entity sources for a given entity
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-description: Add source entities, given by tag, to an entity for one relationship type. Sources the entity already has are kept, and adding one that already exists changes nothing. To replace the whole list of sources, use updateEntitySources. Pass force=true to override relationships defined in the catalog descriptor; the next descriptor sync will overwrite them again.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: Update all direct sources for a given entity and entity relationship type
+      operationId: updateEntitySources
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEntityRelationshipSources'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EntitySourcesResponse'
+          description: Successfully updated entity sources
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Relationship validation error
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update direct entity sources for a given entity
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-description: Replace the direct sources of an entity for one relationship type, given as entity tags. Existing sources that are not in the list are removed, so an empty list removes them all. To add sources without removing any, use addEntitySources. Pass force=true to override relationships defined in the catalog descriptor; the next descriptor sync will overwrite them again.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/relationships/{relationshipTypeTag}:
+    get:
+      description: List all entity relationships for a certain relationship type.
+      operationId: listEntityRelationships
+      parameters:
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListRelationships'
+          description: Successfully retrieved entity relationships
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List entity relationships for a relationship type
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-description: List all entity relationships for a specific relationship type across the entire organization. Returns paginated results showing all source-destination pairs, useful for understanding the complete relationship graph and finding all connections of a particular type.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: Add all entity relationships for a certain relationship type.
+      operationId: addEntityRelationships
+      parameters:
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEntityRelationships'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkUpdateEntityRelationshipsResponse'
+          description: Successfully added entity relationships
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add entity relationships for a relationship type
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-enabled: 'false'
+    put:
+      description: Update all entity relationships for a certain relationship type.
+      operationId: updateEntityRelationships
+      parameters:
+      - in: path
+        name: relationshipTypeTag
+        required: true
+        schema:
+          type: string
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateEntityRelationships'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkUpdateEntityRelationshipsResponse'
+          description: Successfully updated entity relationships
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Relationship type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update entity relationships for a relationship type
+      tags:
+      - Entity Relationships
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    UpdateEntityRelationships:
+      required:
+      - relationships
+      type: object
+      properties:
+        relationships:
+          type: array
+          description: List of code tags for the entities to add as sources
+          items:
+            $ref: '#/components/schemas/EntityRelationshipRequest'
+      description: Updates to entity relationships
+    UpdateEntityRelationshipSources:
+      required:
+      - sources
+      type: object
+      properties:
+        sources:
+          type: array
+          description: List of code tags for the entities to add as sources
+          example:
+          - entity-1
+          - entity-2
+          items:
+            type: string
+            description: List of code tags for the entities to add as sources
+            example: '["entity-1","entity-2"]'
+      description: Updates to entity relationship sources
+    EntitySourcesResponse:
+      required:
+      - sources
+      type: object
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntityDetails'
+    ListRelationships:
+      required:
+      - page
+      - relationships
+      - total
+      - totalPages
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        relationships:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityRelationshipDetails'
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+      description: List of related entities.
+    EntityRelationshipError:
+      required:
+      - destinationEntityTag
+      - errorMessage
+      - relationshipTypeTag
+      - sourceEntityTag
+      type: object
+      properties:
+        destinationEntityTag:
+          type: string
+          description: Code tag of the destination entity
+          example: service-b
+        errorMessage:
+          type: string
+          description: Human-readable error message
+          example: Source entity not found
+        relationshipTypeTag:
+          type: string
+          description: Tag of the relationship type
+          example: depends-on
+        sourceEntityTag:
+          type: string
+          description: Code tag of the source entity
+          example: service-a
+      description: Error details for a failed relationship operation
+    EntityDestinationsResponse:
+      required:
+      - destinations
+      type: object
+      properties:
+        destinations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RelatedEntityDetails'
+    EntityRelationshipDetails:
+      required:
+      - destinationEntity
+      - relationshipTypeTag
+      - sourceEntity
+      type: object
+      properties:
+        destinationEntity:
+          $ref: '#/components/schemas/RelatedEntityDetails'
+        providerType:
+          type: string
+          description: Provider that created or manages this relationship
+          example: WORKDAY
+          enum:
+          - WORKDAY
+        relationshipTypeTag:
+          type: string
+          description: Tag of the relationship type
+          example: depends-on
+        sourceEntity:
+          $ref: '#/components/schemas/RelatedEntityDetails'
+      description: Describes a specific entity relationship
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    EntityRelationship:
+      required:
+      - destinationEntityTag
+      - relationshipTypeTag
+      - sourceEntityTag
+      type: object
+      properties:
+        destinationEntityTag:
+          type: string
+          description: Code tag of the destination entity
+          example: service-b
+        providerType:
+          type: string
+          description: Provider that created or manages this relationship
+          example: WORKDAY
+          enum:
+          - WORKDAY
+        relationshipTypeTag:
+          type: string
+          description: Tag of the relationship type
+          example: depends-on
+        sourceEntityTag:
+          type: string
+          description: Code tag of the source entity
+          example: service-a
+      description: A relationship between two entities
+    EntityRelationshipRequest:
+      required:
+      - destination
+      - source
+      type: object
+      properties:
+        destination:
+          type: string
+          description: Code Tag for the destination entity
+          example: service-b
+        source:
+          type: string
+          description: Code Tag for the source entity
+          example: service-a
+      description: Request to create a relationship between two entities
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    BulkUpdateEntityRelationshipsResponse:
+      required:
+      - errors
+      - relationships
+      type: object
+      properties:
+        errors:
+          type: array
+          description: Errors encountered during the operation
+          items:
+            $ref: '#/components/schemas/EntityRelationshipError'
+        relationships:
+          type: array
+          description: Successfully created or updated relationships
+          items:
+            $ref: '#/components/schemas/EntityRelationship'
+      description: Response from bulk entity relationship operations
+    RelatedEntityDetails:
+      required:
+      - id
+      - name
+      - tag
+      - type
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the entity visible in the Service, Resource, or Domain Catalog. This may contain markdown.
+        id:
+          type: string
+          description: Unique, immutable, 18-character auto-generated identifier for the entity.
+          example: en2da8159dbeefb974
+        name:
+          type: string
+          description: Human-readable name for the entity
+          example: My Favorite Entity
+        tag:
+          type: string
+          description: Unique identifier for the entity. Corresponds to the x-cortex-tag field in the entity descriptor.
+          example: my-favorite-entity
+        type:
+          type: string
+          description: Type of the entity. Corresponds to the x-cortex-type field in the entity descriptor or 'service' for services.
+          example: service
+    UpdateEntityRelationshipDestinations:
+      required:
+      - destinations
+      type: object
+      properties:
+        destinations:
+          type: array
+          description: List of code tags for the entities to add as sources
+          example:
+          - entity-1
+          - entity-2
+          items:
+            type: string
+            description: List of code tags for the entities to add as sources
+            example: '["entity-1","entity-2"]'
+      description: Updates to entity relationship destinations
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

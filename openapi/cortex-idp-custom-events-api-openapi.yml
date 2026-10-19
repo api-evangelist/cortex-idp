@@ -1,0 +1,456 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Custom Events API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Custom Events
+paths:
+  /api/v1/catalog/{tagOrId}/custom-events:
+    delete:
+      operationId: deleteCustomEventsForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: type
+        required: false
+        schema:
+          type: string
+      - deprecated: true
+        description: Use 'startTime' instead
+        in: query
+        name: timestamp
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: If provided, events with greater than or equal to timestamp will be deleted (a date-time without a time-zone in the ISO-8601 calendar system)
+        in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: If provided, events with less than or equal to timestamp will be deleted (a date-time without a time-zone in the ISO-8601 calendar system)
+        in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Successfully deleted custom events
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '404':
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete ALL custom events for an entity
+      tags:
+      - Custom Events
+      x-cortex-mcp-description: Delete multiple custom events with filters. Disabled for MCP access to preserve event history
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: listCustomEventsForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: type
+        required: false
+        schema:
+          type: string
+      - deprecated: true
+        description: Use 'startTime' instead
+        in: query
+        name: timestamp
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: If provided, events with greater than or equal to timestamp will be returned (UTC, e.g. 2026-06-22T00:00:00)
+        in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: If provided, events with less than or equal to timestamp will be returned (UTC, e.g. 2026-06-22T00:00:00)
+        in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventListResponse'
+          description: Successfully retrieved custom events
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventListResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventListResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List custom events for entity
+      tags:
+      - Custom Events
+      x-cortex-mcp-description: List custom events for an entity with optional filtering by type and time range. Supports pagination and filtering by event type, start time, and end time to retrieve historical event data.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      operationId: createCustomEventForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveCustomEventRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Successfully created custom event
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create custom event for entity
+      tags:
+      - Custom Events
+      x-cortex-mcp-description: Record a new custom event on an entity, with a title, type, timestamp and optional description, url and customData. Every call adds another event, so retrying creates duplicates. Returns the event with its UUID. To change an existing event, use replaceCustomEventForEntityByUuid.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/custom-events/{uuid}:
+    delete:
+      operationId: deleteCustomEventForEntityByUuid
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          description: Successfully deleted custom event
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+        '404':
+          description: Entity or custom event not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete custom events by UUID
+      tags:
+      - Custom Events
+      x-cortex-mcp-description: Delete a specific custom event by UUID. Disabled for MCP access to preserve event history
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: getCustomEventForEntityByUuid
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Successfully retrieved custom event
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Entity or custom event not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve custom event by UUID
+      tags:
+      - Custom Events
+      x-cortex-mcp-description: Retrieve a specific custom event by its UUID. Returns event details including title, description, timestamp, type, and any custom data associated with the event.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      operationId: replaceCustomEventForEntityByUuid
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveCustomEventRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Successfully updated custom event
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomEventResponse'
+          description: Entity or custom event not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update custom event by UUID
+      tags:
+      - Custom Events
+      x-cortex-mcp-description: Replace a custom event, found by its UUID, with the request body. Every field is overwritten and fields you omit are cleared, so send the full event (read it first with getCustomEventForEntityByUuid). Returns 404 if the entity or event does not exist. Does not create an event.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    CustomEventListResponse:
+      required:
+      - events
+      - page
+      - total
+      - totalPages
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomEventResponse'
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    SaveCustomEventRequest:
+      required:
+      - timestamp
+      - title
+      - type
+      type: object
+      properties:
+        customData:
+          type: object
+          additionalProperties:
+            type: object
+            description: Optional property to store additional data
+          description: Optional property to store additional data
+        description:
+          type: string
+          description: Optional description of custom event
+        timestamp:
+          type: string
+          description: Time when event occurred
+          format: date-time
+        title:
+          type: string
+          description: Name for custom event
+          example: Created K8s pod
+        type:
+          type: string
+          description: Type of custom event
+          example: POD_CREATION
+        url:
+          type: string
+          description: Optional URL associated with custom event
+          example: https://cortex.io
+    CustomEventResponse:
+      required:
+      - timestamp
+      - title
+      - type
+      - uuid
+      type: object
+      properties:
+        customData:
+          type: object
+          additionalProperties:
+            type: object
+            description: Optional property to store additional data
+          description: Optional property to store additional data
+        description:
+          type: string
+          description: Optional description of custom event
+        timestamp:
+          type: string
+          description: Time when event occurred
+          format: date-time
+        title:
+          type: string
+          description: Name for custom event
+          example: Created K8s pod
+        type:
+          type: string
+          description: Type of custom event
+          example: POD_CREATION
+        url:
+          type: string
+          description: Optional URL associated with custom event
+          example: https://cortex.io
+        uuid:
+          type: string
+          description: Automatically generated identifier
+          format: uuid
+          example: d853c6e0-1bca-40bf-a264-db5d4ee38d77
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

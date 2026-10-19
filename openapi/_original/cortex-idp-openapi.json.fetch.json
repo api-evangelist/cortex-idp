@@ -1,0 +1,12 @@
+{
+ "url": "https://docs.cortex.io/openapi/cortex_swagger.json",
+ "final": "https://docs.cortex.io/openapi/cortex_swagger.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 1549119,
+ "sha256": "8af02ee7167c1dd0195fa47b420ec45a47079a0fe1b6e872cadcf53bba2d3ca4",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

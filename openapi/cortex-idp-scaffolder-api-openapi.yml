@@ -1,0 +1,566 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Scaffolder API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Scaffolder
+paths:
+  /api/v1/scaffolders:
+    get:
+      description: List Scaffolder templates.
+      operationId: listScaffolders
+      parameters:
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaffolderListResponse'
+            application/yaml:
+              schema:
+                $ref: '#/components/schemas/ScaffolderListResponse'
+          description: Successfully found Scaffolder templates
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/yaml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Access denied
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List Scaffolder templates
+      tags:
+      - Scaffolder
+      x-cortex-mcp-description: List the Scaffolder templates configured in Cortex, with their tags. Use getScaffolder for one template's full configuration.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: 'Create or update a Scaffolder template.
+
+
+        API key must have the `Configure Scaffolder` permission.
+
+
+        **Note:** If a Scaffolder template with the same tag already exists, it will be updated.'
+      operationId: createOrUpdateScaffolder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScaffolderRequest'
+          application/yaml:
+            schema:
+              $ref: '#/components/schemas/ScaffolderRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaffolderResponse'
+            application/yaml:
+              schema:
+                $ref: '#/components/schemas/ScaffolderResponse'
+          description: Scaffolder template created or updated successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Access denied
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create or update Scaffolder template
+      tags:
+      - Scaffolder
+      x-cortex-mcp-description: Create a Scaffolder template, or replace the one with the same tag. The request needs name and repoLocator; fields you omit go back to their defaults and are not merged. Without a tag a new template is always created, with a tag derived from the name. Needs the Configure Scaffolder permission. To update by Cortex ID or to rename a tag, use updateScaffolder.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/scaffolders/{tagOrId}:
+    delete:
+      description: 'Delete a Scaffolder template by tag or Cortex ID.
+
+
+        API key must have the `Configure Scaffolder` permission.'
+      operationId: deleteScaffolder
+      parameters:
+      - description: The tag or unique, auto-generated Cortex ID of the Scaffolder template.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      responses:
+        '204':
+          description: Scaffolder template deleted successfully
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Access denied
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Scaffolder template not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete Scaffolder template
+      tags:
+      - Scaffolder
+      x-cortex-mcp-enabled: 'false'
+    get:
+      description: Retrieve a Scaffolder template by tag or Cortex ID.
+      operationId: getScaffolder
+      parameters:
+      - description: The tag or unique, auto-generated Cortex ID of the Scaffolder template.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaffolderResponse'
+            application/yaml:
+              schema:
+                $ref: '#/components/schemas/ScaffolderResponse'
+          description: Successfully found the Scaffolder template
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Access denied
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Scaffolder template not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve Scaffolder template
+      tags:
+      - Scaffolder
+      x-cortex-mcp-description: Get one Scaffolder template's full configuration by tag or Cortex ID. Read this before updateScaffolder, which replaces the whole template.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: 'Update a Scaffolder template by tag or Cortex ID.
+
+
+        API key must have the `Configure Scaffolder` permission.'
+      operationId: updateScaffolder
+      parameters:
+      - description: The tag or unique, auto-generated Cortex ID of the Scaffolder template.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScaffolderRequest'
+          application/yaml:
+            schema:
+              $ref: '#/components/schemas/ScaffolderRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaffolderResponse'
+            application/yaml:
+              schema:
+                $ref: '#/components/schemas/ScaffolderResponse'
+          description: Scaffolder template updated successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Access denied
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Scaffolder template not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update Scaffolder template
+      tags:
+      - Scaffolder
+      x-cortex-mcp-description: Replace an existing Scaffolder template, found by tag or Cortex ID, with the request body. Fields you omit go back to their defaults and are not merged, so read the template with getScaffolder first. Passing a new tag renames the template. Needs the Configure Scaffolder permission.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    Github:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/ScaffolderPublisherOptions'
+      - required:
+        - sparseCheckout
+        type: object
+        properties:
+          sparseCheckout:
+            type: boolean
+            description: Whether the destination is cloned with sparse checkout
+          visibility:
+            type: string
+            description: Visibility of the created repository
+            enum:
+            - PUBLIC
+            - PRIVATE
+            - INTERNAL
+    ScaffolderResponse:
+      required:
+      - createYamlFile
+      - createdAt
+      - id
+      - labels
+      - name
+      - repoLocator
+      - requireNewService
+      - requirePullRequest
+      - showReadme
+      - strictAliasUsage
+      - tag
+      - type
+      - updatedAt
+      type: object
+      properties:
+        createYamlFile:
+          type: boolean
+          description: Whether a cortex.yaml is generated for the created entity
+        createdAt:
+          type: string
+          description: ISO-8601 timestamp at which the template was registered
+        description:
+          type: string
+          description: Description of the Scaffolder template
+        id:
+          type: string
+          description: Unique, auto-generated Cortex ID of the Scaffolder template
+        labels:
+          type: array
+          description: Descriptive labels used to group templates in the UI
+          items:
+            type: string
+            description: Descriptive labels used to group templates in the UI
+        name:
+          type: string
+          description: Display name of the Scaffolder template
+        publisherOptions:
+          oneOf:
+          - $ref: '#/components/schemas/AzureDevops'
+          - $ref: '#/components/schemas/Bitbucket'
+          - $ref: '#/components/schemas/Github'
+          - $ref: '#/components/schemas/Gitlab'
+        repoLocator:
+          oneOf:
+          - $ref: '#/components/schemas/AzureDevops'
+          - $ref: '#/components/schemas/Bitbucket'
+          - $ref: '#/components/schemas/Github'
+          - $ref: '#/components/schemas/Gitlab'
+        requireNewService:
+          type: boolean
+          description: Whether running the template must create a new entity
+        requirePullRequest:
+          type: boolean
+          description: Whether the template publishes via a pull request to an existing repository
+        showReadme:
+          type: boolean
+          description: Whether the template repository's README is shown before a run
+        strictAliasUsage:
+          type: boolean
+          description: Whether runs are restricted to the git configuration alias the template names
+        tag:
+          type: string
+          description: Stable, human-readable identifier, unique within the workspace
+        type:
+          type: string
+          description: The templating engine of the template
+          enum:
+          - COOKIECUTTER
+        updatedAt:
+          type: string
+          description: ISO-8601 timestamp at which the template was last updated
+    ScaffolderPublisherOptions:
+      required:
+      - provider
+      type: object
+      properties:
+        provider:
+          type: string
+          description: The git provider the options apply to
+          enum:
+          - GITHUB
+          - GITLAB
+          - BITBUCKET
+          - AZUREDEVOPS
+      description: Options applied to the repository the Scaffolder publishes to
+      discriminator:
+        propertyName: provider
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    Gitlab:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/ScaffolderPublisherOptions'
+      - type: object
+        properties:
+          visibility:
+            type: string
+            description: Visibility of the created repository
+            enum:
+            - PUBLIC
+            - PRIVATE
+    ScaffolderListResponse:
+      required:
+      - page
+      - scaffolders
+      - total
+      - totalPages
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        scaffolders:
+          type: array
+          description: List of Scaffolder templates
+          items:
+            $ref: '#/components/schemas/ScaffolderResponse'
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    Bitbucket:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/ScaffolderPublisherOptions'
+      - type: object
+        properties:
+          visibility:
+            type: string
+            description: Visibility of the created repository
+            enum:
+            - PUBLIC
+            - PRIVATE
+    ScaffolderRequest:
+      required:
+      - createYamlFile
+      - labels
+      - name
+      - repoLocator
+      - requireNewService
+      - requirePullRequest
+      - showReadme
+      - strictAliasUsage
+      - type
+      type: object
+      properties:
+        createYamlFile:
+          type: boolean
+          description: Whether a cortex.yaml is generated for the created entity. Defaults to `true`
+        description:
+          type: string
+          description: Description of the Scaffolder template
+        labels:
+          type: array
+          description: Descriptive labels used to group templates in the UI
+          items:
+            type: string
+            description: Descriptive labels used to group templates in the UI
+        name:
+          type: string
+          description: Display name of the Scaffolder template
+        publisherOptions:
+          oneOf:
+          - $ref: '#/components/schemas/AzureDevops'
+          - $ref: '#/components/schemas/Bitbucket'
+          - $ref: '#/components/schemas/Github'
+          - $ref: '#/components/schemas/Gitlab'
+        repoLocator:
+          oneOf:
+          - $ref: '#/components/schemas/AzureDevops'
+          - $ref: '#/components/schemas/Bitbucket'
+          - $ref: '#/components/schemas/Github'
+          - $ref: '#/components/schemas/Gitlab'
+        requireNewService:
+          type: boolean
+          description: Whether running the template must create a new entity. Defaults to `true`
+        requirePullRequest:
+          type: boolean
+          description: Whether the template publishes via a pull request to an existing repository. Defaults to `false`
+        showReadme:
+          type: boolean
+          description: Whether the template repository's README is shown before a run. Defaults to `false`
+        strictAliasUsage:
+          type: boolean
+          description: Whether runs are restricted to the git configuration alias the template names. Defaults to `true`
+        tag:
+          type: string
+          description: Stable, human-readable identifier, unique within the workspace. Lowercase letters, numbers, and dashes; may not start or end with a dash. Derived from the name when omitted on creation; an existing template keeps its tag unless a new one is provided.
+        type:
+          type: string
+          description: The templating engine of the template
+          enum:
+          - COOKIECUTTER
+    AzureDevops:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/ScaffolderPublisherOptions'
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

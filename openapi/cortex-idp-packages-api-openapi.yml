@@ -1,0 +1,946 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Packages API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Packages
+paths:
+  /api/v1/catalog/{tagOrId}/packages:
+    get:
+      operationId: listPackages
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: All packages. If using pagination, we do not return page, total, or totalPages in the response. An empty array is returned once you reach the end.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List packages
+      tags:
+      - Packages
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/packages/dotnet/nuget:
+    delete:
+      operationId: deleteNugetPackage
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted package
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[csharp] Delete Nuget package'
+      tags:
+      - Packages
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/packages/dotnet/nuget/csproj:
+    post:
+      operationId: uploadNugetCsproj
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: string
+        description: Stringified version of your *.csproj file
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: NUGET
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Unsupported csproj format, e.g. a .NET Framework project that declares dependencies with <Reference> elements
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[csharp] Upload Nuget csproj'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a .NET *.csproj for an entity (body: raw XML text). Reads `<PackageReference>` elements and REPLACES all of the entity''s NuGet packages, including those from packages.config or packages.lock.json uploads. Fails with 400 for .NET Framework projects that use only `<Reference>`; use uploadNugetPackagesConfig for those.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/dotnet/nuget/packages-config:
+    post:
+      operationId: uploadNugetPackagesConfig
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              type: string
+        description: Stringified version of your packages.config file
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: NUGET
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[csharp] Upload Nuget packages.config'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a .NET packages.config for an entity (body: raw XML text; the format older .NET Framework projects use). REPLACES all of the entity''s NuGet packages, including those from csproj or packages.lock.json uploads.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/dotnet/nuget/packages-lock:
+    post:
+      operationId: uploadNugetPackagesLock
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your nuget package.lock.json file
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: NUGET
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[csharp] Upload Nuget packages.lock.json'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a NuGet packages.lock.json for an entity (body: raw JSON text). Reads the resolved versions of the first target framework and REPLACES all of the entity''s NuGet packages, including those from csproj or packages.config uploads.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/go:
+    delete:
+      operationId: deleteGoPackage
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted package
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[go] Delete Go package'
+      tags:
+      - Packages
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/packages/go/gosum:
+    post:
+      operationId: uploadGoSumPackage
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your go.sum file
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: GO
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[golang] Upload go.sum'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a Go go.sum for an entity (body: raw file text). Keeps the highest version of each module and REPLACES all of the entity''s Go packages.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/java:
+    delete:
+      operationId: deleteJavaPackage
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted package
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[java] Delete Java package'
+      tags:
+      - Packages
+      x-cortex-mcp-enabled: 'false'
+    post:
+      operationId: uploadJavaPackage
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageVersionRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+                dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: JAVA
+                version: string
+              schema:
+                $ref: '#/components/schemas/Package'
+          description: Successfully saved package
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[java] Upload single Java package'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Add or update a single Java package on an entity (JSON body: `{name, version}`, e.g. `com.google.guava:guava`). Upserts by name: it overwrites any existing Java package with that name, including one parsed from a pom.xml, and leaves all other packages alone. To sync a whole pom.xml, use uploadMavenPom.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/java/bulk:
+    post:
+      operationId: uploadJavaPackages
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PackageVersionRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: JAVA
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[java] Upload multiple Java packages'
+      tags:
+      - Packages
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/packages/java/maven-pom:
+    post:
+      operationId: uploadMavenPom
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your pom.xml file
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: JAVA
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[java] Upload maven pom.xml'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a Maven pom.xml for an entity (body: raw XML text). REPLACES the Java packages that came from earlier pom uploads but keeps packages added one at a time with uploadJavaPackage.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/node:
+    delete:
+      operationId: deleteNodePackage
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted package
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[node] Delete Node package'
+      tags:
+      - Packages
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/packages/node/package-json:
+    post:
+      operationId: uploadNpmPackageJson
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your package.json
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: NODE
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[js] Upload NPM/Yarn/PNPM package.json'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a package.json for an entity (body: raw file text). Parses only `dependencies` (not devDependencies) and REPLACES all of the entity''s Node packages, including those from package-lock.json, yarn.lock or pnpm-lock.yaml uploads. Prefer a lockfile tool (uploadNpmPackageLockJson, uploadYarnLock, uploadPnpmLock) for resolved versions.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/node/package-lock:
+    post:
+      operationId: uploadNpmPackageLockJson
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your NPM package-lock.json
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: NODE
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[js] Upload NPM package-lock.json'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload an npm package-lock.json for an entity (body: raw file text; lockfile v1-v3). REPLACES all of the entity''s Node packages, including those from package.json, yarn.lock or pnpm-lock.yaml uploads, with the resolved versions. Invalid JSON returns an empty list and changes nothing.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/node/pnpm-lock:
+    post:
+      operationId: uploadPnpmLock
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your pnpm-lock.yaml file; supported version 6 or higher
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: NODE
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[js] Upload pnpm-lock.yaml'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a pnpm-lock.yaml for an entity (body: raw YAML text; lockfile version 6 or higher). REPLACES all of the entity''s Node packages, including those from package.json, package-lock.json or yarn.lock uploads, with the resolved versions.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/node/yarn-lock:
+    post:
+      operationId: uploadYarnLock
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your yarn.lock file
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: NODE
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[js] Upload yarn.lock'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a yarn.lock for an entity (body: raw file text). REPLACES all of the entity''s Node packages, including those from package.json, package-lock.json or pnpm-lock.yaml uploads, with the resolved versions.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/python:
+    delete:
+      operationId: deletePythonPackage
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted package
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[python] Delete Python package'
+      tags:
+      - Packages
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/packages/python/pipfile:
+    post:
+      operationId: uploadPipfileLock
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your Pipfile.lock file
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: PYTHON
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[python] Upload pipfile.lock'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a Python Pipfile.lock for an entity (body: raw JSON text). Reads only the `default` section, plus a `python` package from `_meta.requires.python_version`, and REPLACES all of the entity''s Python packages, including those from a requirements.txt upload. Invalid JSON returns an empty list and changes nothing.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/packages/python/requirements:
+    post:
+      operationId: uploadRequirementsTxt
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Stringified version of your requirements.txt file
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              example:
+              - dateCreated: '2023-01-01T01:01:01.000Z'
+                id: 0
+                name: string
+                packageType: PYTHON
+                version: string
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Package'
+          description: Successfully saved packages
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: '[python] Upload requirements.txt'
+      tags:
+      - Packages
+      x-cortex-mcp-description: 'Upload a Python requirements.txt for an entity (body: raw file text). REPLACES all of the entity''s Python packages, including those from a Pipfile.lock upload. Requirements with no version specifier are skipped.'
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    PackageVersionRequest:
+      required:
+      - name
+      - version
+      type: object
+      properties:
+        name:
+          type: string
+          description: Package name, like io.cortex.scorecards
+          example: io.cortex.scorecards
+        version:
+          type: string
+          description: Semver package version
+          example: 1.2.3
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    Package:
+      required:
+      - dateCreated
+      - id
+      - name
+      - packageType
+      - version
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        packageType:
+          type: string
+          enum:
+          - NODE
+          - JAVA
+          - PYTHON
+          - GO
+          - NUGET
+        version:
+          type: string
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

@@ -1,177 +1,444 @@
 openapi: 3.2.0
 info:
-  title: Cortex REST Custom Data API
-  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog.
-  version: '1.0'
-  contact:
-    name: Cortex
-    url: https://www.cortex.io
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Custom Data API
+  version: v1
 servers:
-- url: https://api.getcortexapp.com/api/v1
-  description: Cortex REST API
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
 security:
 - bearerAuth: []
 tags:
 - name: Custom Data
-  description: Arbitrary key/value metadata attached to catalog entities.
 paths:
-  /custom-data:
-    get:
-      operationId: getCustomDataAdvanced
-      tags:
-      - Custom Data
-      summary: Retrieve custom data (advanced)
-      description: Advanced retrieval of custom data across entities, supporting keys with non-alphanumeric characters. Full path is /catalog/custom-data.
-      responses:
-        '200':
-          description: Custom data entries.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+  /api/v1/catalog/custom-data:
     put:
-      operationId: bulkUpsertCustomData
-      tags:
-      - Custom Data
-      summary: Bulk add custom data
-      description: Bulk operation to add multiple key/value pairs across many entities. Full path is /catalog/custom-data.
+      description: Add multiple key/values of custom data to multiple entities
+      operationId: createOrUpdateCustomDataInBulk
+      parameters:
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              additionalProperties: true
+              $ref: '#/components/schemas/BulkCustomDataRequest'
+        required: true
       responses:
         '200':
-          description: Bulk upsert result.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /catalog/{tagOrId}/custom-data:
-    parameters:
-    - $ref: '#/components/parameters/TagOrId'
-    get:
-      operationId: listEntityCustomData
-      tags:
-      - Custom Data
-      summary: List custom data for an entity
-      description: Lists custom key/value data attached to an entity, with pagination.
-      responses:
-        '200':
-          description: Custom data entries for the entity.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomDataList'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    post:
-      operationId: addEntityCustomData
+                $ref: '#/components/schemas/BulkCustomDataResponse'
+          description: Successfully created/updated custom data
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid custom data request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add custom data in bulk
       tags:
       - Custom Data
-      summary: Add custom data to an entity
-      description: Adds or creates a custom key/value data entry on an entity.
-      requestBody:
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/custom-data:
+    delete:
+      operationId: deleteCustomDataForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
         required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: key
+        required: true
+        schema:
+          type: string
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Successfully deleted custom data
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete custom data for entity
+      tags:
+      - Custom Data
+      x-cortex-mcp-description: Delete custom data from an entity. Disabled for MCP access to protect data integrity and prevent accidental removal of critical metadata
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: getCustomDataForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomData'
+          description: Successfully retrieved custom data. If using pagination, we do not return page, total, or totalPages in the response.  An empty array is returned once you reach the end.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List custom data for entity
+      tags:
+      - Custom Data
+      x-cortex-mcp-description: List all custom data key-value pairs associated with an entity. Retrieve metadata, configuration settings, and custom attributes stored for services, resources, or domains. Supports pagination for entities with large amounts of custom data.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      operationId: addCustomDataForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - description: When true, overrides values that were defined in the catalog descriptor. Will be overwritten the next time the catalog descriptor is processed.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CustomDataInput'
+              $ref: '#/components/schemas/DataCreateRequest'
+        required: true
       responses:
         '200':
-          description: The created custom data entry.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    delete:
-      operationId: deleteEntityCustomData
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomData'
+          description: Successfully created data
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid custom data request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add custom data for entity
       tags:
       - Custom Data
-      summary: Delete custom data from an entity
-      description: Deletes a custom data entry from an entity by key query parameter.
+      x-cortex-mcp-description: Set one custom data key on an entity. value can be any JSON type. If the key is missing it is created; if it exists its value and description are overwritten (an upsert, so repeating the same call changes nothing). Overwriting a key that came from a different source, such as the YAML descriptor, returns 400 unless force=true, and a forced value is replaced again the next time the descriptor is processed.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/custom-data/{key}:
+    get:
+      operationId: getCustomDataForEntityByKey
       parameters:
-      - name: key
-        in: query
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: key
+        required: true
         schema:
           type: string
       responses:
         '200':
-          description: Deletion confirmation.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /catalog/{tagOrId}/custom-data/{key}:
-    parameters:
-    - $ref: '#/components/parameters/TagOrId'
-    - name: key
-      in: path
-      required: true
-      schema:
-        type: string
-    get:
-      operationId: getEntityCustomDataByKey
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomData'
+          description: Successfully retrieved custom data for key
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Custom data not found for given entity and key
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve custom data for entity by key
       tags:
       - Custom Data
-      summary: Retrieve custom data by key
-      description: Retrieves a specific custom data entry on an entity by key.
+      x-cortex-mcp-description: Retrieve a specific custom data value by key for an entity. Efficiently access individual metadata attributes, configuration values, or custom properties without fetching all custom data.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/custom-integrations/data/{uuid}:
+    post:
+      description: Refer to the Webhook section of the Custom Data docs for more information. This API is preconfigured in your workspace settings under Custom Integrations. The UUID corresponds to a custom data key, as well as a `jq` command that maps the data in this payload to an entity in your workspace.
+      operationId: addCustomDataViaWebhook
+      parameters:
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonNode'
+        description: A JSON object that contains a valid entity tag in the payload, queryable with the `jq` command defined for this webhook in your workspace.
+        required: true
       responses:
         '200':
-          description: The custom data entry.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add custom data via webhook
+      tags:
+      - Custom Data
+      x-cortex-mcp-enabled: 'false'
 components:
   schemas:
-    CustomDataInput:
-      type: object
+    DataCreateRequest:
       required:
       - key
       - value
-      properties:
-        key:
-          type: string
-        value:
-          description: Arbitrary JSON value.
-        description:
-          type: string
-    Error:
       type: object
       properties:
+        description:
+          type: string
+        key:
+          type: string
+          description: Custom data key for the entity
+          example: my-key
+        value:
+          $ref: '#/components/schemas/JsonNode'
+    CustomData:
+      required:
+      - dateUpdated
+      - key
+      - source
+      - value
+      type: object
+      properties:
+        dateUpdated:
+          type: string
+          format: date-time
+        description:
+          type: string
+        id:
+          type: integer
+          format: int64
+        key:
+          type: string
+        source:
+          type: string
+          enum:
+          - YAML
+          - API
+          - INTEGRATION
+        value:
+          $ref: '#/components/schemas/JsonNode'
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
         message:
           type: string
         requestId:
           type: string
-    CustomDataList:
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    BulkCustomDataResponse:
+      required:
+      - values
       type: object
       properties:
-        customData:
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+            enum:
+            - NOT_FOUND
+        values:
           type: array
           items:
-            type: object
-            properties:
-              key:
-                type: string
-              value: {}
-              description:
-                type: string
-              source:
-                type: string
-              dateUpdated:
-                type: string
-                format: date-time
+            $ref: '#/components/schemas/CustomData'
+    JsonNode:
+      type: object
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    BulkCustomDataRequest:
+      required:
+      - values
+      type: object
+      properties:
+        values:
+          type: object
+          additionalProperties:
+            type: array
+            description: Map of entity tag -> custom data key/values
+            example:
+              another-service-tag:
+              - key: different-key
+                value:
+                  nested: object
+              - key: my-cool-key
+                value: Hello again
+              service-x:
+              - key: my-key
+                value: 100
+              - key: my-second-key
+                value: Hello
+            items:
+              $ref: '#/components/schemas/DataCreateRequest'
+          description: Map of entity tag -> custom data key/values
+          example:
+            another-service-tag:
+            - key: different-key
+              value:
+                nested: object
+            - key: my-cool-key
+              value: Hello again
+            service-x:
+            - key: my-key
+              value: 100
+            - key: my-second-key
+              value: Hello
   responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
+    TooManyRequests:
       content:
-        application/json:
+        application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-  parameters:
-    TagOrId:
-      name: tagOrId
-      in: path
-      required: true
-      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
-      schema:
-        type: string
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
       bearerFormat: JWT
-      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

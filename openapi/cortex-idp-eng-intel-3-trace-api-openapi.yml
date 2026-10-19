@@ -1,0 +1,544 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: 'Cortex Eng Intel: 3-Trace API'
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: 'Eng Intel: 3-Trace'
+paths:
+  /api/v1/eng-intel/trace:
+    post:
+      description: Retrieve individual event records with flexible filtering, ordering, and pagination. Supports any engineering data source registered in the registry.
+      operationId: queryTraceEvents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TraceEventsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraceEventsResponse'
+          description: Successfully executed trace query
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraceEventsResponse'
+          description: Invalid source, date range exceeds 6 months, limit exceeds 500, or validation errors
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TraceEventsResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Query raw trace events from engineering data sources
+      tags:
+      - 'Eng Intel: 3-Trace'
+      x-cortex-mcp-description: 'Query raw trace events from engineering data sources.
+
+
+        Returns individual event records (pull requests, deployments, CI runs, etc.) with flexible filtering, ordering, and pagination. Time range (startDate/endDate) cannot exceed 6 months (180 days). Maximum 5000 results per request.
+
+
+        PREREQUISITES - Follow this workflow:
+
+        1. Discover available sources and attributes: Call listMetricDefinitions (view=''full'') to see available data sources
+
+        2. Use source names and attribute keys from the registry response to construct your trace query
+
+        3. Do NOT guess attribute names - always use exact values from listMetricDefinitions responses
+
+
+        IMPORTANT: Use exact attribute names from the registry. Filters use the same AttributeFilter format as the metrics API.
+
+
+        LINKING: Most sources have a URL attribute (e.g., ''pull_requests.url'', ''deployments.url''). Always include URL attributes in your query so you can hyperlink results in Slack using <URL|display text> format.'
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    AttributeFilterObject:
+      required:
+      - attribute
+      - operator
+      - predicate
+      type: object
+      properties:
+        attribute:
+          type: string
+        operator:
+          type: string
+          enum:
+          - ANY
+          - BETWEEN
+          - CONTAINS
+          - EQUAL
+          - GREATER_THAN
+          - GREATER_THAN_OR_EQUAL
+          - IN
+          - IS_NOT_NULL
+          - IS_NULL
+          - LESS_THAN
+          - LESS_THAN_OR_EQUAL
+          - LIKE
+          - NOT_EQUAL
+          - NOT_IN
+          - NOT_LIKE
+        predicate:
+          description: 'The value or values of the attribute to filter by.
+
+
+            The specific predicate value should match the type of the attribute column and is either a scalar value or array of values depending on the operator.
+
+
+            A single, scalar value for EQUAL, NOT_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN, LESS_THAN_OR_EQUAL, CONTAINS, LIKE, NOT_LIKE.
+
+
+            LIKE and NOT_LIKE perform case insensitive matches on a string and use % wildcards to perform partial matching.
+
+
+            An array of values for IN, NOT_IN, ANY, BETWEEN.
+
+
+            BETWEEN takes an array of two arguments, the inclusive lower and upper bounds.
+
+
+            The predicate is ignored for IS_NULL, IS_NOT_NULL, which accept null or empty object as arguments.'
+          anyOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items:
+              anyOf:
+              - type: string
+              - type: number
+              - type: boolean
+      description: Filters to apply to the query
+    AttributeColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - attributeName
+        - ordinal
+        type: object
+        properties:
+          attributeName:
+            type: string
+            description: Name of the attribute field this column represents
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    TraceEventsResponse:
+      required:
+      - metadata
+      - rows
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/QueryMetadata'
+        rows:
+          type: array
+          description: 'Result rows, one array per event. Cells are positional: the value at index i corresponds to `metadata.columns[i]`, and its JSON type follows that column''s type (string, number, boolean, or null). Rows are not keyed by column name.'
+          example:
+          - - cortexapps/brain-backend
+            - 42
+            - '2026-01-15T09:30:00'
+          - - cortexapps/brain-app
+            - 7
+            - null
+          items:
+            type: array
+            description: 'Result rows, one array per event. Cells are positional: the value at index i corresponds to `metadata.columns[i]`, and its JSON type follows that column''s type (string, number, boolean, or null). Rows are not keyed by column name.'
+            example:
+            - - cortexapps/brain-backend
+              - 42
+              - '2026-01-15T09:30:00'
+            - - cortexapps/brain-app
+              - 7
+              - null
+            items:
+              type: object
+              description: 'Result rows, one array per event. Cells are positional: the value at index i corresponds to `metadata.columns[i]`, and its JSON type follows that column''s type (string, number, boolean, or null). Rows are not keyed by column name.'
+              example:
+              - - cortexapps/brain-backend
+                - 42
+                - '2026-01-15T09:30:00'
+              - - cortexapps/brain-app
+                - 7
+                - null
+    MetricAggregateColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - aggregationFunction
+        - metricKey
+        - ordinal
+        type: object
+        properties:
+          aggregationFunction:
+            type: string
+            description: Type of aggregation function applied to the metric
+            enum:
+            - SUM
+            - AVG
+            - COUNT
+            - RATIO
+            - MIN
+            - MAX
+            - P50
+            - P95
+            - RANKING
+            - COLLECT
+            - COLLECT_UNIQUE
+            - COUNT_UNIQUE
+            - LATEST
+          metricKey:
+            type: string
+            description: Unique identifier of the metric being aggregated
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    EntityReferenceColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - attributeName
+        - entityType
+        - factScope
+        - ordinal
+        type: object
+        properties:
+          attributeName:
+            type: string
+            description: Name of the attribute that references the entity
+          entityType:
+            type: string
+            description: Type of entity being referenced (e.g., 'user', 'team', 'service')
+          factScope:
+            type: string
+            description: Whether sibling rows under this grouping hold disjoint or overlapping facts. SHARED_ACROSS_ROWS means the grouping fans out (e.g. a repo maps to many entities), so the grouped values share underlying records and do not sum to the total; UNIQUE_PER_ROW means each row's values are its own and are additive.
+            enum:
+            - UNIQUE_PER_ROW
+            - SHARED_ACROSS_ROWS
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    TraceEventsRequest:
+      required:
+      - attributes
+      - endDate
+      - filters
+      - limit
+      - orderBy
+      - source
+      - startDate
+      type: object
+      properties:
+        attributes:
+          type: array
+          description: List of attribute names to include in results. Empty returns all attributes.
+          items:
+            type: string
+            description: List of attribute names to include in results. Empty returns all attributes.
+        daysOfWeek:
+          uniqueItems: true
+          type: array
+          description: 'Optional day-of-week restriction (ISO: Monday=1..Sunday=7). When set, only events whose time attribute falls on one of these days are returned (e.g. [1,2,3,4,5] excludes weekends).'
+          items:
+            type: integer
+            description: 'Optional day-of-week restriction (ISO: Monday=1..Sunday=7). When set, only events whose time attribute falls on one of these days are returned (e.g. [1,2,3,4,5] excludes weekends).'
+            format: int32
+        endDate:
+          type: string
+          description: End of the time range to query
+          format: date-time
+        filters:
+          type: array
+          description: Filters to apply to the query
+          items:
+            $ref: '#/components/schemas/AttributeFilterObject'
+        limit:
+          type: integer
+          description: Maximum number of results to return (max 500)
+          format: int32
+        nextPage:
+          type: string
+          description: Pagination cursor from a previous response
+        orderBy:
+          type: array
+          description: Ordering specification for results
+          items:
+            $ref: '#/components/schemas/OrderBy'
+        source:
+          type: string
+          description: Data source to query (e.g., 'pull_requests', 'deployments')
+        startDate:
+          type: string
+          description: Start of the time range to query
+          format: date-time
+        timeAttribute:
+          type: string
+          description: Override the default time attribute for time-based filtering
+    QueryMetadata:
+      required:
+      - columns
+      type: object
+      properties:
+        columns:
+          type: array
+          description: List of column definitions describing each field in the result rows
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/AggregatedAttributeColumn'
+            - $ref: '#/components/schemas/AttributeColumn'
+            - $ref: '#/components/schemas/EntityReferenceColumn'
+            - $ref: '#/components/schemas/MetricAggregateColumn'
+            - $ref: '#/components/schemas/MetricValueColumn'
+            - $ref: '#/components/schemas/TimeWindowColumn'
+            - $ref: '#/components/schemas/UrlColumn'
+        nextPage:
+          type: string
+          description: Cursor for the next page, or null when this is the last page. Pass it back as the request's nextPage.
+      description: Query metadata describing the structure of returned columns
+    UrlColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - attributeName
+        - ordinal
+        type: object
+        properties:
+          attributeName:
+            type: string
+            description: Name of the attribute containing the URL
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    AggregatedAttributeColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - aggregationFunction
+        - attributeName
+        - ordinal
+        - resultType
+        type: object
+        properties:
+          aggregationFunction:
+            type: string
+            description: Type of aggregation function applied to the attribute
+            enum:
+            - SUM
+            - AVG
+            - COUNT
+            - RATIO
+            - MIN
+            - MAX
+            - P50
+            - P95
+            - RANKING
+            - COLLECT
+            - COLLECT_UNIQUE
+            - COUNT_UNIQUE
+            - LATEST
+          attributeName:
+            type: string
+            description: Name of the attribute field this column aggregates
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+          resultType:
+            type: string
+            description: Type of the produced cell rather than of the underlying attribute
+            enum:
+            - STRING
+            - BOOLEAN
+            - INTEGER
+            - DECIMAL
+            - DOUBLE
+            - DATE
+            - TREE
+            - DATETIME
+            - JSON
+            - ARRAY
+            - ENUM
+            - UNSUPPORTED
+    OrderBy:
+      required:
+      - attribute
+      - direction
+      type: object
+      properties:
+        attribute:
+          type: string
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+      description: Ordering specification for results
+    MetricValueColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - metricKey
+        - ordinal
+        type: object
+        properties:
+          metricKey:
+            type: string
+            description: Unique identifier of the metric this column represents
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    Column:
+      required:
+      - alias
+      - name
+      - ordinal
+      - type
+      type: object
+      properties:
+        alias:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        name:
+          type: string
+        ordinal:
+          type: integer
+          format: int32
+        type:
+          type: string
+      description: List of column definitions describing each field in the result rows
+      discriminator:
+        propertyName: type
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    TimeWindowColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - ordinal
+        - windowSize
+        type: object
+        properties:
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+          windowSize:
+            type: object
+            properties:
+              nano:
+                type: integer
+                format: int32
+              negative:
+                type: boolean
+              positive:
+                type: boolean
+              seconds:
+                type: integer
+                format: int64
+              units:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dateBased:
+                      type: boolean
+                    duration:
+                      type: object
+                      properties:
+                        nano:
+                          type: integer
+                          format: int32
+                        negative:
+                          type: boolean
+                        positive:
+                          type: boolean
+                        seconds:
+                          type: integer
+                          format: int64
+                        zero:
+                          type: boolean
+                    durationEstimated:
+                      type: boolean
+                    timeBased:
+                      type: boolean
+              zero:
+                type: boolean
+            description: Duration of the time window represented by this column
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

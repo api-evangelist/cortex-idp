@@ -1,0 +1,566 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex [Integrations] Datadog API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: '[Integrations] Datadog'
+paths:
+  /api/v1/datadog/configuration:
+    post:
+      operationId: DatadogSaveConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatadogConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseDatadogConfiguration'
+          description: Successfully added configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add a single configuration
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/datadog/configuration/validate:
+    post:
+      operationId: DatadogValidateAllConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleIntegrationConfigValidation'
+          description: Successfully validated all configurations
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate all configurations
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/datadog/configuration/validate/{alias}:
+    post:
+      operationId: DatadogValidateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationConfigValidation'
+          description: Successfully validated configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate a configuration
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/datadog/configuration/{alias}:
+    delete:
+      operationId: DatadogRemoveConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseDatadogConfiguration'
+          description: Successfully deleted configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a configuration
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: DatadogGetConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatadogConfiguration'
+          description: Successfully found configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a configuration
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+    put:
+      description: 'WARNING: Updating aliases for configurations or changing the default configuration could cause entity YAMLs that use this integration to break.'
+      operationId: DatadogUpdateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatadogUpdateConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseDatadogConfiguration'
+          description: Successfully updated configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update a configuration
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/datadog/configurations:
+    delete:
+      operationId: DatadogRemoveAllConfigurations
+      responses:
+        '200':
+          description: Successfully deleted all configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete all configurations
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: DatadogListConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseDatadogConfiguration'
+          description: Successfully found configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve configurations
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+    post:
+      operationId: DatadogSaveConfigurations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurationsRequestDatadogConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleConfigurationsResponseDatadogConfiguration'
+          description: Successfully added configurations
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add multiple configurations
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/datadog/default-configuration:
+    get:
+      operationId: DatadogGetDefaultConfiguration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatadogConfiguration'
+          description: Successfully found default configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve default configuration
+      tags:
+      - '[Integrations] Datadog'
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    DatadogUpdateConfigurationRequest:
+      required:
+      - alias
+      - environments
+      - isDefault
+      type: object
+      properties:
+        alias:
+          type: string
+        apiKey:
+          type: string
+          description: Omit to keep the current API key.
+        appKey:
+          type: string
+          description: Omit to keep the current application key.
+        customSubdomain:
+          type:
+          - string
+          - 'null'
+          description: Omit to keep the current custom subdomain, or send null to remove it.
+        environments:
+          type: array
+          items:
+            type: string
+        isDefault:
+          type: boolean
+        region:
+          type: string
+          description: Omit to keep the current region.
+          enum:
+          - EU1
+          - US1
+          - US3
+          - US5
+          - US1_FED
+    ConfigurationsResponseDatadogConfiguration:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatadogConfiguration'
+    IntegrationConfigValidation:
+      required:
+      - isValid
+      type: object
+      properties:
+        alias:
+          type: string
+        isValid:
+          type: boolean
+        message:
+          type: string
+    DatadogConfiguration:
+      required:
+      - alias
+      - environments
+      - isDefault
+      - lastFourApiKey
+      - lastFourAppKey
+      - region
+      type: object
+      properties:
+        alias:
+          type: string
+        customSubdomain:
+          type: string
+        environments:
+          type: array
+          items:
+            type: string
+        isDefault:
+          type: boolean
+        lastFourApiKey:
+          type: string
+        lastFourAppKey:
+          type: string
+        region:
+          type: string
+          enum:
+          - EU1
+          - US1
+          - US3
+          - US5
+          - US1_FED
+    ConfigurationsRequestDatadogConfigurationRequest:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatadogConfigurationRequest'
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    MultipleIntegrationConfigValidation:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationConfigValidation'
+    MultipleConfigurationsResponseDatadogConfiguration:
+      required:
+      - configurations
+      - skippedConfigurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatadogConfiguration'
+        skippedConfigurations:
+          type: object
+          additionalProperties:
+            type: string
+    DatadogConfigurationRequest:
+      required:
+      - alias
+      - apiKey
+      - appKey
+      - environments
+      - isDefault
+      - region
+      type: object
+      properties:
+        alias:
+          type: string
+        apiKey:
+          type: string
+        appKey:
+          type: string
+        customSubdomain:
+          type: string
+        environments:
+          type: array
+          items:
+            type: string
+        isDefault:
+          type: boolean
+        region:
+          type: string
+          enum:
+          - EU1
+          - US1
+          - US3
+          - US5
+          - US1_FED
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

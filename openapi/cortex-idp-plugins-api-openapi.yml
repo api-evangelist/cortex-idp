@@ -1,0 +1,764 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Plugins API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Plugins
+paths:
+  /api/v1/plugins:
+    get:
+      description: Retrieve a list of all plugins, excluding drafts
+      operationId: listAllPlugins
+      parameters:
+      - in: query
+        name: includeDrafts
+        required: false
+        schema:
+          type: boolean
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginsMetadataResponse'
+          description: List of plugins
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Get all plugins
+      tags:
+      - Plugins
+      x-cortex-mcp-description: List the plugins installed in Cortex, with their tags, names and contexts. Use getPluginByTag for one plugin's full definition, including its HTML source.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: Create a new plugin
+      operationId: createPlugin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePluginRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginMetadata'
+          description: Metadata of the created plugin
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create a plugin
+      tags:
+      - Plugins
+      x-cortex-mcp-description: Create a plugin from its HTML source (blob), with tag, name, contexts (where it shows up, for example {"type":"GLOBAL"}), minimumRoleRequired, isDraft, and optional proxyTag, iconTag and version. Fails if the tag already exists; to change a plugin use updatePlugin or patchPlugin.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/plugins/{tag}:
+    delete:
+      description: Delete a plugin by tag
+      operationId: deletePlugin
+      parameters:
+      - description: Unique identifier for the plugin
+        in: path
+        name: tag
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Plugin deleted
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Plugin not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a plugin
+      tags:
+      - Plugins
+      x-cortex-mcp-enabled: 'false'
+    get:
+      description: Retrieve the metadata of a plugin by tag
+      operationId: getPluginByTag
+      parameters:
+      - description: Unique identifier for the plugin
+        in: path
+        name: tag
+        required: true
+        schema:
+          type: string
+      - description: When true, returns the plugin blob. Defaults to false.
+        in: query
+        name: includeBlob
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginMetadataWithBlob'
+          description: Metadata of the plugin
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Plugin not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Get plugin by tag
+      tags:
+      - Plugins
+      x-cortex-mcp-description: Get one plugin's full definition by tag, including its HTML source (blob). Read this before updatePlugin, which replaces the whole plugin.
+      x-cortex-mcp-enabled: 'true'
+    patch:
+      description: Partially update plugin by tag
+      operationId: patchPlugin
+      parameters:
+      - description: Unique identifier for the plugin
+        in: path
+        name: tag
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchPluginRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginMetadataWithBlob'
+          description: Plugin updated successfully
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid input, such as malformed tag or invalid metadata
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Plugin with the specified tag not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Patch a plugin
+      tags:
+      - Plugins
+      x-cortex-mcp-description: Change only the fields you send on a plugin, found by tag. Omitted fields stay as they are, and an explicit null clears a field that can be null. The response includes the HTML blob only if the blob was changed. Returns 404 if the plugin does not exist. To replace the whole plugin, use updatePlugin.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: Replace an existing plugin by tag
+      operationId: updatePlugin
+      parameters:
+      - description: Unique identifier for the plugin
+        in: path
+        name: tag
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePluginRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PluginMetadata'
+          description: Metadata of the replaced plugin
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Plugin not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Replace a plugin
+      tags:
+      - Plugins
+      x-cortex-mcp-description: Replace a plugin, found by tag, with the full definition in the request, including its HTML blob. Fields you omit that can be null are cleared. Returns 404 if the plugin does not exist. To change only some fields, use patchPlugin.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    PluginMetadataWithBlob:
+      required:
+      - contexts
+      - isDraft
+      - lastUpdated
+      - minimumRoleRequired
+      - name
+      - tag
+      type: object
+      properties:
+        blob:
+          type: string
+          description: The raw source code of the plugin; only returned if the blob is updated as part of the request.
+        contexts:
+          type: array
+          description: 'Which contexts the plugin should execute/show up in, e.g. `{ "type": "GLOBAL" }`'
+          items:
+            $ref: '#/components/schemas/CortexPluginContext'
+        createdBy:
+          $ref: '#/components/schemas/CortexUserDefinition'
+        description:
+          type: string
+          description: Description of the plugin
+        iconTag:
+          type: string
+          description: Icon tag for the plugin
+        isDraft:
+          type: boolean
+          description: Whether the plugin is generally available or not
+        lastUpdated:
+          type: string
+          description: When the plugin was last updated
+        minimumRoleRequired:
+          type: string
+          description: The minimum role required to view the plugin, e.g. `VIEWER`, `USER`, `MANAGER`, `OWNER`, or the tag for a custom role. Learn more about each permission in our [docs](https://docs.cortex.io/docs/walkthroughs/workspace-settings/permissioning#roles-in-cortex).
+        name:
+          type: string
+          description: Display name of the plugin
+        proxyTag:
+          type: string
+          description: The identifier of the proxy to use for requests from this plugin
+        tag:
+          type: string
+          description: Unique identifier for the plugin
+        version:
+          type: string
+          description: The version of the plugin
+    CreatePluginRequest:
+      required:
+      - blob
+      - contexts
+      - isDraft
+      - minimumRoleRequired
+      - name
+      - tag
+      type: object
+      properties:
+        blob:
+          type: string
+          description: The raw source code of the plugin. This should be an HTML file
+        contexts:
+          type: array
+          description: 'Which contexts the plugin should execute/show up in, e.g. `{ "type": "GLOBAL" }`'
+          items:
+            $ref: '#/components/schemas/CortexPluginContext'
+        description:
+          type: string
+          description: Description of the plugin
+        iconTag:
+          type: string
+          description: Icon tag for the plugin
+        isDraft:
+          type: boolean
+          description: Whether the plugin is generally available or not
+        minimumRoleRequired:
+          type: string
+          description: The minimum role required to view the plugin, e.g. `VIEWER`, `USER`, `MANAGER`, `OWNER`, or the tag for a custom role. Learn more about each permission in our [docs](https://docs.cortex.io/docs/walkthroughs/workspace-settings/permissioning#roles-in-cortex).
+        name:
+          type: string
+          description: Display name of the plugin
+        proxyTag:
+          type: string
+          description: The identifier of the proxy to use for requests from this plugin
+        tag:
+          type: string
+          description: Unique identifier for the plugin
+        version:
+          type: string
+          description: The version of the plugin
+    DOMAIN_FILTER:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EntityFilter'
+      - type: object
+        properties:
+          entityGroupFilter:
+            $ref: '#/components/schemas/EntityGroupFilterDTO'
+    UpdatePluginRequest:
+      required:
+      - blob
+      - contexts
+      - isDraft
+      - minimumRoleRequired
+      - name
+      type: object
+      properties:
+        blob:
+          type: string
+          description: The raw source code of the plugin. This should be an HTML file
+        contexts:
+          type: array
+          description: 'Which contexts the plugin should execute/show up in, e.g. `{ "type": "GLOBAL" }`'
+          items:
+            $ref: '#/components/schemas/CortexPluginContext'
+        description:
+          type: string
+          description: Description of the plugin
+        iconTag:
+          type: string
+          description: Icon tag for the plugin
+        isDraft:
+          type: boolean
+          description: Whether the plugin is generally available or not
+        minimumRoleRequired:
+          type: string
+          description: The minimum role required to view the plugin, e.g. `VIEWER`, `USER`, `MANAGER`, `OWNER`, or the tag for a custom role. Learn more about each permission in our [docs](https://docs.cortex.io/docs/walkthroughs/workspace-settings/permissioning#roles-in-cortex).
+        name:
+          type: string
+          description: Display name of the plugin
+        proxyTag:
+          type: string
+          description: The identifier of the proxy to use for requests from this plugin
+        version:
+          type: string
+          description: The version of the plugin
+    PluginsMetadataResponse:
+      required:
+      - page
+      - plugins
+      - total
+      - totalPages
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        plugins:
+          type: array
+          items:
+            $ref: '#/components/schemas/PluginMetadata'
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    PatchPluginRequest:
+      type: object
+      properties:
+        blob:
+          type:
+          - string
+          - 'null'
+          description: The raw source code of the plugin. This should be an HTML file
+        contexts:
+          type:
+          - array
+          - 'null'
+          description: 'Which contexts the plugin should execute/show up in, e.g. `{ "type": "GLOBAL" }`'
+          items:
+            $ref: '#/components/schemas/CortexPluginContext'
+        description:
+          type:
+          - string
+          - 'null'
+          description: Description of the plugin
+        iconTag:
+          type:
+          - string
+          - 'null'
+          description: Icon tag for the plugin
+        isDraft:
+          type:
+          - boolean
+          - 'null'
+          description: Whether the plugin is generally available or not
+        minimumRoleRequired:
+          type:
+          - string
+          - 'null'
+          description: The minimum role required to view the plugin, e.g. `VIEWER`, `USER`, `MANAGER`, `OWNER`, or custom role tags.
+        name:
+          type:
+          - string
+          - 'null'
+          description: Display name of the plugin
+        proxyTag:
+          type:
+          - string
+          - 'null'
+          description: The identifier of the proxy to use for requests from this plugin
+        version:
+          type: string
+          description: The version of the plugin
+    CortexPluginContext:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      description: 'Which contexts the plugin should execute/show up in, e.g. `{ "type": "GLOBAL" }`'
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/ENTITY'
+      - $ref: '#/components/schemas/GLOBAL'
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    ENTITY:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CortexPluginContext'
+      - type: object
+        properties:
+          entityFilter:
+            $ref: '#/components/schemas/EntityFilter'
+    CortexUserDefinition:
+      required:
+      - dateCreated
+      - email
+      - name
+      - oauthUserId
+      - tenantId
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+        email:
+          type: string
+        id:
+          type: integer
+          format: int64
+        lastLogin:
+          type: string
+          format: date-time
+        name:
+          type: string
+        oauthUserId:
+          type: string
+        tenantId:
+          type: integer
+          format: int64
+        timezone:
+          type: string
+      description: The creator of the plugin. Null if created via API.
+    EntityTypeFilter:
+      required:
+      - include
+      - providers
+      - types
+      type: object
+      properties:
+        include:
+          type: boolean
+        providers:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            enum:
+            - AWS
+            - GCP
+            - AZURE
+        types:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    PluginMetadata:
+      required:
+      - contexts
+      - isDraft
+      - lastUpdated
+      - minimumRoleRequired
+      - name
+      - tag
+      type: object
+      properties:
+        contexts:
+          type: array
+          description: 'Which contexts the plugin should execute/show up in, e.g. `{ "type": "GLOBAL" }`'
+          items:
+            $ref: '#/components/schemas/CortexPluginContext'
+        createdBy:
+          $ref: '#/components/schemas/CortexUserDefinition'
+        description:
+          type: string
+          description: Description of the plugin
+        iconTag:
+          type: string
+          description: Icon tag for the plugin
+        isDraft:
+          type: boolean
+          description: Whether the plugin is generally available or not
+        lastUpdated:
+          type: string
+          description: When the plugin was last updated
+        minimumRoleRequired:
+          type: string
+          description: The minimum role required to view the plugin, e.g. `VIEWER`, `USER`, `MANAGER`, `OWNER`, or the tag for a custom role. Learn more about each permission in our [docs](https://docs.cortex.io/docs/walkthroughs/workspace-settings/permissioning#roles-in-cortex).
+        name:
+          type: string
+          description: Display name of the plugin
+        proxyTag:
+          type: string
+          description: The identifier of the proxy to use for requests from this plugin
+        tag:
+          type: string
+          description: Unique identifier for the plugin
+        version:
+          type: string
+          description: The version of the plugin
+    EntityGroupFilterDTO:
+      required:
+      - entityGroups
+      - excludedEntityGroups
+      type: object
+      properties:
+        entityGroups:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        excludedEntityGroups:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    GLOBAL:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CortexPluginContext'
+    RESOURCE_FILTER:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EntityFilter'
+      - type: object
+        properties:
+          entityGroupFilter:
+            $ref: '#/components/schemas/EntityGroupFilterDTO'
+          typeFilter:
+            $ref: '#/components/schemas/EntityTypeFilter'
+    COMPOUND_FILTER:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EntityFilter'
+      - type: object
+        properties:
+          cqlFilter:
+            $ref: '#/components/schemas/CQL_FILTER'
+          entityGroupFilter:
+            $ref: '#/components/schemas/EntityGroupFilterDTO'
+          typeFilter:
+            $ref: '#/components/schemas/EntityTypeFilter'
+    TEAM_FILTER:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EntityFilter'
+      - type: object
+        properties:
+          entityGroupFilter:
+            $ref: '#/components/schemas/EntityGroupFilterDTO'
+    EntityFilter:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - CQL_FILTER
+          - SERVICE_FILTER
+          - RESOURCE_FILTER
+          - DOMAIN_FILTER
+          - TEAM_FILTER
+          - COMPOUND_FILTER
+      discriminator:
+        propertyName: type
+      oneOf:
+      - $ref: '#/components/schemas/CQL_FILTER'
+      - $ref: '#/components/schemas/SERVICE_FILTER'
+      - $ref: '#/components/schemas/RESOURCE_FILTER'
+      - $ref: '#/components/schemas/DOMAIN_FILTER'
+      - $ref: '#/components/schemas/TEAM_FILTER'
+      - $ref: '#/components/schemas/COMPOUND_FILTER'
+    CQL_FILTER:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EntityFilter'
+      - required:
+        - category
+        - query
+        type: object
+        properties:
+          category:
+            type: string
+            enum:
+            - Service
+            - Resource
+            - Domain
+            - Team
+            - Generic
+          cqlVersion:
+            type: string
+            enum:
+            - V1
+            - V2
+          query:
+            type: string
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    SERVICE_FILTER:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/EntityFilter'
+      - type: object
+        properties:
+          entityGroupFilter:
+            $ref: '#/components/schemas/EntityGroupFilterDTO'
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

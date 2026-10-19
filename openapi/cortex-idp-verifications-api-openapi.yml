@@ -1,0 +1,848 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Verifications API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Verifications
+paths:
+  /api/v1/verification-periods:
+    get:
+      description: Returns every verification period in the workspace, open or closed, with a count of how many entities are outstanding.
+      operationId: listVerificationPeriods
+      parameters:
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - description: Return only periods that are open today (true) or only those that are not (false). Omit for all periods.
+        example: true
+        in: query
+        name: isActive
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVerificationPeriods'
+          description: All verification periods
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve verification periods
+      tags:
+      - Verifications
+      x-cortex-mcp-description: List verification periods, open or closed, each with a count of the entities that are still outstanding. Pass isActive=true for the periods that are open today. Call this first to find the periodCid that the verification tools need.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: Opens a verification campaign over the entities its scope selects. Every selected entity gets a PENDING verification immediately, except under a cqlQuery scope, which is evaluated in the background, so the counts read zero until it finishes.
+      operationId: createVerificationPeriod
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertVerificationPeriodRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationPeriodSummary'
+          description: The created verification period
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: endDate is before startDate, or a named role does not exist
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create a verification period
+      tags:
+      - Verifications
+      x-cortex-mcp-description: Create a verification period (campaign) with a name, startDate, endDate and scope. The scope selects entities by types, entityGroups, excludedEntityGroups and/or cqlQuery; an empty scope covers every entity. Every entity in scope gets a PENDING verification right away. A cqlQuery scope is evaluated in the background, so the counts show zero until it finishes. Optional requiredRoles, requiredCustomRoleTags and requiredTeamRoleTags limit who may verify. Each call creates a new period and is not idempotent.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/verification-periods/{periodCid}:
+    delete:
+      description: Closes the period and stops it appearing in reads, along with the verifications recorded against it. The CID is not reissued, so the period cannot be restored through this API.
+      operationId: deleteVerificationPeriod
+      parameters:
+      - description: The CID of the verification period
+        example: vp0a1b2c3d4e5f6789
+        in: path
+        name: periodCid
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: The period was deleted
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Verification period not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a verification period
+      tags:
+      - Verifications
+      x-cortex-mcp-description: Cortex Verification Periods API - Read the verification periods a workspace runs, their schedule and scope, and how many entities are still outstanding
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: retrieveVerificationPeriod
+      parameters:
+      - description: The CID of the verification period
+        example: vp0a1b2c3d4e5f6789
+        in: path
+        name: periodCid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationPeriodSummary'
+          description: The verification period
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Verification period not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a verification period
+      tags:
+      - Verifications
+      x-cortex-mcp-description: Get one verification period by its CID, including its schedule, the entity filter that sets its scope, who may verify, and how many entities are outstanding. Use listVerificationPeriods to find the CID.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: 'Replaces the period in full; omitted optional fields are cleared rather than left alone. Changing the scope changes who owes a verification: widening it adds PENDING entries, and narrowing it removes entries along with any answer already recorded for them.'
+      operationId: updateVerificationPeriod
+      parameters:
+      - description: The CID of the verification period
+        example: vp0a1b2c3d4e5f6789
+        in: path
+        name: periodCid
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertVerificationPeriodRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerificationPeriodSummary'
+          description: The updated verification period
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: endDate is before startDate, or a named role does not exist
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Verification period not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update a verification period
+      tags:
+      - Verifications
+      x-cortex-mcp-description: 'Update a verification period by its CID. This replaces the period in full, so optional fields that are left out are cleared; call retrieveVerificationPeriod first and send the complete definition. Changing the scope is destructive: widening it adds PENDING entries, and narrowing it deletes the entries for removed entities, including answers already recorded.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/verifications:
+    get:
+      description: Returns every verification in the workspace, one entry per entity and verification period, including entities that have not been verified yet. Each entry names the entity it belongs to, and who verified it once someone has.
+      operationId: listVerifications
+      parameters:
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - description: Return only verifications belonging to this verification period
+        example: vp0a1b2c3d4e5f6789
+        in: query
+        name: periodCid
+        required: false
+        schema:
+          type: string
+      - description: Return only verifications in this state
+        example: PENDING
+        in: query
+        name: status
+        required: false
+        schema:
+          type: string
+          enum:
+          - PENDING
+          - VERIFIED_CORRECT
+          - VERIFIED_INCORRECT
+      - description: Return only verifications whose period is open today (true) or only those whose period is not (false). Omit for all periods.
+        example: true
+        in: query
+        name: isActive
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListVerifications'
+          description: A page of verifications
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve verifications
+      tags:
+      - Verifications
+      x-cortex-mcp-description: List verifications across the catalog, one entry per entity and verification period, including entities nobody has verified yet. Each entry names the entity, the period it belongs to, the status (PENDING, VERIFIED_CORRECT, VERIFIED_INCORRECT), and who verified it. Filter by periodCid, status, or isActive=true for periods that are open today. Use this to answer who still owes a verification, and which entities were reported incorrect.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: 'Answers many entity-and-period pairs in one call. Each entry is answered on its own merits: an entity the caller may not verify is returned under `errors` while the rest are still recorded, because eligibility depends on who owns each entity. Read `errors` on every response -- a 200 does not mean every entry was recorded.'
+      operationId: bulkVerifyEntities
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkVerifyRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkVerifyResponse'
+          description: The entries that were recorded, and the entries that were not
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Verify entities in bulk
+      tags:
+      - Verifications
+      x-cortex-mcp-description: Cortex Verifications API - Read who has verified which entities, for which verification period, and which entities are still outstanding
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    BulkVerifyResponse:
+      required:
+      - errors
+      - verifications
+      type: object
+      properties:
+        errors:
+          type: array
+          description: The entries that were not recorded, each naming the entity and period it came from
+          items:
+            $ref: '#/components/schemas/BulkVerifyError'
+        verifications:
+          type: array
+          description: The answers that were recorded
+          items:
+            $ref: '#/components/schemas/BulkVerifyResult'
+      description: What a bulk verify recorded, and what it declined to record
+    VerificationPeriod:
+      required:
+      - cid
+      - endDate
+      - isActive
+      - name
+      - startDate
+      type: object
+      properties:
+        cid:
+          type: string
+          description: Stable identifier for the period
+          example: vp0a1b2c3d4e5f6789
+        description:
+          type: string
+          description: What owners are being asked to confirm
+        endDate:
+          type: string
+          description: When the period closes
+          format: date-time
+        isActive:
+          type: boolean
+          description: Whether the period is open today, and so still accepting verifications
+          example: true
+        name:
+          type: string
+          description: Display name
+          example: Q3 Ownership Review
+        startDate:
+          type: string
+          description: When the period opens
+          format: date-time
+      description: A time-boxed entity verification campaign
+    VerificationCounts:
+      required:
+      - pending
+      - verifiedCorrect
+      - verifiedIncorrect
+      type: object
+      properties:
+        pending:
+          type: integer
+          description: Entities not yet verified
+          format: int64
+          example: 12
+        verifiedCorrect:
+          type: integer
+          description: Entities confirmed correct
+          format: int64
+          example: 40
+        verifiedIncorrect:
+          type: integer
+          description: Entities flagged incorrect
+          format: int64
+          example: 3
+      description: Entity counts for one verification period
+    VerificationEntitySummary:
+      required:
+      - cid
+      - name
+      - tag
+      - type
+      type: object
+      properties:
+        cid:
+          type: string
+          description: Stable identifier
+          example: en0a1b2c3d4e5f6789
+        name:
+          type: string
+          description: Display name
+          example: Payments API
+        tag:
+          type: string
+          description: The entity's tag
+          example: payments-api
+        type:
+          type: string
+          description: The entity's type
+          example: service
+      description: Enough of an entity to identify it and look it up
+    BulkVerifyError:
+      required:
+      - code
+      - entity
+      - message
+      - periodCid
+      type: object
+      properties:
+        code:
+          type: string
+          description: Why the entry was not recorded. Branch on this rather than on the message.
+          example: NOT_AN_OWNER
+          enum:
+          - ENTITY_NOT_FOUND
+          - PERIOD_NOT_FOUND
+          - ENTITY_NOT_IN_PERIOD_SCOPE
+          - DUPLICATE_ENTRY
+          - STATUS_NOT_AN_ANSWER
+          - REASON_REQUIRED
+          - PERIOD_NOT_OPEN
+          - MISSING_REQUIRED_ROLE
+          - NOT_AN_OWNER
+        entity:
+          type: string
+          description: The entity, as the request named it
+        message:
+          type: string
+          description: The reason in words, fixed to the code rather than written per entry
+          example: You do not own this entity
+        periodCid:
+          type: string
+          description: The verification period
+      description: One entry that was not recorded, and why
+    EntityVerificationWithEntity:
+      required:
+      - entity
+      - period
+      - status
+      type: object
+      properties:
+        entity:
+          $ref: '#/components/schemas/VerificationEntitySummary'
+        period:
+          $ref: '#/components/schemas/VerificationPeriod'
+        reason:
+          type: string
+          description: Why the entity was marked incorrect, when the verifier supplied one
+          example: Ownership moved to the payments team
+        status:
+          type: string
+          description: PENDING until someone verifies the entity for this period, then the answer they gave
+          example: VERIFIED_CORRECT
+          enum:
+          - PENDING
+          - VERIFIED_CORRECT
+          - VERIFIED_INCORRECT
+        verifiedAt:
+          type: string
+          description: When the entity was verified
+          format: date-time
+        verifiedByApiKey:
+          $ref: '#/components/schemas/ApiKeyVerifier'
+        verifiedByUser:
+          $ref: '#/components/schemas/CortexUserSummary'
+      description: One entity's status for one verification period, with the entity named
+    BulkVerifyResult:
+      required:
+      - entity
+      - periodCid
+      - status
+      type: object
+      properties:
+        entity:
+          type: string
+          description: The entity, as the request named it
+        periodCid:
+          type: string
+          description: The verification period
+        reason:
+          type: string
+          description: Why the entity was marked incorrect, when a reason was given
+        status:
+          type: string
+          description: The answer recorded
+          example: VERIFIED_CORRECT
+          enum:
+          - PENDING
+          - VERIFIED_CORRECT
+          - VERIFIED_INCORRECT
+        verifiedAt:
+          type: string
+          description: When the entity was verified
+          format: date-time
+        verifiedByApiKey:
+          $ref: '#/components/schemas/ApiKeyVerifier'
+        verifiedByUser:
+          $ref: '#/components/schemas/CortexUserSummary'
+      description: One recorded answer
+    BulkVerifyRequest:
+      required:
+      - verifications
+      type: object
+      properties:
+        verifications:
+          type: array
+          description: The answers to record
+          items:
+            $ref: '#/components/schemas/VerifyEntityEntry'
+      description: Answers for many entity-and-period pairs
+    ListVerificationPeriods:
+      required:
+      - page
+      - periods
+      - total
+      - totalPages
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/VerificationPeriodSummary'
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+      description: A page of verification periods
+    ApiKeyVerifier:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The key's name, or null when it has none
+          example: ci-bot
+      description: An API key that verified an entity
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    CortexUserSummary:
+      required:
+      - email
+      - name
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+      description: The user who verified the entity. Null while the status is PENDING, and null when a global API key verified it.
+    UpsertVerificationPeriodRequest:
+      required:
+      - endDate
+      - name
+      - requiredCustomRoleTags
+      - requiredRoles
+      - requiredTeamRoleTags
+      - scope
+      - startDate
+      type: object
+      properties:
+        description:
+          type: string
+          description: What owners are being asked to confirm
+        endDate:
+          type: string
+          description: The day the period closes, inclusive
+          format: date-time
+        name:
+          type: string
+          description: Display name
+          example: Q3 Ownership Review
+        reasonRequired:
+          type: boolean
+          description: Whether a reason is required to mark an entity incorrect. Marking an entity correct never requires one. Defaults to false.
+          example: false
+          default: false
+        requiredCustomRoleTags:
+          type: array
+          description: Tags of custom Cortex roles a user must hold to verify
+          items:
+            type: string
+            description: Tags of custom Cortex roles a user must hold to verify
+        requiredRoles:
+          type: array
+          description: Cortex roles a user must hold to verify. Empty means any owner of the entity may verify.
+          example:
+          - OWNER
+          items:
+            type: string
+            description: Cortex roles a user must hold to verify. Empty means any owner of the entity may verify.
+            example: '["OWNER"]'
+            enum:
+            - VIEWER
+            - USER
+            - MANAGER
+            - API
+            - OWNER
+        requiredTeamRoleTags:
+          type: array
+          description: Tags of team roles a user must hold on a team that owns the entity in order to verify
+          items:
+            type: string
+            description: Tags of team roles a user must hold on a team that owns the entity in order to verify
+        scope:
+          $ref: '#/components/schemas/VerificationScope'
+        startDate:
+          type: string
+          description: The day the period opens, inclusive
+          format: date-time
+      description: A verification period to create, or the full replacement state for one
+    VerificationPeriodSummary:
+      required:
+      - cid
+      - counts
+      - endDate
+      - isActive
+      - name
+      - reasonRequired
+      - requiredCustomRoleTags
+      - requiredRoles
+      - requiredTeamRoleTags
+      - scope
+      - startDate
+      type: object
+      properties:
+        cid:
+          type: string
+          description: Stable identifier, usable wherever a period CID is accepted
+          example: vp0a1b2c3d4e5f6789
+        counts:
+          $ref: '#/components/schemas/VerificationCounts'
+        description:
+          type: string
+          description: What owners are being asked to confirm
+        endDate:
+          type: string
+          description: When the period closes
+          format: date-time
+        isActive:
+          type: boolean
+          description: Whether the period is open today, and so still accepting verifications
+          example: true
+        name:
+          type: string
+          description: Display name
+          example: Q3 Ownership Review
+        reasonRequired:
+          type: boolean
+          description: Whether a reason is required when an entity is marked incorrect
+          example: false
+        requiredCustomRoleTags:
+          type: array
+          description: Tags of custom Cortex roles a user must hold to verify
+          items:
+            type: string
+            description: Tags of custom Cortex roles a user must hold to verify
+        requiredRoles:
+          type: array
+          description: Cortex roles a user must hold to verify
+          example:
+          - OWNER
+          items:
+            type: string
+            description: Cortex roles a user must hold to verify
+            example: '["OWNER"]'
+            enum:
+            - VIEWER
+            - USER
+            - MANAGER
+            - API
+            - OWNER
+        requiredTeamRoleTags:
+          type: array
+          description: Tags of team roles a user must hold on an owning team to verify
+          items:
+            type: string
+            description: Tags of team roles a user must hold on an owning team to verify
+        scope:
+          $ref: '#/components/schemas/VerificationScope'
+        startDate:
+          type: string
+          description: When the period opens
+          format: date-time
+      description: A verification period and how far along it is
+    ListVerifications:
+      required:
+      - page
+      - total
+      - totalPages
+      - verifications
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+        verifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/EntityVerificationWithEntity'
+      description: A page of verifications from across the catalog
+    VerifyEntityEntry:
+      required:
+      - entity
+      - periodCid
+      - status
+      type: object
+      properties:
+        entity:
+          type: string
+          description: The entity's tag or CID
+          example: payments-api
+        periodCid:
+          type: string
+          description: The CID of the verification period
+          example: vp0a1b2c3d4e5f6789
+        reason:
+          type: string
+          description: Why the entity is incorrect. Required when the period sets reasonRequired and the status is VERIFIED_INCORRECT.
+          example: Ownership moved to the payments team
+        status:
+          type: string
+          description: Whether the entity's data is correct. PENDING is not accepted.
+          example: VERIFIED_CORRECT
+          enum:
+          - PENDING
+          - VERIFIED_CORRECT
+          - VERIFIED_INCORRECT
+      description: One entity's answer for one verification period
+    VerificationScope:
+      required:
+      - entityGroups
+      - excludedEntityGroups
+      - types
+      type: object
+      properties:
+        cqlQuery:
+          type: string
+          description: Cover the entities this CQL query returns. Evaluated in the background, so a period created with one reports zero entities until that finishes.
+          example: tag != null
+        entityGroups:
+          uniqueItems: true
+          type: array
+          description: Cover only entities in these entity groups. Empty means every group.
+          items:
+            type: string
+            description: Cover only entities in these entity groups. Empty means every group.
+        excludedEntityGroups:
+          uniqueItems: true
+          type: array
+          description: Exclude entities in these entity groups
+          items:
+            type: string
+            description: Exclude entities in these entity groups
+        types:
+          uniqueItems: true
+          type: array
+          description: Cover only entities of these types. Empty means every type.
+          example:
+          - service
+          items:
+            type: string
+            description: Cover only entities of these types. Empty means every type.
+            example: '["service"]'
+      description: Which entities a verification period covers. An empty scope covers every entity. Combined conditions all have to hold.
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

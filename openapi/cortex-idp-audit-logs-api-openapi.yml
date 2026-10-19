@@ -1,0 +1,344 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Audit Logs API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Audit Logs
+paths:
+  /api/v1/audit-logs:
+    get:
+      description: 'Note: To see the complete list of possible values, please reference the available filter options for audit logs under Settings in the app. API key must have the `View audit logs` permission.'
+      operationId: getAuditLogs
+      parameters:
+      - in: query
+        name: startTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: endTime
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - in: query
+        name: actions
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - CREATE
+            - READ
+            - UPDATE
+            - DELETE
+      - in: query
+        name: objectIdentifiers
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - description: Filter by Cortex object types (CATALOG, SERVICE, TEAM, SCORECARD, etc), integration configurations (AWS_CONFIGURATION, BITBUCKET_CONFIGURATION, etc), and more.
+        in: query
+        name: objectTypes
+        required: false
+        schema:
+          type: string
+          enum:
+          - ACCOUNT_FLAG
+          - ACTIVE_DIRECTORY_CONFIGURATION
+          - ALLOW_LIST_ENTRY
+          - API_KEY
+          - APIIRO_CONFIGURATION
+          - ARGOCD_CONFIGURATION
+          - ATLASSIAN_CONFIGURATION
+          - AWS_CLOUD_CONTROL_TYPE_CONFIGURATION
+          - AWS_CONFIGURATION
+          - AZURE_DEVOPS_CONFIGURATION
+          - AZURE_RESOURCES_CONFIGURATION
+          - BAMBOO_HR_CONFIGURATION
+          - BITBUCKET_CONFIGURATION
+          - BITBUCKET_OAUTH_CONFIGURATION
+          - BITBUCKET_OAUTH_REGISTRATION
+          - BITBUCKET_ONPREM_CONFIGURATION
+          - BITBUCKET_ONPREM_WEBHOOK_SECRET
+          - BITBUCKET_PERSONAL_CONFIGURATION
+          - BITBUCKET_WORKSPACE_ACCESS_TOKEN_CONFIGURATION
+          - BUGSNAG_CONFIGURATION
+          - BUILDKITE_CONFIGURATION
+          - CATALOG
+          - CATALOG_FILTER
+          - CHECKMARX_SAST_CONFIGURATION
+          - CIRCLE_CI_CONFIGURATION
+          - CLICKUP_CONFIGURATION
+          - CODECOV_CONFIGURATION
+          - CORALOGIX_CONFIGURATION
+          - CORTEX_TEAM_ROLES
+          - CORTEX_USER
+          - CORTEX_USER_ROLES
+          - CUSTOM_DATA
+          - CUSTOM_EVENT
+          - CUSTOM_METRICS_CONFIGURATION
+          - CUSTOM_METRICS_DATA
+          - CUSTOM_ROLE
+          - CUSTOM_ROLE_PERMISSIONS
+          - DATADOG_CONFIGURATION
+          - DEPENDENCY
+          - DOMAIN
+          - DYNATRACE_CONFIGURATION
+          - ENGINTEL_SAVED_MODULE
+          - ENTITY_SIDEBAR_CONFIGURATION
+          - ENTITY_TYPE_DEFINITION
+          - ENTITY_VERIFICATION
+          - FIREHYDRANT_CONFIGURATION
+          - GITHUB_APP_CONFIGURATION
+          - GITHUB_APP_INSTALLATION
+          - GITHUB_PERSONAL_TOKEN
+          - GITHUB_WEBHOOK_SECRET
+          - GITLAB_CONFIGURATION
+          - GOOGLE_CONFIGURATION
+          - IDENTITY_MAPPING
+          - INCIDENT_IO_CONFIGURATION
+          - INITIATIVE
+          - INSTANA_CONFIGURATION
+          - INTEGRATION_INSTANCE
+          - JENKINS_CONFIGURATION
+          - JIRA_BASIC_CONFIGURATION
+          - JIRA_CLOUD_SCOPED_CONFIGURATION
+          - JIRA_CONFIGURATION
+          - JIRA_OAUTH_CONFIGURATION
+          - JIRA_OAUTH_REGISTRATION
+          - JIRA_ONPREM_CONFIGURATION
+          - LAUNCHDARKLY_CONFIGURATION
+          - LIGHTSTEP_CONFIGURATION
+          - MEND_SAST_CONFIGURATION
+          - MEND_SCA_CONFIGURATION
+          - MICROSOFT_TEAMS_CONFIGURATION
+          - NEWRELIC_CONFIGURATION
+          - OAUTH_CONFIGURATION
+          - OKTA_CONFIGURATION
+          - OPENAPI_DEFINITION
+          - OPSGENIE_CONFIGURATION
+          - PAGERDUTY_CONFIGURATION
+          - PERSONAL_API_KEY
+          - PLUGIN
+          - PROMETHEUS_CONFIGURATION
+          - RELATIONSHIP_TYPE
+          - RELAY_CONFIGURATION
+          - RESOURCE
+          - ROLLBAR_CONFIGURATION
+          - SCORECARD
+          - SCORECARD_FILTER
+          - SCORECARD_RULE
+          - SCORECARD_RULE_FILTER
+          - SECRET
+          - SECRET_GROUP
+          - SEMGREP_CONFIGURATION
+          - SENTRY_CONFIGURATION
+          - SERVICE
+          - SERVICENOW_CONFIGURATION
+          - SIGNALFX_CONFIGURATION
+          - SLACK_CONFIGURATION
+          - SNYK_CONFIGURATION
+          - SONARQUBE_CONFIGURATION
+          - SUMOLOGIC_CONFIGURATION
+          - TEAM
+          - USER_LABEL_KEY
+          - VERACODE_CONFIGURATION
+          - VERIFICATION_PERIOD
+          - VICTOROPS_CONFIGURATION
+          - WEBHOOK_CONFIGURATION
+          - WIZ_CONFIGURATION
+          - WORKDAY_CONFIGURATION
+          - WORKFLOW
+          - XMATTERS_CONFIGURATION
+      - in: query
+        name: actorTypes
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - API_KEY
+            - PERSONAL_API_KEY
+            - OAUTH2
+            - BACKSTAGE
+            - ANONYMOUS
+            - WORKFLOW_ACTION
+            - USER
+            - SYSTEM
+      - in: query
+        name: actorApiKeyIdentifiers
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - in: query
+        name: actorEmails
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - in: query
+        name: actorIpAddresses
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - in: query
+        name: actorRequestTypes
+        required: false
+        schema:
+          type: string
+          enum:
+          - API_KEY_ENTITY
+          - ATLASSIAN_WEBHOOK
+          - SCORECARD_BADGES
+          - SLACK_COMMAND
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditLogsResponse'
+          description: Successfully retrieved audit logs
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve audit logs
+      tags:
+      - Audit Logs
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    AuditLogsResponse:
+      required:
+      - logs
+      - page
+      - total
+      - totalPages
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogResponse'
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    AuditLogResponse:
+      required:
+      - action
+      - objectIdentifier
+      - objectType
+      - timestamp
+      type: object
+      properties:
+        action:
+          type: string
+          description: Type of action performed
+          enum:
+          - CREATE
+          - UPDATE
+          - DELETE
+        actorIdentifier:
+          type: string
+          description: Readable identifier of the authenticated actor. This could an be OAuth user email, API key identifier, attributed webhook, etc.
+        ipAddress:
+          type: string
+          description: IP address of the actor
+        objectIdentifier:
+          type: string
+          description: Readable identifier of the object acted upon
+        objectType:
+          type: string
+          description: Type of object acted upon
+        timestamp:
+          type: string
+          format: date-time
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

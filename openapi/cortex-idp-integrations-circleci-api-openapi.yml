@@ -1,0 +1,511 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex [Integrations] CircleCI API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: '[Integrations] CircleCI'
+paths:
+  /api/v1/circleci/configuration:
+    post:
+      operationId: CircleCISaveConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CircleCiConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseCircleCiConfiguration'
+          description: Successfully added configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add a single configuration
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/circleci/configuration/validate:
+    post:
+      operationId: CircleCIValidateAllConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleIntegrationConfigValidation'
+          description: Successfully validated all configurations
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate all configurations
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/circleci/configuration/validate/{alias}:
+    post:
+      operationId: CircleCIValidateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationConfigValidation'
+          description: Successfully validated configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate a configuration
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/circleci/configuration/{alias}:
+    delete:
+      operationId: CircleCIRemoveConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseCircleCiConfiguration'
+          description: Successfully deleted configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a configuration
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: CircleCIGetConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CircleCiConfiguration'
+          description: Successfully found configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a configuration
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+    put:
+      description: 'WARNING: Updating aliases for configurations or changing the default configuration could cause entity YAMLs that use this integration to break.'
+      operationId: CircleCIUpdateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CircleCiUpdateConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseCircleCiConfiguration'
+          description: Successfully updated configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update a configuration
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/circleci/configurations:
+    delete:
+      operationId: CircleCIRemoveAllConfigurations
+      responses:
+        '200':
+          description: Successfully deleted all configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete all configurations
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: CircleCIListConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseCircleCiConfiguration'
+          description: Successfully found configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve configurations
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+    post:
+      operationId: CircleCISaveConfigurations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurationsRequestCircleCiConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleConfigurationsResponseCircleCiConfiguration'
+          description: Successfully added configurations
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add multiple configurations
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/circleci/default-configuration:
+    get:
+      operationId: CircleCIGetDefaultConfiguration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CircleCiConfiguration'
+          description: Successfully found default configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve default configuration
+      tags:
+      - '[Integrations] CircleCI'
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    ConfigurationsResponseCircleCiConfiguration:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CircleCiConfiguration'
+    ConfigurationsRequestCircleCiConfigurationRequest:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CircleCiConfigurationRequest'
+    IntegrationConfigValidation:
+      required:
+      - isValid
+      type: object
+      properties:
+        alias:
+          type: string
+        isValid:
+          type: boolean
+        message:
+          type: string
+    CircleCiConfiguration:
+      required:
+      - alias
+      - isDefault
+      - lastFour
+      type: object
+      properties:
+        alias:
+          type: string
+        host:
+          type: string
+        isDefault:
+          type: boolean
+        lastFour:
+          type: string
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    MultipleConfigurationsResponseCircleCiConfiguration:
+      required:
+      - configurations
+      - skippedConfigurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/CircleCiConfiguration'
+        skippedConfigurations:
+          type: object
+          additionalProperties:
+            type: string
+    MultipleIntegrationConfigValidation:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationConfigValidation'
+    CircleCiConfigurationRequest:
+      required:
+      - alias
+      - apiKey
+      - isDefault
+      type: object
+      properties:
+        alias:
+          type: string
+        apiKey:
+          type: string
+        host:
+          type: string
+        isDefault:
+          type: boolean
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    CircleCiUpdateConfigurationRequest:
+      required:
+      - alias
+      - isDefault
+      type: object
+      properties:
+        alias:
+          type: string
+        apiKey:
+          type: string
+        host:
+          type: string
+        isDefault:
+          type: boolean
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

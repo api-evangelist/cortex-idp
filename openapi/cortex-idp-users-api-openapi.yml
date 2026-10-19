@@ -1,0 +1,340 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Users API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Users
+paths:
+  /api/v1/users:
+    get:
+      description: 'Returns every user in your Cortex tenant along with their profile metadata: name, email, join date, and last active timestamp. Intended for access reviews, compliance, and auditing. Role assignments are available from the separate GET /api/v1/users/roles endpoint. Requires the View Roles permission; assign it to a custom role to issue a least-privilege API key for automated reporting.'
+      operationId: getUsers
+      parameters:
+      - description: Filter to specific users by email. Provide a comma-separated list to request multiple users (e.g. ?email=a@acme.com,b@acme.com). Matching is case-insensitive. Omit to return all users.
+        in: query
+        name: email
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersResponse'
+          description: Successfully retrieved users
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Caller does not have the View Roles permission
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List users
+      tags:
+      - Users
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/users/roles:
+    get:
+      description: Returns the role assignments for every user in your Cortex tenant, intended for access reviews and access governance reporting. Each entry lists the user along with their assigned built-in (BASIC) and CUSTOM roles. Requires the View Roles permission; assign it to a custom role to issue a least-privilege API key for automated reporting.
+      operationId: getUserRoleAssignments
+      parameters:
+      - description: Filter to specific users by email. Provide a comma-separated list to request multiple users (e.g. ?email=a@acme.com,b@acme.com). Matching is case-insensitive. Omit to return all users.
+        in: query
+        name: email
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRoleAssignmentsResponse'
+          description: Successfully retrieved user role assignments
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Authentication required
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Caller does not have the View Roles permission
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List user role assignments
+      tags:
+      - Users
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    UserRoleAssignment:
+      required:
+      - email
+      - name
+      - roles
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email address of the user
+        name:
+          type: string
+          description: Display name of the user
+        roles:
+          type: array
+          description: Roles assigned to the user
+          items:
+            $ref: '#/components/schemas/AssignedRole'
+      description: User role assignments for the current page
+    UserRoleAssignmentsResponse:
+      required:
+      - page
+      - total
+      - totalPages
+      - users
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+        users:
+          type: array
+          description: User role assignments for the current page
+          items:
+            $ref: '#/components/schemas/UserRoleAssignment'
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    AssignedRole:
+      required:
+      - type
+      type: object
+      properties:
+        name:
+          type: string
+          description: Display name of the custom role; present only when type is CUSTOM
+        role:
+          type: string
+          description: Name of the built-in role; present only when type is BASIC
+        tag:
+          type: string
+          description: Tag of the custom role; present only when type is CUSTOM
+        type:
+          type: string
+          description: Whether this is a built-in (BASIC) or CUSTOM role
+          enum:
+          - BASIC
+          - CUSTOM
+      description: Roles assigned to the user
+    UsersResponse:
+      required:
+      - page
+      - total
+      - totalPages
+      - users
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+        users:
+          type: array
+          description: Users for the current page
+          items:
+            $ref: '#/components/schemas/User1'
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    User1:
+      required:
+      - email
+      - joinedAt
+      - name
+      type: object
+      properties:
+        email:
+          type: string
+          description: Email address of the user
+        joinedAt:
+          type: string
+          description: When the user was first added to Cortex (join date), as a UTC ISO-8601 instant
+          format: date-time
+          example: '2024-01-15T08:00:00Z'
+        lastActiveAt:
+          type: string
+          description: Last time the user logged in, as a UTC ISO-8601 instant; null if the user has never logged in
+          format: date-time
+          example: '2024-06-10T14:45:00Z'
+        name:
+          type: string
+          description: Display name of the user
+      description: Users for the current page
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

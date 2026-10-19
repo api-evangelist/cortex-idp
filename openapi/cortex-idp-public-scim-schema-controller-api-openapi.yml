@@ -1,0 +1,110 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Public SCIM Schema Controller API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: public-scim-schema-controller
+paths:
+  /scim/v2/Schemas:
+    get:
+      operationId: getSchemas
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      tags:
+      - public-scim-schema-controller
+      x-cortex-mcp-enabled: 'false'
+      summary: Get schemas
+      x-summary-source: derived
+  /scim/v2/Schemas/{id}:
+    get:
+      operationId: getSchema
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      tags:
+      - public-scim-schema-controller
+      x-cortex-mcp-enabled: 'false'
+      summary: Get schema
+      x-summary-source: derived
+components:
+  schemas:
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

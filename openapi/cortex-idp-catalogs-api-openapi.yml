@@ -1,0 +1,415 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Catalogs API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Catalogs
+paths:
+  /api/v1/catalog-pages:
+    get:
+      description: 'Retrieves a list of catalogs.
+
+
+        API key must have the `View catalogs` permission.'
+      operationId: listCatalogPages
+      parameters:
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPageListResponse'
+          description: Successfully retrieved catalogs
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List catalogs
+      tags:
+      - Catalogs
+      x-cortex-mcp-description: List the catalog pages configured in Cortex (the catalogs shown in the sidebar, such as Services or Domains), with their slugs and how each one selects its entities. Use getCatalogPage for one catalog by slug.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: 'Creates a catalog, or replaces the existing one with the same slug.
+
+
+        API key must have the `Edit catalogs` permission.'
+      operationId: upsertCatalogPage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogPageRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPage'
+          description: Successfully created or replaced the catalog
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The catalog is managed by Cortex and cannot be modified
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The referenced relationship type was not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create or replace a catalog
+      tags:
+      - Catalogs
+      x-cortex-mcp-description: Create a catalog page, or replace the existing one with the same slug. A replace overwrites every field. Name, slug and iconTag are required. Choose the page's entities with a `filter` (FILTER catalog) or a `relationshipTypeTag` (RELATIONSHIP_TYPE catalog). A DOMAIN catalog must set type=DOMAIN explicitly. Catalogs managed by Cortex cannot be changed (403). Requires the `Edit catalogs` permission.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog-pages/{slug}:
+    delete:
+      operationId: deleteCatalogPage
+      parameters:
+      - in: path
+        name: slug
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted catalog
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: The catalog is managed by Cortex and cannot be deleted
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Catalog not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete catalog
+      tags:
+      - Catalogs
+      x-cortex-mcp-enabled: 'false'
+    get:
+      description: 'Retrieves a single catalog by slug.
+
+
+        API key must have the `View catalogs` permission.'
+      operationId: getCatalogPage
+      parameters:
+      - in: path
+        name: slug
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogPage'
+          description: Successfully retrieved catalog
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Catalog not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Get catalog
+      tags:
+      - Catalogs
+      x-cortex-mcp-description: Get one catalog page by slug, including its type and the filter or relationship type that selects its entities. Read this before upsertCatalogPage, which replaces the whole page.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    TypeFilter:
+      type: object
+      properties:
+        exclude:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        include:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+      description: Entity types (e.g. service, domain, team) to include or exclude. Only one of `include` or `exclude` can be set
+    CatalogPage:
+      required:
+      - dateCreated
+      - dateUpdated
+      - iconTag
+      - isCortexManaged
+      - isDraft
+      - name
+      - slug
+      - type
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          description: Time the catalog was created
+          format: date-time
+        dateUpdated:
+          type: string
+          description: Time the catalog was last updated
+          format: date-time
+        description:
+          type: string
+          description: Optional description of the catalog
+        filter:
+          $ref: '#/components/schemas/Filter'
+        iconTag:
+          type: string
+          description: Tag of the icon shown for the catalog
+          example: cortex
+        isCortexManaged:
+          type: boolean
+          description: Whether the catalog is managed by Cortex. Cortex-managed catalogs cannot be modified or deleted
+        isDraft:
+          type: boolean
+          description: Whether the catalog is a draft
+        name:
+          type: string
+          description: Name of the catalog
+        relationshipTypeTag:
+          type: string
+          description: Tag of the relationship type the catalog is built from, for `RELATIONSHIP_TYPE` catalogs
+        slug:
+          type: string
+          description: Unique identifier for the catalog
+          example: my-catalog
+        type:
+          type: string
+          description: 'What the catalog is built from: a filter, a relationship type, or the domain hierarchy'
+          enum:
+          - FILTER
+          - RELATIONSHIP_TYPE
+          - DOMAIN
+    CatalogPageRequest:
+      required:
+      - iconTag
+      - isDraft
+      - name
+      - slug
+      type: object
+      properties:
+        description:
+          type: string
+          description: Optional description of the catalog
+        filter:
+          $ref: '#/components/schemas/Filter'
+        iconTag:
+          type: string
+          description: Tag of the icon shown for the catalog
+          example: cortex
+        isDraft:
+          type: boolean
+          description: Whether the catalog is a draft
+        name:
+          type: string
+          description: Name of the catalog
+        relationshipTypeTag:
+          type: string
+          description: Tag of the relationship type the catalog is built from, for a `RELATIONSHIP_TYPE` catalog
+        slug:
+          type: string
+          description: Unique identifier for the catalog
+          example: my-catalog
+        type:
+          type: string
+          description: 'What the catalog is built from. Optional: inferred as `FILTER` when `filter` is set and `RELATIONSHIP_TYPE` when `relationshipTypeTag` is set. Must be set explicitly to `DOMAIN` for a domain catalog'
+          enum:
+          - FILTER
+          - RELATIONSHIP_TYPE
+          - DOMAIN
+    GroupFilter:
+      type: object
+      properties:
+        exclude:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        include:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+      description: Entity groups to include or exclude
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    Filter:
+      type: object
+      properties:
+        groups:
+          $ref: '#/components/schemas/GroupFilter'
+        query:
+          type: string
+          description: CQL expression to apply as a filter
+        types:
+          $ref: '#/components/schemas/TypeFilter'
+      description: Filter that selects the entities in the catalog, for `FILTER` catalogs
+    CatalogPageListResponse:
+      required:
+      - catalogPages
+      - page
+      - total
+      - totalPages
+      type: object
+      properties:
+        catalogPages:
+          type: array
+          description: The catalogs on this page of results
+          items:
+            $ref: '#/components/schemas/CatalogPage'
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

@@ -1,0 +1,366 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex SCIM API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: SCIM
+paths:
+  /scim/v2/Users:
+    get:
+      description: Fetches users based on provided criteria
+      operationId: findUsers
+      parameters:
+      - in: query
+        name: attributes
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: excludedAttributes
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: filter
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: startIndex
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - in: query
+        name: count
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - in: query
+        name: sortBy
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: sortOrder
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: domain
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: Returns list of requested users
+        '403':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: All SCIM operations are disabled
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Find users
+      tags:
+      - SCIM
+      x-cortex-mcp-enabled: 'false'
+    post:
+      description: Creates a user based on provided data.
+      operationId: createUser
+      parameters:
+      - in: query
+        name: attributes
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: excludedAttributes
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+          application/scim+json:
+            schema:
+              type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: Returns created user data
+        '403':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: Automatic provisioning of users is disabled
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Creates a user
+      tags:
+      - SCIM
+      x-cortex-mcp-enabled: 'false'
+  /scim/v2/Users/{id}:
+    delete:
+      description: Deletes a user based on provided id
+      operationId: deleteUser
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: Returns deleted user data
+        '403':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: Automatic deprovisioning of users is disabled
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Deletes a user
+      tags:
+      - SCIM
+      x-cortex-mcp-enabled: 'false'
+    get:
+      description: Gets a user based on provided id
+      operationId: getUser
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: attributes
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: excludedAttributes
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: Returns requested user data
+        '403':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: All SCIM operations are disabled
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Gets a user by id
+      tags:
+      - SCIM
+      x-cortex-mcp-enabled: 'false'
+    patch:
+      description: Replaces user details based on provided id and data
+      operationId: patchUser
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: attributes
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: excludedAttributes
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+          application/scim+json:
+            schema:
+              type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: Returns patched user data
+        '400':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: The SCIM toggle required for the requested change is disabled (provisioning for reactivation, deprovisioning for deactivation)
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Patches a user
+      tags:
+      - SCIM
+      x-cortex-mcp-enabled: 'false'
+    put:
+      description: Updates a user based on provided id and data
+      operationId: updateUser
+      parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: attributes
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: excludedAttributes
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+          application/scim+json:
+            schema:
+              type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: Returns updated user data
+        '400':
+          content:
+            application/json:
+              schema:
+                type: string
+            application/scim+json:
+              schema:
+                type: string
+          description: The SCIM toggle required for the requested change is disabled (provisioning for reactivation, deprovisioning for deactivation)
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Updates a user
+      tags:
+      - SCIM
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

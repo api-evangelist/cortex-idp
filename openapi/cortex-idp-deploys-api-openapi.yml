@@ -1,193 +1,670 @@
 openapi: 3.2.0
 info:
-  title: Cortex REST Deploys API
-  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog.
-  version: '1.0'
-  contact:
-    name: Cortex
-    url: https://www.cortex.io
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Deploys API
+  version: v1
 servers:
-- url: https://api.getcortexapp.com/api/v1
-  description: Cortex REST API
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
 security:
 - bearerAuth: []
 tags:
 - name: Deploys
-  description: Deployment events recorded per catalog entity.
 paths:
-  /catalog/{tagOrId}/deploys:
-    parameters:
-    - $ref: '#/components/parameters/TagOrId'
-    get:
-      operationId: listEntityDeploys
-      tags:
-      - Deploys
-      summary: List deploys for an entity
-      description: Lists deployment events recorded for a catalog entity.
+  /api/v1/catalog/deploys:
+    delete:
+      description: 'Filter and delete deploys by SHA hash, environment, or type. Note that at least one of the filters need to be set.
+
+        If looking to delete all deployments for an entity, use the `Delete all deploys for entity` endpoint instead.'
+      operationId: deleteDeploysByFilter
+      parameters:
+      - in: query
+        name: environment
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: sha
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: type
+        required: false
+        schema:
+          type: string
+          enum:
+          - DEPLOY
+          - SCALE
+          - ROLLBACK
+          - RESTART
       responses:
         '200':
-          description: A list of deploy events.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeployList'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: '#/components/schemas/DeploysResponse'
+          description: Successfully deleted deployment
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Trying to delete deploys without any filters
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete deploys by filter
+      tags:
+      - Deploys
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/deploys/all:
+    delete:
+      description: Dangerous endpoint that blows away deploys for all entities
+      operationId: deleteAllDeploys
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploysResponse'
+          description: Successfully deleted all deployments
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete all deployments for all entities
+      tags:
+      - Deploys
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/deploys:
+    delete:
+      operationId: deleteDeploysForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: query
+        name: environment
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: sha
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: type
+        required: false
+        schema:
+          type: string
+          enum:
+          - DEPLOY
+          - SCALE
+          - ROLLBACK
+          - RESTART
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDeploy'
+          description: Successfully deleted deployments
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete deployments for entity
+      tags:
+      - Deploys
+      x-cortex-mcp-description: Delete multiple deployments. Disabled for MCP access to preserve deployment history
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: getDeploysForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDeployListPaginatedResponse'
+          description: Successfully retrieved deployments
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List deployments for entity
+      tags:
+      - Deploys
+      x-cortex-mcp-description: List all deployments for a specific catalog entity. Returns deployment history including timestamps, environments, SHAs, and deployment types in paginated format.
+      x-cortex-mcp-enabled: 'true'
     post:
-      operationId: addEntityDeploy
-      tags:
-      - Deploys
-      summary: Add a deploy for an entity
-      description: Records a new deployment event for a catalog entity.
-      requestBody:
+      operationId: addDeployForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
         required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeployInput'
+              $ref: '#/components/schemas/SaveDeployRequest'
+        required: true
       responses:
         '200':
-          description: The recorded deploy event.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    delete:
-      operationId: deleteEntityDeploys
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDeploy'
+          description: Successfully created deployment
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add deployment for entity
       tags:
       - Deploys
-      summary: Delete deploys for an entity
-      description: Deletes deploy events for an entity, optionally filtered by environment, sha, or type.
+      x-cortex-mcp-description: 'Record a new deployment on an entity: title, timestamp, type (DEPLOY, SCALE, ROLLBACK or RESTART), and optional sha, url, environment, deployer and customData. Every call adds another record, so retrying creates duplicates. Returns the deployment with its UUID. To correct an existing record, use updateDeployByUuid.'
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/deploys/{uuid}:
+    delete:
+      operationId: deleteDeployByUuid
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         '200':
-          description: Deletion confirmation.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /catalog/{tagOrId}/deploys/{uuid}:
-    parameters:
-    - $ref: '#/components/parameters/TagOrId'
-    - name: uuid
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDeploy'
+          description: Successfully deleted deployment
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or deployment not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete deployment by UUID
+      tags:
+      - Deploys
+      x-cortex-mcp-description: Delete a specific deployment. Disabled for MCP access to preserve deployment history
+      x-cortex-mcp-enabled: 'false'
     put:
-      operationId: updateEntityDeploy
-      tags:
-      - Deploys
-      summary: Update a deploy
-      description: Updates a single deploy event for an entity.
-      requestBody:
+      operationId: updateDeployByUuid
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
         required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      - in: path
+        name: uuid
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeployInput'
+              $ref: '#/components/schemas/SaveDeployRequest'
+        required: true
       responses:
         '200':
-          description: The updated deploy event.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    delete:
-      operationId: deleteEntityDeploy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDeploy'
+          description: Successfully updated deployment
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or deployment not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update deployment by UUID
       tags:
       - Deploys
-      summary: Delete a deploy
-      description: Deletes a single deploy event by uuid.
-      responses:
-        '200':
-          description: Deletion confirmation.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /deploys/environments:
+      x-cortex-mcp-description: Replace a deployment record, found by its UUID, with the request body. Every field is overwritten and fields you omit are cleared, so send the full record. Returns 404 if the entity or deployment does not exist. Does not create a record.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/deploys/environments:
     get:
       operationId: listDeployEnvironments
-      tags:
-      - Deploys
-      summary: List deploy environments
-      description: Lists the deploy environments known to Cortex.
       responses:
         '200':
-          description: A list of environments.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /deploys/search:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeployEnvironmentsResponse'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List all distinct deploy environments for this tenant
+      tags:
+      - Deploys
+      x-cortex-mcp-description: List all distinct deploy environment names for this tenant. Use before getDeploysForEntity to pass the correct environment values.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/deploys/search:
     get:
       operationId: searchDeploys
-      tags:
-      - Deploys
-      summary: Search deploys
-      description: Searches deploy events across the catalog.
+      parameters:
+      - description: Filter by environment names (exact match, any of)
+        in: query
+        name: environments
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - description: 'Filter by deploy types: DEPLOY, ROLLBACK, SCALE, RESTART'
+        in: query
+        name: types
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+            enum:
+            - DEPLOY
+            - SCALE
+            - ROLLBACK
+            - RESTART
+      - description: Filter to these entity tags or CIDs (any of)
+        in: query
+        name: entityTagOrIds
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - description: Only deploys at or after this timestamp (UTC, e.g. 2026-06-22T00:00:00)
+        in: query
+        name: timestampAfter
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: Only deploys at or before this timestamp (UTC, e.g. 2026-06-22T00:00:00)
+        in: query
+        name: timestampBefore
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
       responses:
         '200':
-          description: Matching deploy events.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomDeployListPaginatedResponse'
+          description: OK
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Search deployments across the tenant
+      tags:
+      - Deploys
+      x-cortex-mcp-description: 'Get deployments with server-side filtering (environment, type, entity, time range). Pass entityTagOrIds=[''my-tag''] to get deployments for a single entity, or omit it to search tenant-wide.
+
+
+        Environments are matched exactly — call listDeployEnvironments first to discover values (e.g. ''prod'' vs ''prod2ndmd'').'
+      x-cortex-mcp-enabled: 'true'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    DeployInput:
+    SaveDeployRequest:
+      required:
+      - timestamp
+      - title
+      - type
       type: object
       properties:
-        sha:
-          type: string
-        title:
-          type: string
-        type:
-          type: string
+        customData:
+          type: object
+          additionalProperties:
+            type: object
+        deployer:
+          $ref: '#/components/schemas/Deployer'
         environment:
+          type: string
+        sha:
           type: string
         timestamp:
           type: string
           format: date-time
-    DeployList:
+        title:
+          type: string
+        type:
+          type: string
+          enum:
+          - DEPLOY
+          - SCALE
+          - ROLLBACK
+          - RESTART
+        url:
+          type: string
+    Deployer:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+    CustomDeploy1:
+      required:
+      - timestamp
+      - title
+      - type
+      - uuid
+      type: object
+      properties:
+        customData:
+          type: object
+          additionalProperties:
+            type: object
+            description: Arbitrary string-to-any map of custom data about the deploy event
+          description: Arbitrary string-to-any map of custom data about the deploy event
+        deployer:
+          $ref: '#/components/schemas/Deployer'
+        deployerEmail:
+          type: string
+          description: Replaced with Deployer object
+          deprecated: true
+        deployerName:
+          type: string
+          description: Replaced with Deployer object
+          deprecated: true
+        environment:
+          type: string
+        sha:
+          type: string
+          description: Optional commit SHA hash that this deploy corresponds to
+        timestamp:
+          type: string
+          description: ISO8601 timestamp string in UTC
+          format: date-time
+        title:
+          type: string
+          description: Human readable title for the deploy. This is usually the commit message or PR title.
+        type:
+          type: string
+          enum:
+          - DEPLOY
+          - SCALE
+          - ROLLBACK
+          - RESTART
+        url:
+          type: string
+          description: Optional URL associated with deployment
+          example: https://cortex.io
+        uuid:
+          type: string
+          format: uuid
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    DeployEnvironmentsResponse:
+      required:
+      - environments
+      type: object
+      properties:
+        environments:
+          type: array
+          items:
+            type: string
+    CustomDeployListPaginatedResponse:
+      required:
+      - deployments
+      - page
+      - total
+      - totalPages
+      type: object
+      properties:
+        deployments:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomDeploy1'
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    CustomDeploy:
+      required:
+      - serviceId
+      - timestamp
+      - title
+      - type
+      - uuid
+      type: object
+      properties:
+        customData:
+          type: object
+          additionalProperties:
+            type: object
+        deployerEmail:
+          type: string
+        deployerName:
+          type: string
+        environment:
+          type: string
+        id:
+          type: integer
+          format: int64
+        serviceId:
+          type: integer
+          format: int64
+        sha:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        title:
+          type: string
+        type:
+          type: string
+          enum:
+          - DEPLOY
+          - SCALE
+          - ROLLBACK
+          - RESTART
+        url:
+          type: string
+        uuid:
+          type: string
+          format: uuid
+    DeploysResponse:
+      required:
+      - deploys
       type: object
       properties:
         deploys:
           type: array
           items:
-            $ref: '#/components/schemas/Deploy'
-    Error:
+            $ref: '#/components/schemas/CustomDeploy1'
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
       type: object
       properties:
-        message:
+        detail:
           type: string
-        requestId:
+        instance:
           type: string
-    Deploy:
-      type: object
-      description: A deployment event. Modeled/simplified.
-      properties:
-        uuid:
-          type: string
-          format: uuid
-        sha:
-          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
         title:
           type: string
         type:
           type: string
-        environment:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-  parameters:
-    TagOrId:
-      name: tagOrId
-      in: path
-      required: true
-      description: The entity's x-cortex-tag or id. Tags with forward slashes must be URL-encoded.
-      schema:
-        type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
       bearerFormat: JWT
-      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

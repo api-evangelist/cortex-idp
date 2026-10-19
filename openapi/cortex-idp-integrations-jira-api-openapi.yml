@@ -1,0 +1,656 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex [Integrations] Jira API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: '[Integrations] Jira'
+paths:
+  /api/v1/jira/configuration:
+    post:
+      operationId: JiraSaveConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/JiraCloudBasicRequest'
+              - $ref: '#/components/schemas/JiraCloudScopedRequest'
+              - $ref: '#/components/schemas/JiraOnPremBasicRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseJiraConfigurationResponse'
+          description: Successfully added configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add a single configuration
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/jira/configuration/validate:
+    post:
+      operationId: JiraValidateAllConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleIntegrationConfigValidation'
+          description: Successfully validated all configurations
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate all configurations
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/jira/configuration/validate/{alias}:
+    post:
+      operationId: JiraValidateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationConfigValidation'
+          description: Successfully validated configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate a configuration
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/jira/configuration/{alias}:
+    delete:
+      operationId: JiraRemoveConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseJiraConfigurationResponse'
+          description: Successfully deleted configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a configuration
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: JiraGetConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JiraConfigurationResponse'
+          description: Successfully found configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a configuration
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+    put:
+      description: 'WARNING: Updating aliases for configurations or changing the default configuration could cause entity YAMLs that use this integration to break.'
+      operationId: JiraUpdateConfiguration
+      parameters:
+      - in: path
+        name: alias
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/JiraCloudBasicUpdateRequest'
+              - $ref: '#/components/schemas/JiraCloudScopedUpdateRequest'
+              - $ref: '#/components/schemas/JiraOnPremBasicUpdateRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseJiraConfigurationResponse'
+          description: Successfully updated configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update a configuration
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/jira/configurations:
+    delete:
+      operationId: JiraRemoveAllConfigurations
+      responses:
+        '200':
+          description: Successfully deleted all configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete all configurations
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: JiraListConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationsResponseJiraConfigurationResponse'
+          description: Successfully found configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve configurations
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+    post:
+      operationId: JiraSaveConfigurations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigurationsRequestJiraConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleConfigurationsResponseJiraConfigurationResponse'
+          description: Successfully added configurations
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add multiple configurations
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/jira/default-configuration:
+    get:
+      operationId: JiraGetDefaultConfiguration
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JiraConfigurationResponse'
+          description: Successfully found default configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve default configuration
+      tags:
+      - '[Integrations] Jira'
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    JiraOnPremBasicUpdateRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/JiraUpdateRequest'
+      - type: object
+        properties:
+          frontendHost:
+            type: string
+          host:
+            type: string
+          password:
+            type: string
+          username:
+            type: string
+    JiraCloudBasicRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/JiraConfigurationRequest'
+      - required:
+        - apiToken
+        - baseUrl
+        - email
+        - subdomain
+        type: object
+        properties:
+          apiToken:
+            type: string
+          baseUrl:
+            type: string
+            enum:
+            - JIRA
+            - ATLASSIAN
+            - ATLASSIAN_API
+          email:
+            type: string
+          subdomain:
+            type: string
+    IntegrationConfigValidation:
+      required:
+      - isValid
+      type: object
+      properties:
+        alias:
+          type: string
+        isValid:
+          type: boolean
+        message:
+          type: string
+    JiraOnPremBasicRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/JiraConfigurationRequest'
+      - required:
+        - host
+        - password
+        - username
+        type: object
+        properties:
+          frontendHost:
+            type: string
+          host:
+            type: string
+          password:
+            type: string
+          username:
+            type: string
+    JiraUpdateRequest:
+      required:
+      - alias
+      - isDefault
+      - type
+      type: object
+      properties:
+        alias:
+          type: string
+        isDefault:
+          type: boolean
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    JiraConfigurationRequest:
+      required:
+      - alias
+      - isDefault
+      - type
+      type: object
+      properties:
+        alias:
+          type: string
+        isDefault:
+          type: boolean
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+    JiraCloudScopedRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/JiraConfigurationRequest'
+      - required:
+        - apiToken
+        - baseUrl
+        - cloudId
+        - email
+        - subdomain
+        type: object
+        properties:
+          apiToken:
+            type: string
+          baseUrl:
+            type: string
+            enum:
+            - JIRA
+            - ATLASSIAN
+            - ATLASSIAN_API
+          cloudId:
+            type: string
+          email:
+            type: string
+          subdomain:
+            type: string
+    JiraCloudScopedUpdateRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/JiraUpdateRequest'
+      - type: object
+        properties:
+          apiToken:
+            type: string
+          baseUrl:
+            type: string
+            enum:
+            - JIRA
+            - ATLASSIAN
+            - ATLASSIAN_API
+          cloudId:
+            type: string
+          email:
+            type: string
+          subdomain:
+            type: string
+    ConfigurationsRequestJiraConfigurationRequest:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/JiraCloudBasicRequest'
+            - $ref: '#/components/schemas/JiraCloudScopedRequest'
+            - $ref: '#/components/schemas/JiraOnPremBasicRequest'
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    JiraCloudBasicUpdateRequest:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/JiraUpdateRequest'
+      - type: object
+        properties:
+          apiToken:
+            type: string
+          baseUrl:
+            type: string
+            enum:
+            - JIRA
+            - ATLASSIAN
+            - ATLASSIAN_API
+          email:
+            type: string
+          subdomain:
+            type: string
+    MultipleIntegrationConfigValidation:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationConfigValidation'
+    ConfigurationsResponseJiraConfigurationResponse:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/JiraConfigurationResponse'
+    JiraConfigurationResponse:
+      required:
+      - alias
+      - isDefault
+      - type
+      type: object
+      properties:
+        alias:
+          type: string
+        baseUrl:
+          type: string
+          enum:
+          - JIRA
+          - ATLASSIAN
+          - ATLASSIAN_API
+        email:
+          type: string
+        frontendHost:
+          type: string
+        host:
+          type: string
+        isDefault:
+          type: boolean
+        lastFour:
+          type: string
+        subdomain:
+          type: string
+        type:
+          type: string
+        username:
+          type: string
+    MultipleConfigurationsResponseJiraConfigurationResponse:
+      required:
+      - configurations
+      - skippedConfigurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/JiraConfigurationResponse'
+        skippedConfigurations:
+          type: object
+          additionalProperties:
+            type: string
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

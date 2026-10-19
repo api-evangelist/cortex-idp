@@ -1,0 +1,220 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Integration Status API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Integration Status
+paths:
+  /api/v1/integrations/status:
+    get:
+      description: 'Returns every installed integration configuration with the result of its most recent
+
+        connection check. Serves stored results only and never contacts the third-party service.
+
+        The timestamp is when the connection was last checked, not when data was last synced.'
+      operationId: listIntegrationStatuses
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationStatusesResponse'
+          description: Successfully listed integration statuses
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List installed integrations and their status
+      tags:
+      - Integration Status
+      x-cortex-mcp-description: List every integration installed in this workspace (GitHub, Jira, PagerDuty, Slack, etc.) with the result of its most recent connection check. Use to find integrations whose credentials are failing (INVALID) or have not been checked recently (UNKNOWN). lastValidatedAt is when the connection was last checked, not when data was last synced, so do not report it as data freshness. message is null unless the caller has the Manage Integrations permission.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    IntegrationStatusesResponse:
+      required:
+      - integrations
+      type: object
+      properties:
+        integrations:
+          type: array
+          description: Installed integration configurations, one entry per alias
+          items:
+            $ref: '#/components/schemas/IntegrationStatus'
+    IntegrationValidation:
+      required:
+      - status
+      type: object
+      properties:
+        lastValidatedAt:
+          type: string
+          description: When the connection was last checked, as a UTC ISO-8601 instant. This is not a data sync time. Null if the connection has never been checked
+          format: date-time
+          example: '2026-10-01T08:00:00Z'
+        message:
+          type: string
+          description: Detail from the most recent connection check, usually the failure, truncated to 500 characters. Unsanitized vendor error text, so only returned to callers with the Manage Integrations permission; null for everyone else
+        status:
+          type: string
+          description: VALID or INVALID from a connection check in the last 3 days; UNKNOWN when the integration has no connection check or the last one is older than that
+          enum:
+          - VALID
+          - INVALID
+          - UNKNOWN
+      description: Result of the most recent connection check
+    IntegrationStatus:
+      required:
+      - categories
+      - integrationType
+      - validation
+      type: object
+      properties:
+        alias:
+          type: string
+          description: Configuration alias; null for integrations that support a single configuration
+        categories:
+          type: array
+          description: Categories this configuration is used for
+          items:
+            type: string
+            description: Categories this configuration is used for
+            enum:
+            - AI
+            - CI_CD
+            - CLOUD_INFRASTRUCTURE
+            - CODE_QUALITY
+            - COMMUNICATION
+            - ERROR_TRACKING
+            - FEATURE_MANAGEMENT
+            - INCIDENT_MANAGEMENT
+            - OBSERVABILITY
+            - ON_CALL
+            - PROJECT_MANAGEMENT
+            - SECURITY
+            - TEAMS
+            - VERSION_CONTROL
+            - ITSM
+        integrationType:
+          type: string
+          description: Integration type
+          enum:
+          - AITools
+          - ActiveDirectory
+          - Apiiro
+          - ArgoCD
+          - APM
+          - AWS
+          - AzureDevops
+          - AzureResources
+          - BambooHR
+          - Bitbucket
+          - Bugsnag
+          - Buildkite
+          - Checkmarx
+          - Clickup
+          - CircleCi
+          - Codecov
+          - Coralogix
+          - Datadog
+          - Dynatrace
+          - ECS
+          - Firehydrant
+          - Forge
+          - Git
+          - GitHub
+          - GitLab
+          - Google
+          - Harness
+          - IncidentIo
+          - IncidentResponse
+          - Instana
+          - Internal
+          - Jenkins
+          - Jira
+          - K8s
+          - LaunchDarkly
+          - Lightstep
+          - Mend
+          - MendSca
+          - MicrosoftTeams
+          - NewRelic
+          - Oncall
+          - Okta
+          - Opsgenie
+          - OwnershipProvider
+          - Pagerduty
+          - Prometheus
+          - Rollbar
+          - Rootly
+          - Security
+          - ServiceNow
+          - Sentry
+          - Semgrep
+          - SignalFX
+          - Slack
+          - SLO
+          - Snyk
+          - Sonarqube
+          - SumoLogic
+          - Veracode
+          - Victorops
+          - Workday
+          - Wiz
+          - XMatters
+          - Anthropic
+        validation:
+          $ref: '#/components/schemas/IntegrationValidation'
+      description: Installed integration configurations, one entry per alias
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

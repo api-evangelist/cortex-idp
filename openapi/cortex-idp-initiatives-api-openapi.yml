@@ -1,167 +1,542 @@
 openapi: 3.2.0
 info:
-  title: Cortex REST Initiatives API
-  description: Cortex (cortex.io) is an internal developer portal (IDP) and software catalog.
-  version: '1.0'
-  contact:
-    name: Cortex
-    url: https://www.cortex.io
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Initiatives API
+  version: v1
 servers:
-- url: https://api.getcortexapp.com/api/v1
-  description: Cortex REST API
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
 security:
 - bearerAuth: []
 tags:
 - name: Initiatives
-  description: Time-boxed improvement campaigns driving entities toward a Scorecard target.
 paths:
-  /initiatives:
+  /api/v1/initiatives:
     get:
+      description: 'Retrieves a list of Initiatives.
+
+
+        API key must have the `View Initiatives` permission.'
       operationId: listInitiatives
-      tags:
-      - Initiatives
-      summary: List initiatives
-      description: Lists all Initiatives in the workspace.
+      parameters:
+      - description: Whether or not to include draft Initiatives in the response
+        in: query
+        name: includeDrafts
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - description: Whether or not to include expired Initiatives in the response
+        in: query
+        name: includeExpired
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
       responses:
         '200':
-          description: A list of initiatives.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/InitiativeList'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    post:
-      operationId: createInitiative
+                $ref: '#/components/schemas/InitiativeListResponse'
+          description: Successfully retrieved Initiatives
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List Initiatives
       tags:
       - Initiatives
-      summary: Create an initiative
-      description: Creates a new Initiative campaign.
+      x-cortex-mcp-description: List all initiatives in the organization with optional filters for draft and expired initiatives. View active improvement programs, strategic projects, and their current status to understand organizational priorities and track progress.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      description: 'Create an Initiative.
+
+
+        API key must have the `Edit Initiative` permission.'
+      operationId: createInitiative
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InitiativeInput'
+              $ref: '#/components/schemas/InitiativeRequest'
+        required: true
       responses:
         '200':
-          description: The created initiative.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /initiatives/{cid}:
-    parameters:
-    - name: cid
-      in: path
-      required: true
-      description: 18-character auto-generated identifier for the Initiative.
-      schema:
-        type: string
-    get:
-      operationId: getInitiative
-      tags:
-      - Initiatives
-      summary: Retrieve an initiative
-      description: Retrieves a single Initiative by its cid.
-      responses:
-        '200':
-          description: The requested initiative.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Initiative'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      operationId: updateInitiative
+          description: Successfully created Initiative
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create an Initiative
       tags:
       - Initiatives
-      summary: Update an initiative
-      description: Updates an existing Initiative.
-      requestBody:
+      x-cortex-mcp-description: Create a new Initiative against one Scorecard (scorecardTag), with a name, a future targetDate and isDraft. Provide emphasizedLevels (by ladder rank, 1 = highest) or emphasizedRules (each expression must exactly match an existing rule expression in that Scorecard; get them from getScorecard). Optionally narrow it with a filter and set a notificationSchedule. Each call creates a new Initiative and is not idempotent. Requires the `Edit Initiative` permission.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/initiatives/{cid}:
+    delete:
+      operationId: deleteInitiative
+      parameters:
+      - in: path
+        name: cid
         required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted Initiative
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Initiative not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete Initiative
+      tags:
+      - Initiatives
+      x-cortex-mcp-description: Delete an initiative. Disabled for MCP access to preserve historical tracking and prevent loss of progress data
+      x-cortex-mcp-enabled: 'false'
+    get:
+      description: 'Get Initiative.
+
+
+        API key must have the `View Initiatives` permission.'
+      operationId: getInitiative
+      parameters:
+      - in: path
+        name: cid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Initiative'
+          description: Successfully retrieved Initiative
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Initiative not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Get Initiative
+      tags:
+      - Initiatives
+      x-cortex-mcp-description: Retrieve detailed information about a specific initiative including its goals, timeline, affected entities, scorecard targets, and current progress. Essential for understanding initiative scope and tracking achievement of objectives.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: 'Update an Initiative.
+
+
+        API key must have the `Edit Initiative` permission.'
+      operationId: updateInitiative
+      parameters:
+      - in: path
+        name: cid
+        required: true
+        schema:
+          type: string
+      requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InitiativeInput'
+              $ref: '#/components/schemas/InitiativeRequest'
+        required: true
       responses:
         '200':
-          description: The updated initiative.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    delete:
-      operationId: deleteInitiative
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Initiative'
+          description: Successfully updated Initiative
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Initiative not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update an Initiative
       tags:
       - Initiatives
-      summary: Delete an initiative
-      description: Deletes an Initiative by cid.
-      responses:
-        '200':
-          description: Deletion confirmation.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+      x-cortex-mcp-description: Update an existing Initiative by its CID. The request has the same shape as createInitiative and replaces the Initiative in full; optional fields that are left out are cleared, not kept. Call getInitiative(cid) first and send the complete definition back. Returns 404 if the CID does not exist. Requires the `Edit Initiative` permission.
+      x-cortex-mcp-enabled: 'true'
 components:
   schemas:
-    Initiative:
+    TypeFilter:
       type: object
-      description: An Initiative campaign. Modeled/simplified.
+      properties:
+        exclude:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        include:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+      description: Entity types (e.g. service, domain, team) to include or exclude. Only one of `include` or `exclude` can be set
+    Initiative:
+      required:
+      - dateCreated
+      - dateUpdated
+      - emphasizedLevels
+      - emphasizedRules
+      - isDraft
+      - name
+      - scorecardName
+      - scorecardTag
+      - targetDate
+      type: object
       properties:
         cid:
           type: string
-        name:
+          description: Unique, immutable, 18-character auto-generated identifier for the Initiative.
+          example: in2da8159dbeefb974
+        dateCreated:
           type: string
+          description: Time the Initiative was created
+          format: date-time
+        dateUpdated:
+          type: string
+          description: Time the Initiative was last updated
+          format: date-time
         description:
           type: string
+          description: Optional description of the Initiative
+        emphasizedLevels:
+          uniqueItems: true
+          type: array
+          description: Emphasized levels for the Initiative
+          items:
+            $ref: '#/components/schemas/EmphasizedLevel'
+        emphasizedRules:
+          uniqueItems: true
+          type: array
+          description: Emphasized rules for the Initiative
+          items:
+            $ref: '#/components/schemas/EmphasizedRule'
+        filter:
+          $ref: '#/components/schemas/Filter'
+        isDraft:
+          type: boolean
+          description: Whether or not the Initiative is a draft
+        name:
+          type: string
+          description: Name of the Initiative
+        notificationSchedule:
+          $ref: '#/components/schemas/NotificationSchedule'
+        scorecardName:
+          type: string
+          description: Name of the scorecard associated with the Initiative
         scorecardTag:
           type: string
+          description: Tag of the scorecard associated with the Initiative
         targetDate:
           type: string
+          description: Target date for the Initiative to be completed
           format: date
-    InitiativeList:
+    InitiativeRequest:
+      required:
+      - emphasizedLevels
+      - emphasizedRules
+      - isDraft
+      - name
+      - scorecardTag
+      - targetDate
+      type: object
+      properties:
+        description:
+          type: string
+          description: Optional description of the Initiative
+        emphasizedLevels:
+          type: array
+          description: Emphasized levels for the Initiative. Either emphasized levels or rules must be provided
+          items:
+            $ref: '#/components/schemas/EmphasizedLadderLevelRequest'
+        emphasizedRules:
+          type: array
+          description: Emphasized rules for the Initiative. Either emphasized levels or rules must be provided
+          items:
+            $ref: '#/components/schemas/EmphasizedRuleRequest'
+        filter:
+          $ref: '#/components/schemas/Filter'
+        isDraft:
+          type: boolean
+          description: Whether or not the Initiative is a draft
+        name:
+          type: string
+          description: Name of the Initiative
+        notificationSchedule:
+          $ref: '#/components/schemas/NotificationSchedule'
+        scorecardTag:
+          type: string
+          description: Tag of the scorecard associated with the Initiative
+        targetDate:
+          type: string
+          description: Target date for the Initiative to be completed. Must be in the future
+          format: date
+    NotificationSchedule:
+      required:
+      - isDisabled
+      - timeInterval
+      - timeUnit
+      type: object
+      properties:
+        isDisabled:
+          type: boolean
+          description: Whether or not notifications are disabled for this Initiative
+        replyToEmails:
+          type: array
+          description: Optional list of reply-to emails
+          items:
+            type: string
+            description: Optional list of reply-to emails
+        timeInterval:
+          type: integer
+          description: Time interval for the notification schedule cadence
+          format: int32
+        timeUnit:
+          type: string
+          description: Time unit for the notification schedule. Must be one of DAY, WEEK, MONTH
+      description: Notification schedule for the Initiative
+    InitiativeListResponse:
+      required:
+      - initiatives
+      - page
+      - total
+      - totalPages
       type: object
       properties:
         initiatives:
           type: array
           items:
             $ref: '#/components/schemas/Initiative'
-    InitiativeInput:
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    GroupFilter:
       type: object
-      required:
-      - name
       properties:
+        exclude:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+        include:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+      description: Entity groups to include or exclude
+    EmphasizedLevel:
+      required:
+      - color
+      - name
+      - rank
+      type: object
+      properties:
+        color:
+          type: string
+          description: Color associated with the emphasized level
         name:
           type: string
-        description:
-          type: string
-        scorecardTag:
-          type: string
-        targetDate:
-          type: string
-          format: date
-    Error:
+          description: Name of the emphasized level
+        rank:
+          type: integer
+          description: Rank of the level where 1 is the highest
+          format: int32
+      description: Emphasized levels for the Initiative
+    ErrorResponse:
+      required:
+      - message
+      - type
       type: object
       properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
         message:
           type: string
         requestId:
           type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    EmphasizedLadderLevelRequest:
+      required:
+      - rank
+      type: object
+      properties:
+        rank:
+          type: integer
+          description: Rank of the level where 1 is the highest
+          format: int32
+      description: Emphasized levels for the Initiative. Either emphasized levels or rules must be provided
+    Filter:
+      type: object
+      properties:
+        groups:
+          $ref: '#/components/schemas/GroupFilter'
+        query:
+          type: string
+          description: CQL expression to apply as a filter
+        types:
+          $ref: '#/components/schemas/TypeFilter'
+      description: Filter that selects the entities in the catalog, for `FILTER` catalogs
+    EmphasizedRuleRequest:
+      required:
+      - expression
+      type: object
+      properties:
+        expression:
+          type: string
+          description: CQL expression for the emphasized rule
+      description: Emphasized rules for the Initiative. Either emphasized levels or rules must be provided
+    EmphasizedRule:
+      required:
+      - expression
+      type: object
+      properties:
+        description:
+          type: string
+          description: Optional description of the emphasized rule
+        expression:
+          type: string
+          description: CQL expression for the emphasized rule
+        title:
+          type: string
+          description: Optional title of the emphasized rule
+      description: Emphasized rules for the Initiative
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
   responses:
-    Unauthorized:
-      description: Missing or invalid Bearer token.
+    TooManyRequests:
       content:
-        application/json:
+        application/problem+json:
           schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
           schema:
-            $ref: '#/components/schemas/Error'
+            minimum: 0
+            type: integer
+            format: int32
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
       bearerFormat: JWT
-      description: 'API key created in the Settings page of your Cortex workspace, passed as Authorization: Bearer <token>.'
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

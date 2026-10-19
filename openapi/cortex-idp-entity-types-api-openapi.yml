@@ -1,0 +1,366 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Entity Types API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Entity Types
+paths:
+  /api/v1/catalog/definitions:
+    get:
+      description: 'List entity types
+
+
+        Response excludes Cortex default types of service, domain, and team.'
+      operationId: listDefinitions
+      parameters:
+      - description: When true, returns the built-in entity types that Cortex provides, such as `rds` and `s3`. Defaults to false.
+        in: query
+        name: includeBuiltIn
+        required: false
+        schema:
+          type: boolean
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogDefinitionsListResponse'
+          description: Successfully found entity types
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List entity types
+      tags:
+      - Entity Types
+      x-cortex-mcp-description: List the entity type definitions in this workspace - the types an entity can be, each with the JSON schema its descriptor must satisfy. Read this before interpreting or composing an entity's custom fields.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      operationId: createDefinition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCatalogDefinitionRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogDefinitionResponse'
+          description: Successfully created entity type
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Failed to create entity type
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create entity type
+      tags:
+      - Entity Types
+      x-cortex-mcp-description: Create a custom entity type. It needs a `type` slug and a JSON `schema` that every entity of this type must satisfy; name, description and iconTag are optional. Fails if the type already exists or conflicts with a built-in type. To change an existing type, use updateDefinition.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/definitions/{type}:
+    delete:
+      operationId: deleteDefinition
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted entity type
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete entity type
+      tags:
+      - Entity Types
+      x-cortex-mcp-description: Cortex Entity Types API - Read the entity type definitions and the descriptor schema each one requires
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: getDefinition
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogDefinitionResponse'
+          description: Successfully found entity types
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve entity type
+      tags:
+      - Entity Types
+      x-cortex-mcp-description: Get one entity type definition by type, including the JSON schema its descriptor must satisfy.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      operationId: updateDefinition
+      parameters:
+      - in: path
+        name: type
+        required: true
+        schema:
+          type: string
+      - description: When true, schema will be updated even if it results in broken schemas for existing entities. Defaults to false.
+        in: query
+        name: force
+        required: false
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCatalogDefinitionRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogDefinitionResponse'
+          description: Successfully updated entity type
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Failed to update entity type
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity type not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update entity type
+      tags:
+      - Entity Types
+      x-cortex-mcp-description: Replace an existing custom entity type's name, description and JSON schema. Fields you leave out are cleared, except iconTag, which is kept. The type slug itself cannot be changed. If active entities use the type, a schema change is rejected unless force=true, and force may make those entities fail validation. Returns 404 if the type does not exist. Read the current version with getDefinition first.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    CreateCatalogDefinitionRequest:
+      required:
+      - schema
+      - type
+      type: object
+      properties:
+        description:
+          type: string
+        iconTag:
+          type: string
+        name:
+          type: string
+        schema:
+          $ref: '#/components/schemas/JsonNode'
+        type:
+          type: string
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    UpdateCatalogDefinitionRequest:
+      required:
+      - schema
+      type: object
+      properties:
+        description:
+          type: string
+        iconTag:
+          type: string
+        name:
+          type: string
+        schema:
+          $ref: '#/components/schemas/JsonNode'
+    CatalogDefinitionResponse:
+      required:
+      - schema
+      - source
+      - type
+      type: object
+      properties:
+        description:
+          type: string
+        iconTag:
+          type: string
+        name:
+          type: string
+        schema:
+          $ref: '#/components/schemas/JsonNode'
+        source:
+          type: string
+          enum:
+          - CORTEX
+          - CUSTOM
+        type:
+          type: string
+    CatalogDefinitionsListResponse:
+      required:
+      - definitions
+      - page
+      - total
+      - totalPages
+      type: object
+      properties:
+        definitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogDefinitionResponse'
+        page:
+          type: integer
+          description: Current page number, 0-indexed
+          format: int32
+        total:
+          type: integer
+          description: Total number of results
+          format: int32
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+    JsonNode:
+      type: object
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

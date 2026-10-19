@@ -1,0 +1,288 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex On Call API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: On-call
+paths:
+  /api/v1/catalog/{tagOrId}/integrations/oncall/current:
+    get:
+      operationId: getCurrentOncallForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CurrentOncallDetails'
+          description: Successfully retrieved current on-call
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve current on-call for entity
+      tags:
+      - On-call
+      x-cortex-mcp-description: Retrieve the current on-call personnel for an entity in real-time. Shows who is actively responsible for incident response, including primary and secondary on-call, contact information, and rotation schedules.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{tagOrId}/integrations/oncall/registration:
+    get:
+      operationId: getOncallRegistrationForEntity
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OncallRegistration'
+          description: Successfully retrieved on-call registration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity or registration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve on-call registration for entity
+      tags:
+      - On-call
+      x-cortex-mcp-description: Get the on-call registration details for an entity, including the escalation policy, service mapping, and provider information. Disabled for MCP access to protect sensitive on-call information
+      x-cortex-mcp-enabled: 'false'
+components:
+  schemas:
+    CurrentOncallDetails:
+      required:
+      - current
+      type: object
+      properties:
+        current:
+          type: array
+          items:
+            $ref: '#/components/schemas/OncallDetails'
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    Escalation:
+      required:
+      - escalationLevel
+      - schedules
+      type: object
+      properties:
+        escalationLevel:
+          type: integer
+          format: int32
+        schedules:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSchedule'
+      description: List of escalations
+    User:
+      required:
+      - name
+      type: object
+      properties:
+        email:
+          type: string
+          description: Contact email
+          example: cristina@cortex.io
+        name:
+          type: string
+          description: Name
+          example: Cristina Buenahora
+    OncallDetails:
+      required:
+      - escalations
+      - provider
+      type: object
+      properties:
+        escalations:
+          type: array
+          description: List of escalations
+          items:
+            $ref: '#/components/schemas/Escalation'
+        provider:
+          type: string
+          description: Integration
+          example: OPSGENIE, PAGERDUTY, VICTOROPS
+          enum:
+          - OPSGENIE
+          - PAGERDUTY
+          - VICTOROPS
+          - XMATTERS
+          - INCIDENTIO
+          - DATADOG
+    UserSchedule:
+      required:
+      - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+      description: User details
+    OncallRegistration:
+      required:
+      - id
+      - provider
+      - source
+      - type
+      type: object
+      properties:
+        id:
+          type: string
+          description: Registration ID
+          example: ASDF1234
+        provider:
+          type: string
+          description: Integration
+          example: OPSGENIE, PAGERDUTY, VICTOROPS
+          enum:
+          - OPSGENIE
+          - PAGERDUTY
+          - VICTOROPS
+          - XMATTERS
+          - INCIDENTIO
+          - DATADOG
+        source:
+          type: string
+          description: Source
+          example: AUTO_MAPPED, DEFINED
+          enum:
+          - AUTO_MAPPED
+          - DEFINED
+        type:
+          type: string
+          description: Type of registration
+          example: ESCALATION_POLICY, SCHEDULE, SERVICE
+          enum:
+          - ESCALATION_POLICY
+          - SCHEDULE
+          - SERVICE
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

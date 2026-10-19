@@ -1,0 +1,604 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex [Integrations] AWS API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: '[Integrations] AWS'
+paths:
+  /api/v1/aws/configurations:
+    delete:
+      operationId: AWSRemoveAllConfigurations
+      responses:
+        '200':
+          description: Successfully deleted configurations
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete all configurations
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: AWSGetAllConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkAwsConfigurationsResponse'
+          description: Successfully found configurations
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve configurations
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+    post:
+      operationId: AWSAddSingleConfiguration
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SingleAwsConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleAwsConfigurationResponse'
+          description: Successfully added configuration
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Add a single configuration
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+    put:
+      operationId: AWSReplaceAllConfigurations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkAwsConfigurationsRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkAwsConfigurationsResponse'
+          description: Successfully replaced configurations
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update configurations
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/aws/configurations/all/validate:
+    post:
+      operationId: AWSValidateAllConfigurations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleIntegrationConfigValidation'
+          description: Successfully validated all configurations
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate all configurations
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/aws/configurations/validate/{accountId}:
+    post:
+      operationId: AWSValidateConfiguration
+      parameters:
+      - in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationConfigValidation'
+          description: Successfully validated configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Validate a configuration
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/aws/configurations/{accountId}:
+    delete:
+      operationId: AWSRemoveSingleConfiguration
+      parameters:
+      - in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully deleted configuration
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete a configuration
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: AWSGetConfiguration
+      parameters:
+      - in: path
+        name: accountId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleAwsConfigurationResponse'
+          description: Successfully found configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Configuration not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve a configuration
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/aws/types:
+    get:
+      operationId: AWSGetAwsCloudControlTypes
+      parameters:
+      - description: When true, includes all AWS types supported
+        in: query
+        name: includeDisabled
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AwsCloudControlTypeResponse'
+          description: Successfully found AWS types
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: AWS types not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: List AWS types
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+    put:
+      operationId: AWSSetConfiguredAwsCloudControlTypes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AwsCloudControlTypesConfigurationRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AwsCloudControlTypesResponse'
+          description: Successfully replaced AWS types
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Bad Request
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update configured AWS types
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{tagOrId}/aws:
+    get:
+      description: 'Returns all cached AWS resource details for the specified entity.
+
+        This endpoint serves cached data only and does not make live AWS API calls.'
+      operationId: AWSGetAwsResources
+      parameters:
+      - description: The tag (`x-cortex-tag`) or unique, auto-generated identifier (CID) for the entity. If the tag contains forward slashes, URL-encode each `/` as `%2F`. The tag is matched exactly as encoded, including leading, trailing, and consecutive slashes, which are preserved and not collapsed (for example, the tag `/services/payments-api` is referenced as `%2Fservices%2Fpayments-api`). Tags containing slashes are supported via the API but not in the Cortex UI; this difference is expected.
+        in: path
+        name: tagOrId
+        required: true
+        schema:
+          type: string
+          description: Entity identifier - can be a tag or CID
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AwsCatalogResponse'
+          description: Successfully retrieved AWS resource details
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found or no AWS resource details cached
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Get AWS resource details for an entity
+      tags:
+      - '[Integrations] AWS'
+      x-cortex-mcp-description: List the AWS resources mapped to an entity, with their type and ARN. Returns nothing when the tenant has no AWS integration.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    SingleAwsConfigurationResponse:
+      required:
+      - accountId
+      - role
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: The account ID for the AWS account
+        accountName:
+          type: string
+          description: The account alias for the AWS account
+        role:
+          type: string
+          description: The IAM role Cortex would be assuming
+    AwsCatalogResponse:
+      required:
+      - resources
+      type: object
+      properties:
+        lastUpdated:
+          type: string
+          description: Timestamp when the cache was last updated
+          format: date-time
+        resources:
+          type: array
+          description: List of AWS resources associated with this entity
+          items:
+            $ref: '#/components/schemas/AwsResource'
+    AwsCloudControlTypeConfigurationRequest:
+      required:
+      - enabled
+      - type
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Whether AWS type is configured to be discovered and imported into the catalogs
+        type:
+          type: string
+          description: AWS type
+          example: AWS::S3::Bucket
+      description: List of AWS types and whether they're configured to be discovered and imported into the catalogs
+    AwsCloudControlTypesConfigurationRequest:
+      required:
+      - types
+      type: object
+      properties:
+        types:
+          type: array
+          description: List of AWS types and whether they're configured to be discovered and imported into the catalogs
+          items:
+            $ref: '#/components/schemas/AwsCloudControlTypeConfigurationRequest'
+    BulkAwsConfigurationsResponse:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleAwsConfigurationResponse'
+    IntegrationConfigValidation:
+      required:
+      - isValid
+      type: object
+      properties:
+        alias:
+          type: string
+        isValid:
+          type: boolean
+        message:
+          type: string
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    AvailableCloudControlTypeResponse:
+      required:
+      - enabled
+      - type
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Whether AWS type is configured to be discovered and imported into the catalogs
+        type:
+          type: string
+          description: AWS type
+          example: AWS::S3::Bucket
+      description: List of AWS types and whether they're configured to be discovered and imported into the catalogs
+    MultipleIntegrationConfigValidation:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/IntegrationConfigValidation'
+    SingleAwsConfigurationRequest:
+      required:
+      - accountId
+      - role
+      type: object
+      properties:
+        accountId:
+          type: string
+          description: The account ID for the AWS account
+        role:
+          type: string
+          description: The IAM role Cortex would be assuming
+    BulkAwsConfigurationsRequest:
+      required:
+      - configurations
+      type: object
+      properties:
+        configurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SingleAwsConfigurationRequest'
+    AwsCloudControlTypesResponse:
+      required:
+      - types
+      type: object
+      properties:
+        types:
+          type: array
+          description: List of AWS types and whether they're configured to be discovered and imported into the catalogs
+          items:
+            $ref: '#/components/schemas/AvailableCloudControlTypeResponse'
+    AwsResource:
+      required:
+      - details
+      - tags
+      type: object
+      properties:
+        details:
+          $ref: '#/components/schemas/JsonNode'
+        tags:
+          type: object
+          additionalProperties:
+            type: string
+            description: Resource tags as key-value pairs
+          description: Resource tags as key-value pairs
+      description: List of AWS resources associated with this entity
+    JsonNode:
+      type: object
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    AwsCloudControlTypeResponse:
+      required:
+      - hasMore
+      - page
+      - total
+      - totalPages
+      - types
+      type: object
+      properties:
+        hasMore:
+          type: boolean
+          description: If there are more pages
+        page:
+          type: integer
+          description: Number of page
+          format: int32
+        total:
+          type: integer
+          description: Total number of AWS Resources types
+          format: int64
+        totalPages:
+          type: integer
+          description: Total number of pages
+          format: int32
+        types:
+          type: array
+          description: List of AWS types types and whether they're configured to be discovered and imported into the catalogs
+          items:
+            $ref: '#/components/schemas/AvailableCloudControlTypeResponse'
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

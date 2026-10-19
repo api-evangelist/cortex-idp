@@ -1,0 +1,645 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: 'Cortex Eng Intel: 2-Metrics API'
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: 'Eng Intel: 2-Metrics'
+paths:
+  /api/v1/eng-intel/metrics/point-in-time:
+    post:
+      description: Query current metric values with optional period comparisons and flexible grouping. Supports batch queries for multiple metrics efficiently.
+      operationId: queryPointInTimeMetrics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchPointInTimeRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointInTimeResponse'
+          description: Successfully executed metrics query
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointInTimeResponse'
+          description: Invalid metric names, date range exceeds 6 months, validation errors, or unsupported orderBy attributes
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointInTimeResponse'
+          description: Forbidden
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Execute point-in-time engineering metrics queries
+      tags:
+      - 'Eng Intel: 2-Metrics'
+      x-cortex-mcp-description: "Execute point-in-time queries for one or more engineering metrics.\n\nReturns current metric values for specified time periods, with support for batch queries. Time range (startTime/endTime) cannot exceed 6 months (180 days).\n\nCOMPARISON FIELD: If you need to compare against a different time window, use the comparison field with type='TIME_WINDOW'.\nThe ONLY valid type is TIME_WINDOW. Do NOT use PERIOD_OVER_PERIOD or any other type.\nExample: {\"type\": \"TIME_WINDOW\", \"startTime\": \"2025-01-01T00:00:00\", \"endTime\": \"2025-01-15T00:00:00\"}\n\nPREREQUISITES - Follow this workflow:\n1. Discover all available metrics ONCE: Call listMetricDefinitions (view='basic') - cache this response\n2. Get metric query metadata ONCE per metric: Call listMetricDefinitions (view='full', key=METRIC_KEY)\n   - supportedAggregations: Valid aggregation methods\n   - orderByAttribute: Attribute path for sorting by metric values\n   - groupByOptions[].key: Valid groupBy keys (use exact values, do NOT guess)\n   - filterOptions[].key: Valid filter keys (use exact values, do NOT guess)\n   Cache the full view response for each metric. Reuse the metadata from cached responses for subsequent queries on the same metric.\n3. Construct query: Use the query metadata from the full view responses in step 2 to build valid point-in-time requests\n\nIMPORTANT: Cache only results from listMetricDefinitions. Do NOT cache point-in-time query results - always execute fresh queries for current data.\nOnly refresh cached listMetricDefinitions responses if no longer in your context window or explicitly requested.\nDo NOT guess attribute names - always use exact values from listMetricDefinitions responses.\n\nResponse includes:\n- Lightweight metadata: Column definitions optimized for programmatic use\n- Row data: Actual metric values and dimensional data\n- No heavy schemas: Source definitions excluded (get from listMetricDefinitions instead)\n\nError responses:\n- 400: Invalid metric names, date range, validation errors, or unsupported metric combinations\n- 403: Restricted Feature (contact help@cortex.io)"
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    TimeWindow:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PointInTimeComparison'
+      - required:
+        - decimalPlaces
+        - endTime
+        - startTime
+        type: object
+        properties:
+          decimalPlaces:
+            type: integer
+            format: int32
+          endTime:
+            type: string
+            format: date-time
+          startTime:
+            type: string
+            format: date-time
+    MetricAggregateColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - aggregationFunction
+        - metricKey
+        - ordinal
+        type: object
+        properties:
+          aggregationFunction:
+            type: string
+            description: Type of aggregation function applied to the metric
+            enum:
+            - SUM
+            - AVG
+            - COUNT
+            - RATIO
+            - MIN
+            - MAX
+            - P50
+            - P95
+            - RANKING
+            - COLLECT
+            - COLLECT_UNIQUE
+            - COUNT_UNIQUE
+            - LATEST
+          metricKey:
+            type: string
+            description: Unique identifier of the metric being aggregated
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    UrlColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - attributeName
+        - ordinal
+        type: object
+        properties:
+          attributeName:
+            type: string
+            description: Name of the attribute containing the URL
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    MetricValueColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - metricKey
+        - ordinal
+        type: object
+        properties:
+          metricKey:
+            type: string
+            description: Unique identifier of the metric this column represents
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    TimeWindowColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - ordinal
+        - windowSize
+        type: object
+        properties:
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+          windowSize:
+            type: object
+            properties:
+              nano:
+                type: integer
+                format: int32
+              negative:
+                type: boolean
+              positive:
+                type: boolean
+              seconds:
+                type: integer
+                format: int64
+              units:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dateBased:
+                      type: boolean
+                    duration:
+                      type: object
+                      properties:
+                        nano:
+                          type: integer
+                          format: int32
+                        negative:
+                          type: boolean
+                        positive:
+                          type: boolean
+                        seconds:
+                          type: integer
+                          format: int64
+                        zero:
+                          type: boolean
+                    durationEstimated:
+                      type: boolean
+                    timeBased:
+                      type: boolean
+              zero:
+                type: boolean
+            description: Duration of the time window represented by this column
+    NestedAggregation:
+      required:
+      - aggregations
+      - groupBy
+      type: object
+      properties:
+        aggregations:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetricAggregation'
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeFilterObject'
+        groupBy:
+          type: array
+          items:
+            type: string
+        timeAttribute:
+          type: string
+      description: Nested aggregations for advanced sub-queries
+    FilterDefinedPeerComparison:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/PointInTimeComparison'
+      - required:
+        - peerFilters
+        type: object
+        properties:
+          peerFilters:
+            type: array
+            items:
+              $ref: '#/components/schemas/AttributeFilterObject'
+    OrderBy:
+      required:
+      - attribute
+      - direction
+      type: object
+      properties:
+        attribute:
+          type: string
+        direction:
+          type: string
+          enum:
+          - ASC
+          - DESC
+      description: Ordering specification for results
+    AggregatedAttributeColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - aggregationFunction
+        - attributeName
+        - ordinal
+        - resultType
+        type: object
+        properties:
+          aggregationFunction:
+            type: string
+            description: Type of aggregation function applied to the attribute
+            enum:
+            - SUM
+            - AVG
+            - COUNT
+            - RATIO
+            - MIN
+            - MAX
+            - P50
+            - P95
+            - RANKING
+            - COLLECT
+            - COLLECT_UNIQUE
+            - COUNT_UNIQUE
+            - LATEST
+          attributeName:
+            type: string
+            description: Name of the attribute field this column aggregates
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+          resultType:
+            type: string
+            description: Type of the produced cell rather than of the underlying attribute
+            enum:
+            - STRING
+            - BOOLEAN
+            - INTEGER
+            - DECIMAL
+            - DOUBLE
+            - DATE
+            - TREE
+            - DATETIME
+            - JSON
+            - ARRAY
+            - ENUM
+            - UNSUPPORTED
+    MetricAggregation:
+      required:
+      - aggregation
+      - metric
+      type: object
+      properties:
+        aggregation:
+          type: string
+          enum:
+          - SUM
+          - AVG
+          - COUNT
+          - RATIO
+          - MIN
+          - MAX
+          - P50
+          - P95
+          - RANKING
+          - COLLECT
+          - COLLECT_UNIQUE
+          - COUNT_UNIQUE
+          - LATEST
+        density:
+          type: string
+          enum:
+          - REQUIRED
+          - OPTIONAL
+        endTime:
+          type: string
+          format: date-time
+        filters:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttributeFilterObject'
+        metric:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+    BatchPointInTimeRequest:
+      required:
+      - endTime
+      - filters
+      - groupBy
+      - limit
+      - metrics
+      - orderBy
+      - startTime
+      type: object
+      properties:
+        comparison:
+          oneOf:
+          - $ref: '#/components/schemas/FilterDefinedPeerComparison'
+          - $ref: '#/components/schemas/TimeWindow'
+        daysOfWeek:
+          uniqueItems: true
+          type: array
+          description: 'Optional day-of-week restriction (ISO: Monday=1..Sunday=7). When set, the query filters out rows whose time-attribute does not fall on one of these weekdays. Use {1,2,3,4,5} to exclude weekends. Empty set matches nothing.'
+          items:
+            type: integer
+            description: 'Optional day-of-week restriction (ISO: Monday=1..Sunday=7). When set, the query filters out rows whose time-attribute does not fall on one of these weekdays. Use {1,2,3,4,5} to exclude weekends. Empty set matches nothing.'
+            format: int32
+        endTime:
+          type: string
+          description: End time for the query period
+          format: date-time
+        filters:
+          type: array
+          description: Filters to apply to the data
+          items:
+            $ref: '#/components/schemas/AttributeFilterObject'
+        groupBy:
+          type: array
+          description: Fields to group results by
+          items:
+            type: string
+            description: Fields to group results by
+        limit:
+          type: integer
+          description: Maximum number of results to return
+          format: int32
+        metrics:
+          type: array
+          description: List of metrics to query with their aggregation functions
+          items:
+            $ref: '#/components/schemas/MetricAggregation'
+        nestedAggregations:
+          type: array
+          description: Nested aggregations for advanced sub-queries
+          items:
+            $ref: '#/components/schemas/NestedAggregation'
+        nextPage:
+          type: string
+          description: Pagination token for next page of results
+        orderBy:
+          type: array
+          description: Sort order for results
+          items:
+            $ref: '#/components/schemas/OrderBy'
+        startTime:
+          type: string
+          description: Start time for the query period
+          format: date-time
+        timeAttribute:
+          type: string
+          description: 'Deprecated: use timeAttributes instead. Single time attribute override as a fully-qualified path (e.g. ''pull_requests.date_closed'').'
+        timeAttributes:
+          type: array
+          description: Time attributes to use for queries. Each entry is a fully-qualified attribute path (e.g. 'pull_requests.date_closed'). The source is inferred from the prefix. For single-source queries, provide one entry. For multi-source, provide one per source to override.
+          items:
+            type: string
+            description: Time attributes to use for queries. Each entry is a fully-qualified attribute path (e.g. 'pull_requests.date_closed'). The source is inferred from the prefix. For single-source queries, provide one entry. For multi-source, provide one per source to override.
+      description: Point-in-time metrics query request for batch processing
+    PointInTimeComparison:
+      required:
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+      description: Optional comparison to previous time period
+      discriminator:
+        propertyName: type
+    PointInTimeResponse:
+      required:
+      - metadata
+      - rows
+      type: object
+      properties:
+        metadata:
+          $ref: '#/components/schemas/QueryMetadata'
+        rows:
+          type: array
+          description: 'Result rows, one array per grouping. Cells are positional: the value at index i corresponds to `metadata.columns[i]`, and its JSON type follows that column''s type (string, number, boolean, or null). Rows are not keyed by column name.'
+          example:
+          - - platform-team
+            - 12.5
+            - 30
+          - - payments-team
+            - 8.0
+            - 17
+          items:
+            type: array
+            description: 'Result rows, one array per grouping. Cells are positional: the value at index i corresponds to `metadata.columns[i]`, and its JSON type follows that column''s type (string, number, boolean, or null). Rows are not keyed by column name.'
+            example:
+            - - platform-team
+              - 12.5
+              - 30
+            - - payments-team
+              - 8.0
+              - 17
+            items:
+              type: object
+              description: 'Result rows, one array per grouping. Cells are positional: the value at index i corresponds to `metadata.columns[i]`, and its JSON type follows that column''s type (string, number, boolean, or null). Rows are not keyed by column name.'
+              example:
+              - - platform-team
+                - 12.5
+                - 30
+              - - payments-team
+                - 8.0
+                - 17
+    Column:
+      required:
+      - alias
+      - name
+      - ordinal
+      - type
+      type: object
+      properties:
+        alias:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        name:
+          type: string
+        ordinal:
+          type: integer
+          format: int32
+        type:
+          type: string
+      description: List of column definitions describing each field in the result rows
+      discriminator:
+        propertyName: type
+    AttributeFilterObject:
+      required:
+      - attribute
+      - operator
+      - predicate
+      type: object
+      properties:
+        attribute:
+          type: string
+        operator:
+          type: string
+          enum:
+          - ANY
+          - BETWEEN
+          - CONTAINS
+          - EQUAL
+          - GREATER_THAN
+          - GREATER_THAN_OR_EQUAL
+          - IN
+          - IS_NOT_NULL
+          - IS_NULL
+          - LESS_THAN
+          - LESS_THAN_OR_EQUAL
+          - LIKE
+          - NOT_EQUAL
+          - NOT_IN
+          - NOT_LIKE
+        predicate:
+          description: 'The value or values of the attribute to filter by.
+
+
+            The specific predicate value should match the type of the attribute column and is either a scalar value or array of values depending on the operator.
+
+
+            A single, scalar value for EQUAL, NOT_EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, LESS_THAN, LESS_THAN_OR_EQUAL, CONTAINS, LIKE, NOT_LIKE.
+
+
+            LIKE and NOT_LIKE perform case insensitive matches on a string and use % wildcards to perform partial matching.
+
+
+            An array of values for IN, NOT_IN, ANY, BETWEEN.
+
+
+            BETWEEN takes an array of two arguments, the inclusive lower and upper bounds.
+
+
+            The predicate is ignored for IS_NULL, IS_NOT_NULL, which accept null or empty object as arguments.'
+          anyOf:
+          - type: string
+          - type: number
+          - type: boolean
+          - type: array
+            items:
+              anyOf:
+              - type: string
+              - type: number
+              - type: boolean
+      description: Filters to apply to the query
+    QueryMetadata:
+      required:
+      - columns
+      type: object
+      properties:
+        columns:
+          type: array
+          description: List of column definitions describing each field in the result rows
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/AggregatedAttributeColumn'
+            - $ref: '#/components/schemas/AttributeColumn'
+            - $ref: '#/components/schemas/EntityReferenceColumn'
+            - $ref: '#/components/schemas/MetricAggregateColumn'
+            - $ref: '#/components/schemas/MetricValueColumn'
+            - $ref: '#/components/schemas/TimeWindowColumn'
+            - $ref: '#/components/schemas/UrlColumn'
+        nextPage:
+          type: string
+          description: Cursor for the next page, or null when this is the last page. Pass it back as the request's nextPage.
+      description: Query metadata describing the structure of returned columns
+    AttributeColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - attributeName
+        - ordinal
+        type: object
+        properties:
+          attributeName:
+            type: string
+            description: Name of the attribute field this column represents
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+    EntityReferenceColumn:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/Column'
+      - required:
+        - attributeName
+        - entityType
+        - factScope
+        - ordinal
+        type: object
+        properties:
+          attributeName:
+            type: string
+            description: Name of the attribute that references the entity
+          entityType:
+            type: string
+            description: Type of entity being referenced (e.g., 'user', 'team', 'service')
+          factScope:
+            type: string
+            description: Whether sibling rows under this grouping hold disjoint or overlapping facts. SHARED_ACROSS_ROWS means the grouping fans out (e.g. a repo maps to many entities), so the grouped values share underlying records and do not sum to the total; UNIQUE_PER_ROW means each row's values are its own and are additive.
+            enum:
+            - UNIQUE_PER_ROW
+            - SHARED_ACROSS_ROWS
+          ordinal:
+            type: integer
+            description: Zero-based column position in the result data rows - use this to map column metadata to actual row data values
+            format: int32
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http

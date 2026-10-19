@@ -1,0 +1,605 @@
+openapi: 3.2.0
+info:
+  description: The Cortex REST API provides programmatic access to the data in the catalog, Scorecards, and more.
+  title: Cortex Dependencies API
+  version: v1
+servers:
+- url: https://api.getcortexapp.com
+  description: Cortex Cloud API host
+security:
+- bearerAuth: []
+tags:
+- name: Dependencies
+paths:
+  /api/v1/catalog/dependencies:
+    delete:
+      operationId: deleteDependenciesInBulk
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkDependencyRequest'
+        required: true
+      responses:
+        '204':
+          description: Successfully deleted dependencies
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Cannot modify dependency that is defined in cortex.yaml
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete dependencies in bulk
+      tags:
+      - Dependencies
+      x-cortex-mcp-enabled: 'false'
+    put:
+      description: This API allows you to create multiple dependencies for multiple entities at once.
+      operationId: createOrUpdateDependenciesInBulk
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkDependencyRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkDependencyResponse'
+          description: Successfully created / updated dependencies
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Cannot modify dependency that is defined in cortex.yaml
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create or update dependencies in bulk
+      tags:
+      - Dependencies
+      x-cortex-mcp-enabled: 'false'
+  /api/v1/catalog/{callerTag}/dependencies:
+    delete:
+      description: 'Deletes any outgoing dependencies from the entity. Note: this only deletes dependencies that were created via the API.'
+      operationId: deleteDependenciesFromEntity
+      parameters:
+      - in: path
+        name: callerTag
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DependencyResponse'
+          description: Successfully deleted dependencies
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Caller not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete dependencies from entity
+      tags:
+      - Dependencies
+      x-cortex-mcp-description: Delete all dependencies for an entity. Disabled for MCP access to protect dependency graph integrity and prevent accidental removal of critical relationship data
+      x-cortex-mcp-enabled: 'false'
+    get:
+      operationId: listDependenciesForEntity
+      parameters:
+      - in: path
+        name: callerTag
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: includeOutgoing
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - in: query
+        name: includeIncoming
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - description: Number of results to return per page, between 1 and 1000. Default 250.
+        in: query
+        name: pageSize
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 250
+      - description: Page number to return, 0-indexed. Default 0.
+        in: query
+        name: page
+        required: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - description: Whether to include dependencies on archived entities in the response
+        in: query
+        name: includeArchived
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DependencyResponse'
+          description: Successfully found entity dependencies
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity dependencies not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve all dependencies for an entity
+      tags:
+      - Dependencies
+      x-cortex-mcp-description: List all dependencies for an entity including both incoming (who depends on this service) and outgoing (what this service depends on) relationships. Essential for understanding service interactions, planning changes, and assessing blast radius.
+      x-cortex-mcp-enabled: 'true'
+  /api/v1/catalog/{callerTag}/dependencies/{calleeTag}:
+    delete:
+      description: 'Deletes a single dependency edge between the `caller` and the `callee`.
+
+        Note: This is only supported for edges created via the API.'
+      operationId: deleteDependency
+      parameters:
+      - in: path
+        name: callerTag
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: calleeTag
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: method
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: path
+        required: false
+        schema:
+          type: string
+      responses:
+        '204':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DependencyResponse'
+          description: Successfully deleted dependency
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid endpoint
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Dependency not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Delete dependency
+      tags:
+      - Dependencies
+      x-cortex-mcp-description: Delete a specific dependency between two entities. Disabled for MCP access as removing dependencies can mask critical system relationships
+      x-cortex-mcp-enabled: 'false'
+    get:
+      description: If a dependency exists between the `callee` and the `caller`, returns metadata about the edge.
+      operationId: getDependency
+      parameters:
+      - in: path
+        name: callerTag
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: calleeTag
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: method
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: path
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DependencyResponse'
+          description: Successfully found dependency
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid endpoint
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Dependency not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Retrieve dependency between entities
+      tags:
+      - Dependencies
+      x-cortex-mcp-description: Get specific dependency details between two entities including method, path, and metadata. Useful for understanding the nature of the relationship, API contracts, and communication patterns between services.
+      x-cortex-mcp-enabled: 'true'
+    post:
+      operationId: createDependency
+      parameters:
+      - description: The entity tag (x-cortex-tag) for the callee entity ("from" entity)
+        in: path
+        name: callerTag
+        required: true
+        schema:
+          type: string
+      - description: The entity tag (x-cortex-tag) for the caller entity ("to" entity)
+        in: path
+        name: calleeTag
+        required: true
+        schema:
+          type: string
+      - description: HTTP Method
+        example: POST
+        in: query
+        name: method
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: path
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DependencyCreateRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DependencyResponse'
+          description: Successfully created dependency
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid endpoint
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Create dependency from entity
+      tags:
+      - Dependencies
+      x-cortex-mcp-description: Create a dependency from a caller entity to a callee entity, with an optional description and JSON metadata. Optional method and path scope it to an endpoint, which must exist in the callee's OpenAPI spec. Fails if the same dependency already exists; to change one, use updateDependency.
+      x-cortex-mcp-enabled: 'true'
+    put:
+      description: 'If a dependency exists between two entities, replace the metadata with the payload.
+
+        Note: This only supports dependencies created via the API.'
+      operationId: updateDependency
+      parameters:
+      - in: path
+        name: callerTag
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: calleeTag
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: method
+        required: false
+        schema:
+          type: string
+      - in: query
+        name: path
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DependencyUpdateRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DependencyResponse'
+          description: Successfully updated dependency
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Invalid endpoint
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: Entity not found
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+      summary: Update dependency between entities
+      tags:
+      - Dependencies
+      x-cortex-mcp-description: Set the description and metadata of a caller-to-callee dependency (optionally scoped by method and path). Both fields are overwritten, and null clears them. If the dependency does not exist it is created, so this is an idempotent upsert. Only affects dependencies created through the API, not ones from the descriptor or integrations.
+      x-cortex-mcp-enabled: 'true'
+components:
+  schemas:
+    BulkDependencyResponse:
+      required:
+      - values
+      type: object
+      properties:
+        values:
+          type: object
+          additionalProperties:
+            type: array
+            description: Map of `caller` service to dependencies
+            items:
+              $ref: '#/components/schemas/BulkDependencyInnerResponse'
+          description: Map of `caller` service to dependencies
+    DependencyUpdateRequest:
+      required:
+      - description
+      - metadata
+      type: object
+      properties:
+        description:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/JsonNode'
+    ErrorResponse:
+      required:
+      - message
+      - type
+      type: object
+      properties:
+        details:
+          type: string
+        errorCode:
+          type: string
+        gatewayHttpStatus:
+          type: integer
+          format: int32
+        httpStatus:
+          type: integer
+          format: int32
+        message:
+          type: string
+        requestId:
+          type: string
+        type:
+          type: string
+          enum:
+          - INTEGRATION_MISSING
+          - INTEGRATION_UNREGISTERED
+          - INTEGRATION_UNSUPPORTED
+          - INTEGRATION_GRAPHQL_ERROR
+          - INTEGRATION_BAD_REQUEST
+          - INTEGRATION_UNAUTHORIZED
+          - INTEGRATION_FORBIDDEN
+          - INTEGRATION_NOT_FOUND
+          - INTEGRATION_UNPROCESSABLE_CONTENT
+          - INTEGRATION_RATE_LIMITED
+          - INTEGRATION_INTERNAL_ERROR
+          - INTEGRATION_NOT_IMPLEMENTED
+          - INTEGRATION_BAD_GATEWAY
+          - INTEGRATION_UNAVAILABLE
+          - INTEGRATION_GATEWAY_TIMEOUT
+          - INTEGRATION_TIMED_OUT
+          - INTEGRATION_CACHE_ERROR
+          - INTEGRATION_UNHANDLED_HTTP_ERROR
+          - INTEGRATION_UNHANDLED_EXCEPTION
+          - INTEGRATION_UNEXPECTED_ERROR
+          - ILLEGAL_ARGUMENT_ERROR
+          - BAD_REQUEST
+          - FORBIDDEN
+          - NOT_FOUND
+          - REQUEST_TIMEOUT
+          - CONFLICT
+          - UNHANDLED_EXCEPTION
+          - UNCATEGORIZED
+          - SERVICE_CREATOR
+          - UNKNOWN_HOST
+          - TOO_MANY_REQUESTS
+    BulkDependencyInnerRequest:
+      required:
+      - tag
+      type: object
+      properties:
+        description:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/JsonNode'
+        method:
+          type: string
+        path:
+          type: string
+        tag:
+          type: string
+          description: Entity tag (`x-cortex-tag`) for the `callee`
+      description: Map of `caller` service to dependencies
+    DependencyResponse:
+      required:
+      - calleeTag
+      - calleeType
+      - callerTag
+      - callerType
+      type: object
+      properties:
+        calleeTag:
+          type: string
+          description: Entity tag (x-cortex-tag) for the callee entity
+        calleeType:
+          type: string
+          description: Type of the callee entity. Corresponds to the x-cortex-type field in the entity descriptor or ‘service’ for services.
+        callerTag:
+          type: string
+          description: Entity tag (x-cortex-tag) for the caller entity
+        callerType:
+          type: string
+          description: Type of the caller entity. Corresponds to the x-cortex-type field in the entity descriptor or ‘service’ for services.
+        description:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/JsonNode'
+        method:
+          type: string
+          description: 'Possible values: [GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS, TRACE]'
+        path:
+          type: string
+    BulkDependencyInnerResponse:
+      required:
+      - tag
+      type: object
+      properties:
+        description:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/JsonNode'
+        method:
+          $ref: '#/components/schemas/HttpMethod'
+        path:
+          type: string
+        tag:
+          type: string
+          description: Entity tag (`x-cortex-tag`) for the `callee`
+      description: Map of `caller` service to dependencies
+    JsonNode:
+      type: object
+    DependencyCreateRequest:
+      type: object
+      properties:
+        description:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/JsonNode'
+    HttpMethod:
+      type: object
+    BulkDependencyRequest:
+      required:
+      - values
+      type: object
+      properties:
+        values:
+          type: object
+          additionalProperties:
+            type: array
+            description: Map of `caller` service to dependencies
+            items:
+              $ref: '#/components/schemas/BulkDependencyInnerRequest'
+          description: Map of `caller` service to dependencies
+    TooManyRequestsProblemDetail:
+      required:
+      - type
+      - title
+      - status
+      type: object
+      properties:
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        retryAfter:
+          minimum: 0
+          type: integer
+          description: The number of seconds until the rate limiting resets.
+          format: int32
+        status:
+          maximum: 599
+          minimum: 100
+          type: integer
+          format: int32
+          enum:
+          - 429
+        title:
+          type: string
+        type:
+          type: string
+          format: uri-reference
+  responses:
+    TooManyRequests:
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/TooManyRequestsProblemDetail'
+      description: The client has exceeded the rate limit by performing too many requests in a short period. Retry the request after a delay.
+      headers:
+        Retry-After:
+          description: The number of seconds until the rate limiting resets.
+          schema:
+            minimum: 0
+            type: integer
+            format: int32
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
+      scheme: bearer
+      type: http
