@@ -14,6 +14,7 @@ checked:
 - https://www.sequoiacap.com/our-companies/
 - https://www.sequoiacap.com/sitemap.xml
 - atlassian/integrations/atlassian-integration-edges.yml
+- backstage/integrations/backstage-integration-edges.yml
 marketplace_apps: []
 edges:
 - partner_name: AWS Marketplace
@@ -148,5 +149,22 @@ edges:
   detected: '2026-10-21'
   detected_by: mirror-platform-listings.py
   category: Admin tools
+- partner_name: Backstage (own)
+  partner: backstage
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://github.com/backstage/backstage/tree/d72327203d5d0812bee2eace8688fa5ab22867be/microsite/data/plugins/cortex.yaml
+  mirror_of: backstage/integrations/backstage-integration-edges.yml
+  apps:
+  - Cortex Service Quality Scorecards
+  listing_count: 1
+  detected: '2026-10-22'
+  detected_by: mirror-platform-listings.py
+  category: Monitoring
 source:
 - okta/integrations/okta-integration-edges.yml
