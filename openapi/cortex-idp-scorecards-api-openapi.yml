@@ -1421,3 +1421,9 @@ components:
       description: 'All requests to the Cortex API need to provide an `Authorization: Bearer <token>` header, where `<token>` is an API key created in the Settings page of your workspace.'
       scheme: bearer
       type: http
+x-provenance:
+  method: harvested
+  publisher: Cortex
+  source: https://docs.cortex.io/openapi/cortex_swagger.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
