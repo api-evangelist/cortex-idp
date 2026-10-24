@@ -209,6 +209,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - APIKeys
+  tags_raw:
   - API Keys
   properties:
   - type: OpenAPI
@@ -293,6 +295,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - Catalog
+  tags_raw:
   - Catalogs
   properties:
   - type: OpenAPI
@@ -742,6 +746,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - Group
+  tags_raw:
   - Groups
   properties:
   - type: OpenAPI
@@ -1286,6 +1292,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - 'Integrations: Dynatrace'
+  tags_raw:
   - '[Integrations] Dynatrace'
   properties:
   - type: OpenAPI
@@ -1371,6 +1379,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - Integrations - GitLab
+  tags_raw:
   - '[Integrations] GitLab'
   properties:
   - type: OpenAPI
@@ -1512,6 +1522,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - 'Integrations: Jira'
+  tags_raw:
   - '[Integrations] Jira'
   properties:
   - type: OpenAPI
@@ -2312,6 +2324,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - On-Call
+  tags_raw:
   - On-call
   properties:
   - type: OpenAPI
@@ -2425,6 +2439,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - Query
+  tags_raw:
   - Queries
   properties:
   - type: OpenAPI
@@ -2593,6 +2609,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - Team
+  tags_raw:
   - Teams
   properties:
   - type: OpenAPI
@@ -2678,6 +2696,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
@@ -2706,6 +2726,8 @@ apis:
   humanURL: https://docs.cortex.io/api/readme/catalog-entities
   baseURL: https://api.getcortexapp.com/api/v1
   tags:
+  - Verification
+  tags_raw:
   - Verifications
   properties:
   - type: OpenAPI
