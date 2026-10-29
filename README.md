@@ -1,4 +1,4 @@
-# Cortex (cortex-idp)
+# Cortex
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -64,103 +64,138 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Cortex (cortex.io) is an internal developer portal (IDP) and software catalog platform. It gives an engineering organization a searchable catalog of services and entities, Scorecards that measure those entities against production-readiness and reliability standards, Initiatives for driving improvement campaigns, and roughly thirty integrations (GitHub, PagerDuty, Datadog, Kubernetes, and more) that hydrate the catalog. Cortex exposes a documented public REST API at `https://api.getcortexapp.com/api/v1` authenticated with a Bearer API key.
+Cortex (cortex.io) is an internal developer portal (IDP) and software catalog platform. It gives engineering organizations a catalog of services and entities, Scorecards that measure those entities against production-readiness and reliability standards, Initiatives for driving improvement campaigns, and roughly thirty integrations (GitHub, PagerDuty, Datadog, Kubernetes, and more) that hydrate the catalog. Cortex exposes a documented REST API (base https://api.getcortexapp.com/api/v1) with Bearer/API-key authentication covering the Catalog/Entities, Scorecards, Custom Data, Initiatives, Deploys, Teams, and Integrations. NOTE - this is Cortex.io the internal developer portal / service catalog & scorecards company, NOT Cortex XSOAR (Palo Alto Networks), NOT the Cortex crypto token, and NOT Orange Logic's Cortex DAM.
 
-If you searched for a **software catalog**, **service catalog**, or **internal developer portal (IDP)**, this is that category of product.
+**Areas:** Software Catalog · Internal Developer Portal · Service Catalog · Developer Experience · Scorecards · Platform Engineering · Developer Portal · Developer Tools
 
-> **Disambiguation.** This entry is **Cortex.io the internal developer portal / service catalog & scorecards company** (docs.cortex.io, api.getcortexapp.com). It is **NOT**:
-> - **Cortex XSOAR / Cortex XDR** by Palo Alto Networks (security orchestration / detection),
-> - the **Cortex (CTXC)** crypto token / blockchain, or
-> - **Orange Logic's Cortex** digital asset management (DAM) product.
+## Cortex on APIs.io
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/cortex-idp/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/cortex-idp/refs/heads/main/apis.yml)
+Everything profiled for Cortex is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/cortex-idp/](https://apis.io/providers/cortex-idp/)** — or go straight to one of the APIs or properties below.
 
-## Access model
+### APIs (9)
 
-Cortex is a commercial SaaS internal developer portal (also available via the AWS Marketplace and Microsoft/Azure Marketplace). The REST API is available to authenticated workspace customers using an **API key** created in the Settings page of your Cortex workspace and passed as `Authorization: Bearer <token>`. The API operates on **your own workspace's catalog** - there is no open, unauthenticated public data API. The API reference itself is public at [docs.cortex.io/api](https://docs.cortex.io/api).
+- [Cortex Catalog API](https://apis.io/apis/cortex-idp/cortex-idp-catalog-api/) — Software catalog entities - services, resources, domains, and custom types.
+- [Cortex Custom Data API](https://apis.io/apis/cortex-idp/cortex-idp-custom-data-api/) — Arbitrary key/value metadata attached to catalog entities.
+- [Cortex Deploys API](https://apis.io/apis/cortex-idp/cortex-idp-deploys-api/) — Deployment events recorded per catalog entity.
+- [Cortex Initiatives API](https://apis.io/apis/cortex-idp/cortex-idp-initiatives-api/) — Time-boxed improvement campaigns driving entities toward a Scorecard target.
+- [Cortex Integrations API](https://apis.io/apis/cortex-idp/cortex-idp-integrations-api/) — Third-party integration configurations that hydrate the catalog.
+- [Cortex Scorecards API](https://apis.io/apis/cortex-idp/cortex-idp-scorecards-api/) — Standards that measure catalog entities, with scores and exemptions.
+- [Cortex Dependencies API](https://apis.io/apis/cortex-idp/dependencies-api/) — REST endpoints to list and inspect entity-to-entity dependencies (caller and callee) and the relationships used to build the service graph.
+- [Cortex Workflow Runs API](https://apis.io/apis/cortex-idp/workflows-api/) — REST endpoints for managing and querying Workflow runs, used to drive developer self-service actions and scaffolding from the Cortex IDP.
+- [Cortex MCP Server](https://apis.io/apis/cortex-idp/mcp/) — Model Context Protocol server exposing Cortex catalog, scorecards, dependencies, and on-call data to AI agents and copilots through MCP tools and resources.
 
-The API is rate limited to **1000 requests per minute per client** with a **2MB** maximum request body; exceeding the rate returns **429** with a `Retry-After` header.
+### Published properties
 
-## Tags
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-- Software Catalog
-- Internal Developer Portal
-- Service Catalog
-- Developer Experience
-- IDP
-- Scorecards
-- Platform Engineering
-- Developer Portal
+#### MCP servers (1)
 
-## Timestamps
+Model Context Protocol servers that expose the API to agents.
 
-- **Created:** 2026-07-11
-- **Modified:** 2026-07-11
+- [Moved to /providers/cortex-idp/](https://apis.io/servers/cortex-idp/cortex-idp/)
 
-## APIs
+#### Agentic access (1)
 
-### Cortex Catalog API
+Which operations an agent can call, which act, and which need a human in the loop.
 
-The software catalog core - list, retrieve, create/update (upsert via entity descriptor), archive, unarchive, and delete catalog entities (services, resources, domains, and custom entity types). Retrieve an entity's descriptor, GitOps logs, and its scorecard scores.
+- [Cortex Idp Agentic Access](https://apis.io/agentic-access/cortex-idp/cortex-idp-agentic-access/)
 
-- **Human URL:** [https://docs.cortex.io/api/readme/catalog-entities](https://docs.cortex.io/api/readme/catalog-entities)
-- **Base URL:** `https://api.getcortexapp.com/api/v1`
+#### Collections (7)
 
-### Cortex Scorecards API
+Postman and Open Collection request collections.
 
-List and retrieve Scorecards, fetch scores and next steps, get a per-entity badge, submit scores, manage a scorecard via its descriptor, and run the exemption workflow (request, approve, deny, revoke).
+- [Cortex REST API](https://apis.io/collections/cortex-idp/open-cortex-idp/)
+- [Cortex REST Catalog API](https://apis.io/collections/cortex-idp/open-cortex-idp-catalog-api/)
+- [Cortex REST Catalog Custom Data API](https://apis.io/collections/cortex-idp/open-cortex-idp-custom-data-api/)
+- [Cortex REST Catalog Deploys API](https://apis.io/collections/cortex-idp/open-cortex-idp-deploys-api/)
+- [Cortex REST Catalog Initiatives API](https://apis.io/collections/cortex-idp/open-cortex-idp-initiatives-api/)
+- [Cortex REST Catalog Integrations API](https://apis.io/collections/cortex-idp/open-cortex-idp-integrations-api/)
+- [Cortex REST Catalog Scorecards API](https://apis.io/collections/cortex-idp/open-cortex-idp-scorecards-api/)
 
-- **Human URL:** [https://docs.cortex.io/api/readme/scorecards](https://docs.cortex.io/api/readme/scorecards)
-- **Base URL:** `https://api.getcortexapp.com/api/v1`
+#### Security (1)
 
-### Cortex Custom Data API
+Authentication, trust centre, and vulnerability disclosure.
 
-Attach arbitrary key/value metadata to catalog entities - list, get by key, add, bulk upsert across many entities, and delete.
+- [Cortex Idp Authentication](https://apis.io/security/cortex-idp/cortex-idp-authentication/)
 
-- **Human URL:** [https://docs.cortex.io/api/readme/custom-data](https://docs.cortex.io/api/readme/custom-data)
-- **Base URL:** `https://api.getcortexapp.com/api/v1`
+#### Plans and pricing (1)
 
-### Cortex Initiatives API
+Published plans, tiers and prices.
 
-Create, list, get, update, and delete Initiatives - time-boxed improvement campaigns that drive entities toward a Scorecard target.
+- [Cortex Idp Plans Pricing](https://apis.io/plans/cortex-idp/cortex-idp-plans-pricing/)
 
-- **Human URL:** [https://docs.cortex.io/api/readme/initiatives](https://docs.cortex.io/api/readme/initiatives)
-- **Base URL:** `https://api.getcortexapp.com/api/v1`
+#### Rate limits (1)
 
-### Cortex Deploys API
+Published request limits.
 
-Record and query deployment events per catalog entity - list, add, update, and delete deploys, search across deploys, and list deploy environments.
+- [Cortex Idp Rate Limits](https://apis.io/rate-limits/cortex-idp/cortex-idp-rate-limits/)
 
-- **Human URL:** [https://docs.cortex.io/api/readme/deploys](https://docs.cortex.io/api/readme/deploys)
-- **Base URL:** `https://api.getcortexapp.com/api/v1`
+#### FinOps (1)
 
-### Cortex Integrations API
+What the API costs to run, by operation.
 
-Manage the third-party integration configurations that hydrate the catalog. GitHub is shown as the exemplar; roughly thirty integrations follow the same configuration pattern. List, validate, add, update, and delete personal and app configurations per integration.
+- [Cortex Idp Finops](https://apis.io/finops/cortex-idp/cortex-idp-finops/)
 
-- **Human URL:** [https://docs.cortex.io/api/readme/integrations/github](https://docs.cortex.io/api/readme/integrations/github)
-- **Base URL:** `https://api.getcortexapp.com/api/v1`
+## Where to find this API
 
-## Provenance and honesty note
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-Endpoint **paths and HTTP methods** in this entry are grounded in the live Cortex API reference at [docs.cortex.io/api](https://docs.cortex.io/api) (Catalog Entities, Scorecards, Custom Data, Initiatives, Deploys, and the GitHub integration). Request/response **schemas** in the OpenAPI are honestly modeled and simplified - marked as modeled where not copied verbatim - so verify exact payloads against the current documentation.
-
-**Pricing is modeled.** Cortex's own pricing page ([cortex.io/pricing](https://www.cortex.io/pricing)) is contact-sales / custom proposal and publishes no rate card. Per-developer figures and tier limits in `plans/` come from third-party listings and are unconfirmed (`reconciled: false`). Cortex licenses per developer seat, not per catalogued service.
-
-**No public WebSocket API.** See `review.yml`: Cortex's documented public API is request/response REST over HTTPS. Data ingestion happens via polling and inbound webhooks, not a consumer-facing server-push stream, so no AsyncAPI document was authored.
-
-## Common Properties
-
-- [Authentication](authentication/cortex-idp-authentication.yml)
-- [LinkedIn](https://www.linkedin.com/company/cortexapp)
 - [Website](https://www.cortex.io)
 - [Documentation](https://docs.cortex.io)
-- [Plans](plans/cortex-idp-plans-pricing.yml)
-- [Rate Limits](rate-limits/cortex-idp-rate-limits.yml)
-- [Fin Ops](finops/cortex-idp-finops.yml)
 - [Pricing](https://www.cortex.io/pricing)
+- [Blog](https://www.cortex.io/blog)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 30.0** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 68.3 |
+| Contract quality | 48.9 |
+| Contract governance | 0.0 |
+| Operational transparency | 5.3 |
+| Developer ergonomics | 32.1 |
+| Access clarity | 18.4 |
+
+**Agent readiness 41.8** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | verified |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | yes |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 5.9** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/cortex-idp/](https://apis.io/providers/cortex-idp/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Cortex: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/cortex-idp/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
